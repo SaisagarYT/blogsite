@@ -83,7 +83,7 @@ const Homepage = () => {
       </div>
       <div ref={categoriesRef} className='w-full bg-(--bg-primary) py-20 px-30 flex items-start gap-4 justify-center flex-col'>
         <p className='bg-(--text-button) py-2 px-4 rounded-sm text-(--text-secondary)'>Unlock the Power of</p>
-        <h1 className='text-6xl'>FutureTech Features</h1>
+        <h1 className='text-6xl text-(--text-accent)'>FutureTech Features</h1>
       </div>
       <div ref={blogsRef}>
         <HomepageFeatureCard title="Future Technology Blog" para="Stay informed with our blog section dedicated to future technology." icon={Webassets.icon4}/>
@@ -135,7 +135,7 @@ const Homepage = () => {
       <div className='w-full bg-(--bg-primary) py-20 px-30 flex items-center gap-10 justify-start'>
         <div className='flex flex-col items-start w-4/5'>
           <p className='bg-(--text-button) text-(--text-secondary) py-2 px-4 rounded-sm'>Your Gateway to In-Depth Information</p>
-          <h1 className='text-6xl'>Unlock Valuable Knowledge with FutureTech's Resources</h1>
+          <h1 className='text-6xl text-(--text-accent)'>Unlock Valuable Knowledge with FutureTech's Resources</h1>
         </div>
         <HomepageButton text="View All Resources" icon={Webassets.arrowMark}/>
       </div>
@@ -162,7 +162,7 @@ const Homepage = () => {
       <div className='w-full bg-(--bg-primary) py-20 px-30 flex items-center gap-4 justify-between'>
         <div className='flex flex-col gap-4 items-start'>
           <p className='bg-(--text-button) text-(--text-secondary) py-2 px-4 rounded-sm'>What Our Readers Say</p>
-          <h1 className='text-6xl'>Real Words from Real Readers</h1>
+          <h1 className='text-6xl text-(--text-accent)'>Real Words from Real Readers</h1>
         </div>
         <HomepageButton text="Testimonials" icon={Webassets.arrowMark}/>
       </div>

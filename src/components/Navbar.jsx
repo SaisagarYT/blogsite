@@ -3,9 +3,8 @@ import { useEffect, useState } from "react";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [theme, setTheme] = useState(
-    () => localStorage.getItem("color") || "dark",
-  );
+  const [theme, setTheme] = useState(() => localStorage.getItem("color") || "dark");
+  const [podcastsOpen, setPodcastsOpen] = useState(false);
 
   useEffect(() => {
     document.documentElement.setAttribute("theme", theme);
@@ -17,6 +16,16 @@ const Navbar = () => {
   };
   const [resourcesOpen, setResourcesOpen] = useState(false);
   let resourcesTimeout;
+
+  // Podcasts dropdown hover logic
+  let podcastsTimeout;
+  const handlePodcastsEnter = () => {
+    clearTimeout(podcastsTimeout);
+    setPodcastsOpen(true);
+  };
+  const handlePodcastsLeave = () => {
+    podcastsTimeout = setTimeout(() => setPodcastsOpen(false), 120);
+  };
 
   // Handlers to control dropdown visibility
   const handleResourcesEnter = () => {
@@ -53,20 +62,81 @@ const Navbar = () => {
             <li className="hover:text-(--text-accent) transition cursor-pointer">
               NEWS
             </li>
-            <li className="hover:text-(--text-accent) transition cursor-pointer">
-              PODCASTS
+            <li
+              className="relative"
+              onMouseEnter={handlePodcastsEnter}
+              onMouseLeave={handlePodcastsLeave}
+            >
+              <div className="flex items-center gap-1 hover:text-(--text-accent) transition cursor-pointer select-none">
+                <span>Podcasts</span>
+                <Icon icon="mdi:chevron-down" width="20" height="20" />
+              </div>
+              {/* Podcasts Dropdown */}
+              {podcastsOpen && (
+                <div className="fixed left-0 top-22 w-full bg-white/30 backdrop-blur-lg dark:bg-(--bg-primary) border border-white/40 dark:border-(--bg-secondary) shadow-lg px-32 py-10 flex flex-row gap-10 text-sm text-black dark:text-white z-50 rounded-b-2xl animate-fade-in-down transition-all duration-200"
+                  onMouseEnter={handlePodcastsEnter}
+                  onMouseLeave={handlePodcastsLeave}
+                >
+                  {/* All Episodes & By Topic */}
+                  <div className="min-w-[180px] flex flex-col gap-2 border-r border-gray-100 dark:border-gray-800 pr-8">
+                    <div className="font-bold text-xs text-gray-500 mb-2 uppercase tracking-wide flex items-center gap-2">
+                      <Icon icon="mdi:playlist-play" width="18" className="text-(--text-accent)" />
+                      All Episodes
+                    </div>
+                    <ul className="flex flex-col gap-2">
+                      <li className="group/item flex items-center gap-2 rounded-lg px-3 py-2 cursor-pointer transition-all hover:bg-white/40 hover:backdrop-blur-md dark:hover:bg-(--bg-secondary) hover:shadow-md">
+                        <Icon icon="mdi:tag-multiple-outline" width="16" className="opacity-60 group-hover/item:text-yellow-500" /> By Topic
+                      </li>
+                      <li className="group/item flex items-center gap-2 rounded-lg px-3 py-2 cursor-pointer transition-all hover:bg-white/50 hover:backdrop-blur-md dark:hover:bg-(--bg-secondary) hover:shadow-md">
+                        <Icon icon="mdi:robot-outline" width="16" className="opacity-60 group-hover/item:text-yellow-500" /> AI Talks
+                      </li>
+                      <li className="group/item flex items-center gap-2 rounded-lg px-3 py-2 cursor-pointer transition-all hover:bg-white/50 hover:backdrop-blur-md dark:hover:bg-(--bg-secondary) hover:shadow-md">
+                        <Icon icon="mdi:code-braces" width="16" className="opacity-60 group-hover/item:text-yellow-500" /> Dev Talks
+                      </li>
+                      <li className="group/item flex items-center gap-2 rounded-lg px-3 py-2 cursor-pointer transition-all hover:bg-white/50 hover:backdrop-blur-md dark:hover:bg-(--bg-secondary) hover:shadow-md">
+                        <Icon icon="mdi:account-tie-outline" width="16" className="opacity-60 group-hover/item:text-yellow-500" /> Founder Stories
+                      </li>
+                    </ul>
+                  </div>
+                  {/* Featured & Latest */}
+                  <div className="min-w-[180px] flex flex-col gap-2 border-r border-gray-100 dark:border-gray-800 pr-8">
+                    <div className="font-bold text-xs text-gray-500 mb-2 uppercase tracking-wide flex items-center gap-2">
+                      <Icon icon="mdi:star-outline" width="18" className="text-(--text-accent)" />
+                      Featured Episodes
+                    </div>
+                    <ul className="flex flex-col gap-2">
+                      <li className="group/item flex items-center gap-2 rounded-lg px-3 py-2 cursor-pointer transition-all hover:bg-yellow-50 dark:hover:bg-(--bg-secondary) hover:shadow-md">
+                        <Icon icon="mdi:fire" width="16" className="opacity-60 group-hover/item:text-yellow-500" /> Latest Episode
+                      </li>
+                    </ul>
+                  </div>
+                  {/* Submit a Podcast */}
+                  <div className="min-w-[180px] flex flex-col gap-2">
+                    <div className="font-bold text-xs text-gray-500 mb-2 uppercase tracking-wide flex items-center gap-2">
+                      <Icon icon="mdi:microphone-plus" width="18" className="text-(--text-accent)" />
+                      Community
+                    </div>
+                    <ul className="flex flex-col gap-2">
+                      <li className="group/item flex items-center gap-2 rounded-lg px-3 py-2 cursor-pointer transition-all hover:bg-yellow-50 dark:hover:bg-(--bg-secondary) hover:shadow-md">
+                        <Icon icon="mdi:upload" width="16" className="opacity-60 group-hover/item:text-yellow-500" /> Submit a Podcast
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              )}
             </li>
             <li
               className="relative"
               onMouseEnter={handleResourcesEnter}
-              onMouseLeave={handleResourcesLeave}>
+              onMouseLeave={handleResourcesLeave}
+            >
               <div className="flex items-center gap-1 hover:text-(--text-accent) transition cursor-pointer select-none">
                 <span>Resources</span>
                 <Icon icon="mdi:chevron-down" width="20" height="20" />
               </div>
               {/* Mega Dropdown */}
               {resourcesOpen && (
-                <div className="fixed left-0 top-22 w-full bg-white dark:bg-(--bg-primary) border-t border-gray-200 dark:border-(--bg-secondary) shadow-2xl px-32 py-10 flex flex-row gap-10 text-sm text-black dark:text-white z-50 rounded-b-2xl animate-fade-in-down transition-all duration-200">
+                <div className="fixed left-0 top-22 w-full bg-white/30 backdrop-blur-lg dark:bg-(--bg-primary) border border-white/40 dark:border-(--bg-secondary) shadow-lg px-32 py-10 flex flex-row gap-10 text-sm text-black dark:text-white z-50 rounded-b-2xl animate-fade-in-down transition-all duration-200">
                   {/* Learning Paths */}
                   <div className="min-w-[220px] border-r border-gray-100 dark:border-gray-800 pr-8 flex flex-col gap-2">
                     <div className="font-bold text-xs text-gray-500 mb-3 uppercase tracking-wide flex items-center gap-2">
@@ -78,7 +148,7 @@ const Navbar = () => {
                       Learning Paths
                     </div>
                     <ul className="flex flex-col gap-2">
-                      <li className="group/item flex items-center gap-2 rounded-lg px-3 py-2 cursor-pointer transition-all hover:bg-yellow-50 dark:hover:bg-(--bg-secondary) hover:shadow-md">
+                      <li className="group/item flex items-center gap-2 rounded-lg px-3 py-2 cursor-pointer transition-all hover:bg-white/40 hover:backdrop-blur-md dark:hover:bg-(--bg-secondary) hover:shadow-md">
                         <Icon
                           icon="mdi:star-outline"
                           width="16"
@@ -283,49 +353,6 @@ const Navbar = () => {
       )}
     </nav>
   );
-  // GSAP fade-in and bottom-to-up animation for navbar and menu items
-  useEffect(() => {
-    if (navRef.current) {
-      gsap.fromTo(
-        navRef.current,
-        { opacity: 0, y: 60 },
-        { opacity: 1, y: 0, duration: 1.1, ease: "power3.out" },
-      );
-    }
-    menuItemRefs.current.forEach((el, i) => {
-      if (!el) return;
-      gsap.fromTo(
-        el,
-        { opacity: 0, y: 40 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          delay: 0.3 + i * 0.12,
-          ease: "power3.out",
-        },
-      );
-      el.onmouseenter = () => {
-        gsap.to(el, {
-          scale: 1.15,
-          color: "#FFD11A",
-          duration: 0.3,
-          boxShadow: "0 4px 24px #FFD11A33",
-        });
-      };
-      el.onmouseleave = () => {
-        gsap.to(el, { scale: 1, color: "", duration: 0.3, boxShadow: "none" });
-      };
-    });
-    // Cleanup
-    return () => {
-      menuItemRefs.current.forEach((el) => {
-        if (!el) return;
-        el.onmouseenter = null;
-        el.onmouseleave = null;
-      });
-    };
-  }, []);
-};
+}
 
 export default Navbar;
