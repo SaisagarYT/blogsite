@@ -18,15 +18,20 @@
 /* :root{
   
 } */
+
 :root {
   --bg-background: white;
-  --bg-primary: rgb(216, 216, 216);
-  --bg-secondary:#e4e4e4;
+  --bg-primary: #938400;
+  --bg-secondary:#ffffff;
   --text-main: black;
   --text-secondary: #98989A;
   --text-accent: #FFD11A;
   --text-button:#333333;
   --text-border:#343434;
+}
+
+body {
+  font-family: 'JetBrains Mono', 'Fira Mono', 'Consolas', 'Menlo', 'monospace';
 }
 
 [theme="dark"] {

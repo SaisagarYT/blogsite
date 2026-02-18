@@ -1,28 +1,58 @@
-import React, { useState } from 'react'
-import Navbar from '../components/Navbar'
+import gsap from 'gsap'
+import { useEffect, useRef, useState } from 'react'
+import HomepageCategories from '../JSON/HomepageCategories.jsx'
 import Webassets from '../assets/Assets'
+import HomepageBlog from '../components/HomepageBlog.jsx'
+import Navbar from '../components/Navbar'
+import HomepageBooks from '../reusableComponents/HomepageBooks.jsx'
+import HomepageButton from '../reusableComponents/HomepageButton.jsx'
 import HomepageCard from '../reusableComponents/HomepageCard'
 import HomepageFeatureCard from '../reusableComponents/HomepageFeatureCard'
-import HomepageCategories from '../JSON/HomepageCategories.jsx';
-import HomepageBlog from '../components/HomepageBlog.jsx'
-import HomepageButton from '../reusableComponents/HomepageButton.jsx'
 import HomepagePersons from '../reusableComponents/HomepagePersons.jsx'
-import HomepageBooks from '../reusableComponents/HomepageBooks.jsx'
 import HomepageTestimonials from '../reusableComponents/HomepageTestimonials.jsx'
 console.log(HomepageCategories);
 const Homepage = () => {
-  const [tab,setTab] = useState("All");
+  const [tab, setTab] = useState("All");
+  // Refs for animated sections
+  const heroRef = useRef(null);
+  const statsRef = useRef(null);
+  const featuresRef = useRef(null);
+  const categoriesRef = useRef(null);
+  const blogsRef = useRef(null);
+  const testimonialsRef = useRef(null);
+
+  useEffect(() => {
+    if (heroRef.current) {
+      gsap.fromTo(heroRef.current, { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 1, ease: "power3.out" });
+    }
+    if (statsRef.current) {
+      gsap.fromTo(statsRef.current, { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 1, delay: 0.2, ease: "power3.out" });
+    }
+    if (featuresRef.current) {
+      gsap.fromTo(featuresRef.current, { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 1, delay: 0.4, ease: "power3.out" });
+    }
+    if (categoriesRef.current) {
+      gsap.fromTo(categoriesRef.current, { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 1, delay: 0.6, ease: "power3.out" });
+    }
+    if (blogsRef.current) {
+      gsap.fromTo(blogsRef.current, { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 1, delay: 0.8, ease: "power3.out" });
+    }
+    if (testimonialsRef.current) {
+      gsap.fromTo(testimonialsRef.current, { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 1, delay: 1, ease: "power3.out" });
+    }
+  }, []);
+
   return (
     <section className='w-full'>
       <Navbar/>
-      <div className='w-full bg-(--bg-background) h-screen flex'>
+      <div ref={heroRef} className='w-full bg-(--bg-background) h-screen flex'>
         <div className='flex justify-between items-center flex-col flex-1/2 border-t border-l border-(--bg-primary)'>
           <div className='flex flex-col gap-8 w-3/4 justify-center h-full'>
             <h1 className='text-(--text-secondary) text-3xl'>Your Journey to Tomorrow Begins Here</h1>
             <h1 className='text-7xl'>Explore the Frontiers of Artificial Intelligence</h1>
             <p className='text-lg text-(--text-secondary)'>Welcome to the epicenter of AI innovation. FutureTech AI News is your passport to a world where machines think, learn, and reshape the future. Join us on this visionary expedition into the heart of AI.</p>
           </div>
-          <ul className='flex w-full'>
+          <ul ref={statsRef} className='flex w-full'>
             <li className='flex border-t justify-center items-center py-14 border-(--bg-primary) flex-col flex-1/2'>
               <p className='text-4xl'>300+</p>
               <p className='text-(--text-secondary)'>Resource available</p>
@@ -46,24 +76,20 @@ const Homepage = () => {
           </div>
         </div>
       </div>
-      <div className='w-screen border-b border-b-(--bg-primary) border-t border-t-(--bg-primary) flex justify-center'>
+      <div ref={featuresRef} className='w-screen border-b border-b-(--bg-primary) border-t border-t-(--bg-primary) flex justify-center'>
         <HomepageCard icon={Webassets.icon1} title="Latest New Updates" subTitle="Stay Current" text="Over 1,000 articles published monthly" icon2={Webassets.arrowBackground}/>
         <HomepageCard icon={Webassets.icon1} title="Latest New Updates" subTitle="Stay Current" text="Over 1,000 articles published monthly" icon2={Webassets.arrowBackground}/>
         <HomepageCard icon={Webassets.icon1} title="Latest New Updates" subTitle="Stay Current" text="Over 1,000 articles published monthly" icon2={Webassets.arrowBackground}/>
       </div>
-      <div className='w-full bg-(--bg-primary) py-20 px-30 flex items-start gap-4 justify-center flex-col'>
-        <p className='bg-(--text-button) py-2 px-4 rounded-sm'>Unlock the Power of</p>
+      <div ref={categoriesRef} className='w-full bg-(--bg-primary) py-20 px-30 flex items-start gap-4 justify-center flex-col'>
+        <p className='bg-(--text-button) py-2 px-4 rounded-sm text-(--text-secondary)'>Unlock the Power of</p>
         <h1 className='text-6xl'>FutureTech Features</h1>
       </div>
-      <div>
+      <div ref={blogsRef}>
         <HomepageFeatureCard title="Future Technology Blog" para="Stay informed with our blog section dedicated to future technology." icon={Webassets.icon4}/>
         <HomepageFeatureCard title="Research Insights Blogs" para="Dive deep into future technology concepts with our research section." icon={Webassets.icon5}/>
       </div>
-      <div className='w-full bg-(--bg-primary) py-20 px-30 flex items-start gap-4 justify-center flex-col'>
-        <p className='bg-(--text-button) py-2 px-4 rounded-sm'>Unlock the Power of</p>
-        <h1 className='text-6xl'>FutureTech Features</h1>
-      </div>
-      <div className='w-full py-10 flex justify-center gap-5'>
+      <div ref={testimonialsRef} className='w-full py-10 flex justify-center gap-5'>
         {
           HomepageCategories.map((item,index) =>{
             return <button onClick={() => setTab(item.head)} className='py-5 rounded-md border-(--bg-primary) border px-8 bg-(--bg-secondary)' key={index}>
@@ -108,7 +134,7 @@ const Homepage = () => {
       </div>
       <div className='w-full bg-(--bg-primary) py-20 px-30 flex items-center gap-10 justify-start'>
         <div className='flex flex-col items-start w-4/5'>
-          <p className='bg-(--text-button) py-2 px-4 rounded-sm'>Your Gateway to In-Depth Information</p>
+          <p className='bg-(--text-button) text-(--text-secondary) py-2 px-4 rounded-sm'>Your Gateway to In-Depth Information</p>
           <h1 className='text-6xl'>Unlock Valuable Knowledge with FutureTech's Resources</h1>
         </div>
         <HomepageButton text="View All Resources" icon={Webassets.arrowMark}/>
@@ -135,7 +161,7 @@ const Homepage = () => {
       />
       <div className='w-full bg-(--bg-primary) py-20 px-30 flex items-center gap-4 justify-between'>
         <div className='flex flex-col gap-4 items-start'>
-          <p className='bg-(--text-button) py-2 px-4 rounded-sm'>What Our Readers Say</p>
+          <p className='bg-(--text-button) text-(--text-secondary) py-2 px-4 rounded-sm'>What Our Readers Say</p>
           <h1 className='text-6xl'>Real Words from Real Readers</h1>
         </div>
         <HomepageButton text="Testimonials" icon={Webassets.arrowMark}/>
