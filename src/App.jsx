@@ -1,5 +1,7 @@
+
 import { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
+import VercelSpeedInsights from "./components/VercelSpeedInsights";
 import Authentication from "./screens/Authentication";
 import Homepage from "./screens/Homepage";
 
@@ -20,6 +22,7 @@ const App = () => {
         <Route path="/" element={<Homepage />} />
         <Route path="/auth" element={<Authentication />} />
       </Routes>
+      <VercelSpeedInsights />
     </div>
   );
 };
