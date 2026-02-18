@@ -15,6 +15,18 @@ const Navbar = () => {
   const toggleTheme = () => {
     setTheme((prev) => (prev === "dark" ? "light" : "dark"));
   };
+  const [resourcesOpen, setResourcesOpen] = useState(false);
+  let resourcesTimeout;
+
+  // Handlers to control dropdown visibility
+  const handleResourcesEnter = () => {
+    clearTimeout(resourcesTimeout);
+    setResourcesOpen(true);
+  };
+  const handleResourcesLeave = () => {
+    resourcesTimeout = setTimeout(() => setResourcesOpen(false), 120);
+  };
+
   return (
     <nav className="w-full fixed top-6 left-0 z-50">
       <div className="max-w-7xl mx-auto">
@@ -44,8 +56,175 @@ const Navbar = () => {
             <li className="hover:text-(--text-accent) transition cursor-pointer">
               PODCASTS
             </li>
-            <li className="hover:text-(--text-accent) transition cursor-pointer">
-              RESOURCES
+            <li
+              className="relative"
+              onMouseEnter={handleResourcesEnter}
+              onMouseLeave={handleResourcesLeave}>
+              <div className="flex items-center gap-1 hover:text-(--text-accent) transition cursor-pointer select-none">
+                <span>Resources</span>
+                <Icon icon="mdi:chevron-down" width="20" height="20" />
+              </div>
+              {/* Mega Dropdown */}
+              {resourcesOpen && (
+                <div className="fixed left-0 top-22 w-full bg-white dark:bg-(--bg-primary) border-t border-gray-200 dark:border-(--bg-secondary) shadow-2xl px-32 py-10 flex flex-row gap-10 text-sm text-black dark:text-white z-50 rounded-b-2xl animate-fade-in-down transition-all duration-200">
+                  {/* Learning Paths */}
+                  <div className="min-w-[220px] border-r border-gray-100 dark:border-gray-800 pr-8 flex flex-col gap-2">
+                    <div className="font-bold text-xs text-gray-500 mb-3 uppercase tracking-wide flex items-center gap-2">
+                      <Icon
+                        icon="mdi:map-marker-path"
+                        width="18"
+                        className="text-(--text-accent)"
+                      />{" "}
+                      Learning Paths
+                    </div>
+                    <ul className="flex flex-col gap-2">
+                      <li className="group/item flex items-center gap-2 rounded-lg px-3 py-2 cursor-pointer transition-all hover:bg-yellow-50 dark:hover:bg-(--bg-secondary) hover:shadow-md">
+                        <Icon
+                          icon="mdi:star-outline"
+                          width="16"
+                          className="opacity-60 group-hover/item:text-yellow-500"
+                        />{" "}
+                        Beginner Roadmap
+                      </li>
+                      <li className="group/item flex items-center gap-2 rounded-lg px-3 py-2 cursor-pointer transition-all hover:bg-yellow-50 dark:hover:bg-(--bg-secondary) hover:shadow-md">
+                        <Icon
+                          icon="mdi:trending-up"
+                          width="16"
+                          className="opacity-60 group-hover/item:text-yellow-500"
+                        />{" "}
+                        Intermediate Roadmap
+                      </li>
+                      <li className="group/item flex items-center gap-2 rounded-lg px-3 py-2 cursor-pointer transition-all hover:bg-yellow-50 dark:hover:bg-(--bg-secondary) hover:shadow-md">
+                        <Icon
+                          icon="mdi:rocket-launch-outline"
+                          width="16"
+                          className="opacity-60 group-hover/item:text-yellow-500"
+                        />{" "}
+                        Advanced Roadmap
+                      </li>
+                    </ul>
+                  </div>
+                  {/* Cheat Sheets */}
+                  <div className="min-w-[220px] border-r border-gray-100 dark:border-gray-800 pr-8 flex flex-col gap-2">
+                    <div className="font-bold text-xs text-gray-500 mb-3 uppercase tracking-wide flex items-center gap-2">
+                      <Icon
+                        icon="mdi:file-document-outline"
+                        width="18"
+                        className="text-(--text-accent)"
+                      />{" "}
+                      Cheat Sheets
+                    </div>
+                    <ul className="flex flex-col gap-2">
+                      <li className="group/item flex items-center gap-2 rounded-lg px-3 py-2 cursor-pointer transition-all hover:bg-yellow-50 dark:hover:bg-(--bg-secondary) hover:shadow-md">
+                        <Icon
+                          icon="mdi:language-javascript"
+                          width="16"
+                          className="opacity-60 group-hover/item:text-yellow-500"
+                        />{" "}
+                        JavaScript
+                      </li>
+                      <li className="group/item flex items-center gap-2 rounded-lg px-3 py-2 cursor-pointer transition-all hover:bg-yellow-50 dark:hover:bg-(--bg-secondary) hover:shadow-md">
+                        <Icon
+                          icon="mdi:react"
+                          width="16"
+                          className="opacity-60 group-hover/item:text-yellow-500"
+                        />{" "}
+                        React
+                      </li>
+                      <li className="group/item flex items-center gap-2 rounded-lg px-3 py-2 cursor-pointer transition-all hover:bg-yellow-50 dark:hover:bg-(--bg-secondary) hover:shadow-md">
+                        <Icon
+                          icon="mdi:language-python"
+                          width="16"
+                          className="opacity-60 group-hover/item:text-yellow-500"
+                        />{" "}
+                        Python
+                      </li>
+                      <li className="group/item flex items-center gap-2 rounded-lg px-3 py-2 cursor-pointer transition-all hover:bg-yellow-50 dark:hover:bg-(--bg-secondary) hover:shadow-md">
+                        <Icon
+                          icon="mdi:git"
+                          width="16"
+                          className="opacity-60 group-hover/item:text-yellow-500"
+                        />{" "}
+                        Git
+                      </li>
+                    </ul>
+                  </div>
+                  {/* Tools */}
+                  <div className="min-w-[220px] border-r border-gray-100 dark:border-gray-800 pr-8 flex flex-col gap-2">
+                    <div className="font-bold text-xs text-gray-500 mb-3 uppercase tracking-wide flex items-center gap-2">
+                      <Icon
+                        icon="mdi:tools"
+                        width="18"
+                        className="text-(--text-accent)"
+                      />{" "}
+                      Tools
+                    </div>
+                    <ul className="flex flex-col gap-2">
+                      <li className="group/item flex items-center gap-2 rounded-lg px-3 py-2 cursor-pointer transition-all hover:bg-yellow-50 dark:hover:bg-(--bg-secondary) hover:shadow-md">
+                        <Icon
+                          icon="mdi:gift-outline"
+                          width="16"
+                          className="opacity-60 group-hover/item:text-yellow-500"
+                        />{" "}
+                        Free Tools
+                      </li>
+                      <li className="group/item flex items-center gap-2 rounded-lg px-3 py-2 cursor-pointer transition-all hover:bg-yellow-50 dark:hover:bg-(--bg-secondary) hover:shadow-md">
+                        <Icon
+                          icon="mdi:code-braces"
+                          width="16"
+                          className="opacity-60 group-hover/item:text-yellow-500"
+                        />{" "}
+                        Developer Tools
+                      </li>
+                      <li className="group/item flex items-center gap-2 rounded-lg px-3 py-2 cursor-pointer transition-all hover:bg-yellow-50 dark:hover:bg-(--bg-secondary) hover:shadow-md">
+                        <Icon
+                          icon="mdi:robot-outline"
+                          width="16"
+                          className="opacity-60 group-hover/item:text-yellow-500"
+                        />{" "}
+                        AI Tools
+                      </li>
+                    </ul>
+                  </div>
+                  {/* Downloads */}
+                  <div className="min-w-[220px] flex flex-col gap-2">
+                    <div className="font-bold text-xs text-gray-500 mb-3 uppercase tracking-wide flex items-center gap-2">
+                      <Icon
+                        icon="mdi:download-outline"
+                        width="18"
+                        className="text-(--text-accent)"
+                      />{" "}
+                      Downloads
+                    </div>
+                    <ul className="flex flex-col gap-2">
+                      <li className="group/item flex items-center gap-2 rounded-lg px-3 py-2 cursor-pointer transition-all hover:bg-yellow-50 dark:hover:bg-(--bg-secondary) hover:shadow-md">
+                        <Icon
+                          icon="mdi:file-pdf-box"
+                          width="16"
+                          className="opacity-60 group-hover/item:text-yellow-500"
+                        />{" "}
+                        PDFs
+                      </li>
+                      <li className="group/item flex items-center gap-2 rounded-lg px-3 py-2 cursor-pointer transition-all hover:bg-yellow-50 dark:hover:bg-(--bg-secondary) hover:shadow-md">
+                        <Icon
+                          icon="mdi:note-multiple-outline"
+                          width="16"
+                          className="opacity-60 group-hover/item:text-yellow-500"
+                        />{" "}
+                        Templates
+                      </li>
+                      <li className="group/item flex items-center gap-2 rounded-lg px-3 py-2 cursor-pointer transition-all hover:bg-yellow-50 dark:hover:bg-(--bg-secondary) hover:shadow-md">
+                        <Icon
+                          icon="mdi:book-open-page-variant-outline"
+                          width="16"
+                          className="opacity-60 group-hover/item:text-yellow-500"
+                        />{" "}
+                        Ebooks
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              )}
             </li>
           </ul>
           {/* Right Side */}

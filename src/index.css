@@ -26,6 +26,7 @@
   --text-main: black;
   --text-secondary: #98989A;
   --text-accent: #FFD11A;
+  --bg-yellow:#e4b700;
   --text-button:#333333;
   --text-border:#343434;
 }
@@ -44,6 +45,7 @@ nav {
   --text-main: white;
   --text-secondary: #98989A;
   --text-accent: #FFD11A;
+  --bg-yellow:#3f3300;
 }
 
 
