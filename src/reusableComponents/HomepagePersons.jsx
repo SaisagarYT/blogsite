@@ -1,4 +1,3 @@
-import React from 'react'
 import Webassets from '../assets/Assets'
 import HomepageButton from './HomepageButton'
 
@@ -7,7 +6,11 @@ const HomepagePersons = ({type}) => {
     <section className='w-full flex flex-col items-start gap-6'>
         {
             type === "BTN"?
-            <><div className='bg-(--bg-primary) flex items-center justify-center rounded-4xl overflow-hidden w-51 py-1'>
+                        <>
+                                <div className="mb-2">
+                                    <HomepageButton text="Get Started" icon={Webassets.arrowMark} />
+                                </div>
+                                <div className='bg-(--bg-primary) flex items-center justify-center rounded-4xl overflow-hidden w-51 py-1'>
                       <ul className='flex w-full translate-x-6 items-center justify-center'>
                           <img className='' src={Webassets.person1} alt="" />
                           <img className='-translate-x-4 z-10' src={Webassets.person1} alt="" />

@@ -33,6 +33,9 @@
 body {
   font-family: 'JetBrains Mono', 'Fira Mono', 'Consolas', 'Menlo', 'monospace';
 }
+nav {
+  font-family: 'JetBrains Mono', 'Fira Mono', 'Consolas', 'Menlo', 'monospace';
+}
 
 [theme="dark"] {
   --bg-background: black;
