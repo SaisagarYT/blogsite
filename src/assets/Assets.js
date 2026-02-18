@@ -2,8 +2,8 @@
 import lightSphere from './Abstract Design.png';
 import arrowBackground from './Button.png';
 import icon1 from './Icon.png';
-import icon2 from './Icon1.png';
-import icon3 from './Icon2.png';
+import icon2 from './icon1.png';
+import icon3 from './icon2.png';
 import icon4 from './icon3.png';
 import icon5 from './icon5.png';
 import image1 from './Image (1).png';
