@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Sensitive and environment files
+backend/.env
+backend/*firebase-adminsdk*.json
+backend/firebaseServiceAccountKey.json

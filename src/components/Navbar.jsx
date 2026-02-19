@@ -76,7 +76,7 @@ const Navbar = () => {
               onMouseEnter={handlePodcastsEnter}
               onMouseLeave={handlePodcastsLeave}>
               <div className="flex items-center gap-1 hover:text-(--text-accent) transition cursor-pointer select-none">
-                <span>Podcasts</span>
+                <span>Explore</span>
                 <Icon icon="mdi:chevron-down" width="20" height="20" />
               </div>
               {/* Podcasts Dropdown */}

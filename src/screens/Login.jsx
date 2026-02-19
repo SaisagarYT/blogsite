@@ -36,7 +36,7 @@ const Login = () => {
         <div
           className="hidden md:flex"
           style={{
-            width: "30em",
+            width: "60em",
             minHeight: "40em",
             alignItems: "center",
             justifyContent: "center",
