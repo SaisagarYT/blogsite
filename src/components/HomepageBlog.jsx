@@ -4,7 +4,7 @@ import Webassets from '../assets/Assets'
 
 const HomepageBlog = ({image,name,tag,date,title,description,likes,comments,shares}) => {
   return (
-    <section className='w-full px-30 border flex items-center border-(--bg-primary)'>
+    <section className='w-full px-30 max-sm:p-0 max-sm:flex-col max-sm:items-start border flex items-center border-(--bg-primary)'>
         <div className='flex-1/8 py-20 flex gap-5 items-center'>
           <img src={image} alt="" />
           <div className=''>

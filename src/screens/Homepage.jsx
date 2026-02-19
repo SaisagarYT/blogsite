@@ -179,7 +179,7 @@ const Homepage = () => {
           </button>
         ))}
       </div>
-      <div className="w-full flex flex-col md:grid md:grid-cols-2 lg:grid-cols-4 gap-4 px-2 md:px-4 overflow-x-hidden">
+      <div className="w-full md:grid-cols-2 max-sm:flex max-sm:flex-col max-sm:grid-cols-1 lg:grid-cols-4 gap-4 px-2 md:px-4 overflow-x-hidden">
         <HomepageBlog
           image={Webassets.person1}
           name="Sagar Sylada"
@@ -213,12 +213,12 @@ const Homepage = () => {
           description="Lorem ipsum dolor sit amet consectetur adipisicing elit.Quo repudiandae odio magni, magnam eius officiis at quaerat suscipit nemo dignissimos voluptate hic recusandae ea vero tenetur nobis est, a in?"
         />
       </div>
-      <div className="w-full bg-(--bg-primary) py-10 md:py-20 px-4 md:px-30 flex flex-col md:flex-row items-center gap-4 md:gap-10 justify-start">
+      <div className="w-full max-sm:mt-5 bg-(--bg-primary) py-10 md:py-20 px-4 md:px-30 flex flex-col md:flex-row items-center gap-4 max-sm:justify-start max-sm:w-full md:gap-10 justify-start">
         <div className="flex flex-col items-start w-full md:w-4/5">
           <p className="bg-(--text-button) text-(--text-secondary) py-2 px-4 rounded-sm">
             Your Gateway to In-Depth Information
           </p>
-          <h1 className="text-6xl text-(--text-accent)">
+          <h1 className="text-6xl max-sm:text-4xl text-(--text-accent)">
             Unlock Valuable Knowledge with FutureTech's Resources
           </h1>
         </div>
