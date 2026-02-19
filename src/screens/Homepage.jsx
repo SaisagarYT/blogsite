@@ -67,7 +67,7 @@ const Homepage = () => {
   }, []);
 
   return (
-    <section className="w-full">
+    <section className="w-full min-h-screen bg-(--bg-main) flex flex-col items-center justify-start overflow-x-hidden">
       <Navbar />
       <div
         ref={heroRef}
@@ -169,19 +169,17 @@ const Homepage = () => {
       </div>
       <div
         ref={testimonialsRef}
-        className="w-full py-6 md:py-10 flex flex-col md:flex-row justify-center gap-3 md:gap-5 items-center">
-        {HomepageCategories.map((item, index) => {
-          return (
-            <button
-              onClick={() => setTab(item.head)}
-              className="py-5 rounded-md border-(--bg-primary) border px-8 bg-(--bg-secondary)"
-              key={index}>
-              {item.head}
-            </button>
-          );
-        })}
+        className="w-full py-6 md:py-10 flex flex-col md:flex-row justify-center items-center gap-3 md:gap-5 px-2 md:px-0">
+        {HomepageCategories.map((item, index) => (
+          <button
+            onClick={() => setTab(item.head)}
+            className="w-full md:w-auto py-3 md:py-5 rounded-md border-(--bg-primary) border px-4 md:px-8 bg-(--bg-secondary) text-base md:text-lg transition-colors duration-200 hover:bg-(--text-button) focus:outline-none"
+            key={index}>
+            {item.head}
+          </button>
+        ))}
       </div>
-      <div>
+      <div className="w-full flex flex-col md:grid md:grid-cols-2 lg:grid-cols-4 gap-4 px-2 md:px-4 overflow-x-hidden">
         <HomepageBlog
           image={Webassets.person1}
           name="Sagar Sylada"
@@ -257,7 +255,7 @@ const Homepage = () => {
         </div>
         <HomepageButton text="Testimonials" icon={Webassets.arrowMark} />
       </div>
-      <div className="w-full py-4 px-2 md:px-4 justify-between grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="w-full py-4 px-2 md:px-4 grid grid-cols-1 md:grid-cols-3 gap-4 flex-wrap">
         <HomepageTestimonials
           image={Webassets.person1}
           userName="Saisagar"
@@ -295,7 +293,7 @@ const Homepage = () => {
           review="Lorem ipsum dolor, sit amet consectetur adipisicing elit. Libero maxime perspiciatis a natus modi aperiam quis."
         />
       </div>
-      <div className="w-full bg-(--bg-secondary) py-6 md:py-10 grid px-2 md:px-20 grid-cols-2 md:grid-cols-5 gap-4">
+      <div className="w-full bg-(--bg-secondary) py-6 md:py-10 grid px-2 md:px-4 grid-cols-2 md:grid-cols-5 gap-4 overflow-x-auto">
         <ul className="text-(--text-secondary) flex flex-col gap-2">
           <h1 className="font-bold text-xl mb-3 text-(--text-main)">Home</h1>
           <li className="cursor-pointer">Features</li>
