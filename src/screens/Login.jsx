@@ -28,29 +28,16 @@ const Login = () => {
   const [showSignupPassword, setShowSignupPassword] = useState(false);
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center relative"
-      style={{
-        backgroundImage: `url(${bgImg})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}>
-      <div className="absolute inset-0 bg-black/60 z-0 backdrop-blur-md" />
+    <div className="min-h-screen w-full flex items-center justify-center bg-white px-0 md:px-8">
       <div
-        className="relative z-10 flex rounded-2xl shadow-xl overflow-hidden"
-        style={{
-          background: "rgba(255,255,255,0.9)",
-          width: "60em",
-          maxWidth: "95vw",
-          minHeight: "40em",
-          height: "fit-content",
-        }}>
-        {/* Side image */}
+        className="w-full md:w-[60em] max-w-full md:max-w-[95vw] min-h-screen md:min-h-[40em] flex flex-col md:flex-row rounded-none md:rounded-2xl shadow-none md:shadow-xl overflow-visible md:overflow-hidden bg-white md:bg-opacity-90"
+        style={{ height: "fit-content" }}>
+        {/* Side image - hidden on mobile */}
         <div
+          className="hidden md:flex"
           style={{
             width: "30em",
             minHeight: "40em",
-            display: "flex",
             alignItems: "center",
             justifyContent: "center",
             padding: "16px",
@@ -69,8 +56,8 @@ const Login = () => {
         </div>
         {/* Login/Register form */}
         <div
-          className="bg-white bg-opacity-90 p-8 w-[30em] max-w-[90vw] flex flex-col justify-center"
-          style={{ minHeight: "40em", height: "100%" }}>
+          className="w-full p-4 md:p-8 flex flex-col justify-center"
+          style={{ minHeight: "100vh", height: "100%" }}>
           <div className="flex justify-center mb-8 gap-2">
             <button
               onClick={() => setActiveTab("login")}

@@ -5,9 +5,9 @@ import Webassets from '../assets/Assets'
 
 const HomepageBooks = ({title,desc,image,image2,type,text,icon,title2,desc2}) => {
   return (
-    <div className='flex'>
-        <div className='border-r border-b border-(--bg-secondary) flex-1/10 flex justify-center items-center'>
-          <div className='flex flex-col py-20 px-20 items-start gap-4'>
+    <div className='flex max-sm:flex-col'>
+        <div className='border-r max-sm:flex-col max-sm:flex border-b border-(--bg-secondary) flex-1/10 flex justify-center items-center'>
+          <div className='flex flex-col py-20 max-sm:p-0 px-20 items-start gap-4'>
             <img src={image} alt="" />
           <h1>{title}</h1>
           <p>{desc}</p>

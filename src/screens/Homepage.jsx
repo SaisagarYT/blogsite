@@ -255,7 +255,7 @@ const Homepage = () => {
         </div>
         <HomepageButton text="Testimonials" icon={Webassets.arrowMark} />
       </div>
-      <div className="w-full py-4 px-2 md:px-4 grid grid-cols-1 md:grid-cols-3 gap-4 flex-wrap">
+      <div className="w-full max-sm:p-0 py-4 px-2 md:px-4 grid grid-cols-1 md:grid-cols-3 gap-4 flex-wrap">
         <HomepageTestimonials
           image={Webassets.person1}
           userName="Saisagar"

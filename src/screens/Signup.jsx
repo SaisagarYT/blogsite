@@ -7,30 +7,8 @@ const Signup = () => {
   const [activeTab, setActiveTab] = useState("signup");
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        height: "100vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        background: "#f7f8fa",
-        overflow: "hidden",
-      }}>
-      <div
-        style={{
-          background: "#fff",
-          borderRadius: 20,
-          boxShadow: "0 2px 16px #e5e7eb",
-          padding: 24,
-          width: 420,
-          maxWidth: "98vw",
-          maxHeight: "95vh",
-          overflowY: "auto",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-        }}>
+    <div className="min-h-screen w-full flex items-center justify-center bg-[#f7f8fa] px-0 md:px-8">
+      <div className="w-full md:w-[420px] max-w-full md:max-w-[98vw] max-h-full md:max-h-[95vh] overflow-y-auto flex flex-col justify-center bg-white rounded-none md:rounded-2xl shadow-none md:shadow-lg p-4 md:p-6">
         <div
           style={{
             display: "flex",

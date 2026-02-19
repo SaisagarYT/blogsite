@@ -12,7 +12,7 @@ const HomepageFeatureCard = ({title,para,icon}) => {
         <br />
         <p className='text-(--text-secondary)'>{para}</p>
       </div>
-      <div className='grid grid-cols-2 py-10 max-sm:p-0 max-sm:grid-cols-1 gap-10 flex-1/2'>
+      <div className='grid grid-cols-2 max-sm:grid-cols-1 py-10 max-sm:w-full max-sm:flex-col max-sm:p-0 gap-10 flex-1/2'>
         <HomepageFeatureSubCard title="Quality" text="Over 1,000 articles on emerging tech trends and breakthroughs."/>
         <HomepageFeatureSubCard title="Quality" text="Over 1,000 articles on emerging tech trends and breakthroughs."/>
         <HomepageFeatureSubCard title="Quality" text="Over 1,000 articles on emerging tech trends and breakthroughs."/>
