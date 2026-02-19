@@ -3,7 +3,9 @@ import { useEffect, useState } from "react";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [theme, setTheme] = useState(() => localStorage.getItem("color") || "dark");
+  const [theme, setTheme] = useState(
+    () => localStorage.getItem("color") || "dark",
+  );
   const [podcastsOpen, setPodcastsOpen] = useState(false);
 
   useEffect(() => {
@@ -45,14 +47,21 @@ const Navbar = () => {
             boxShadow: "0 4px 32px 0 rgba(0,0,0,0.10)",
             borderRadius: "2rem",
           }}>
-          {/* Logo */}
+          {/* Logo (hidden on mobile), Hamburger menu (shown on mobile) */}
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-amber-400 flex items-center justify-center font-bold text-lg text-black shadow-md">
+            <div className="w-12 h-12 rounded-full bg-amber-400 flex items-center justify-center font-bold text-lg text-black shadow-md hidden md:flex">
               TM
             </div>
-            <span className="font-extrabold text-xl tracking-wide text-(--text-main)">
+            <span className="font-extrabold text-xl tracking-wide text-(--text-main) hidden md:inline">
               TECHMESTORY
             </span>
+            {/* Hamburger menu icon for mobile */}
+            <button
+              className="md:hidden flex items-center justify-center p-2"
+              onClick={() => setMenuOpen(!menuOpen)}
+              aria-label="Open menu">
+              <Icon icon="mdi:menu" width="32" height="32" />
+            </button>
           </div>
           {/* Desktop Menu */}
           <ul className="hidden md:flex gap-8 items-center font-medium text-(--text-main)">
@@ -65,60 +74,101 @@ const Navbar = () => {
             <li
               className="relative"
               onMouseEnter={handlePodcastsEnter}
-              onMouseLeave={handlePodcastsLeave}
-            >
+              onMouseLeave={handlePodcastsLeave}>
               <div className="flex items-center gap-1 hover:text-(--text-accent) transition cursor-pointer select-none">
                 <span>Podcasts</span>
                 <Icon icon="mdi:chevron-down" width="20" height="20" />
               </div>
               {/* Podcasts Dropdown */}
               {podcastsOpen && (
-                <div className="fixed left-0 top-22 w-full bg-white/30 backdrop-blur-lg dark:bg-(--bg-primary) border border-white/40 dark:border-(--bg-secondary) shadow-lg px-32 py-10 flex flex-row gap-10 text-sm text-black dark:text-white z-50 rounded-b-2xl animate-fade-in-down transition-all duration-200"
+                <div
+                  className="fixed left-0 top-22 w-full bg-white/30 backdrop-blur-lg dark:bg-(--bg-primary) border border-white/40 dark:border-(--bg-secondary) shadow-lg px-32 py-10 flex flex-row gap-10 text-sm text-black dark:text-white z-50 rounded-b-2xl animate-fade-in-down transition-all duration-200"
                   onMouseEnter={handlePodcastsEnter}
-                  onMouseLeave={handlePodcastsLeave}
-                >
+                  onMouseLeave={handlePodcastsLeave}>
                   {/* All Episodes & By Topic */}
                   <div className="min-w-[180px] flex flex-col gap-2 border-r border-gray-100 dark:border-gray-800 pr-8">
                     <div className="font-bold text-xs text-gray-500 mb-2 uppercase tracking-wide flex items-center gap-2">
-                      <Icon icon="mdi:playlist-play" width="18" className="text-(--text-accent)" />
+                      <Icon
+                        icon="mdi:playlist-play"
+                        width="18"
+                        className="text-(--text-accent)"
+                      />
                       All Episodes
                     </div>
                     <ul className="flex flex-col gap-2">
                       <li className="group/item flex items-center gap-2 rounded-lg px-3 py-2 cursor-pointer transition-all hover:bg-white/40 hover:backdrop-blur-md dark:hover:bg-(--bg-secondary) hover:shadow-md">
-                        <Icon icon="mdi:tag-multiple-outline" width="16" className="opacity-60 group-hover/item:text-yellow-500" /> By Topic
+                        <Icon
+                          icon="mdi:tag-multiple-outline"
+                          width="16"
+                          className="opacity-60 group-hover/item:text-yellow-500"
+                        />{" "}
+                        By Topic
                       </li>
                       <li className="group/item flex items-center gap-2 rounded-lg px-3 py-2 cursor-pointer transition-all hover:bg-white/50 hover:backdrop-blur-md dark:hover:bg-(--bg-secondary) hover:shadow-md">
-                        <Icon icon="mdi:robot-outline" width="16" className="opacity-60 group-hover/item:text-yellow-500" /> AI Talks
+                        <Icon
+                          icon="mdi:robot-outline"
+                          width="16"
+                          className="opacity-60 group-hover/item:text-yellow-500"
+                        />{" "}
+                        AI Talks
                       </li>
                       <li className="group/item flex items-center gap-2 rounded-lg px-3 py-2 cursor-pointer transition-all hover:bg-white/50 hover:backdrop-blur-md dark:hover:bg-(--bg-secondary) hover:shadow-md">
-                        <Icon icon="mdi:code-braces" width="16" className="opacity-60 group-hover/item:text-yellow-500" /> Dev Talks
+                        <Icon
+                          icon="mdi:code-braces"
+                          width="16"
+                          className="opacity-60 group-hover/item:text-yellow-500"
+                        />{" "}
+                        Dev Talks
                       </li>
                       <li className="group/item flex items-center gap-2 rounded-lg px-3 py-2 cursor-pointer transition-all hover:bg-white/50 hover:backdrop-blur-md dark:hover:bg-(--bg-secondary) hover:shadow-md">
-                        <Icon icon="mdi:account-tie-outline" width="16" className="opacity-60 group-hover/item:text-yellow-500" /> Founder Stories
+                        <Icon
+                          icon="mdi:account-tie-outline"
+                          width="16"
+                          className="opacity-60 group-hover/item:text-yellow-500"
+                        />{" "}
+                        Founder Stories
                       </li>
                     </ul>
                   </div>
                   {/* Featured & Latest */}
                   <div className="min-w-[180px] flex flex-col gap-2 border-r border-gray-100 dark:border-gray-800 pr-8">
                     <div className="font-bold text-xs text-gray-500 mb-2 uppercase tracking-wide flex items-center gap-2">
-                      <Icon icon="mdi:star-outline" width="18" className="text-(--text-accent)" />
+                      <Icon
+                        icon="mdi:star-outline"
+                        width="18"
+                        className="text-(--text-accent)"
+                      />
                       Featured Episodes
                     </div>
                     <ul className="flex flex-col gap-2">
                       <li className="group/item flex items-center gap-2 rounded-lg px-3 py-2 cursor-pointer transition-all hover:bg-yellow-50 dark:hover:bg-(--bg-secondary) hover:shadow-md">
-                        <Icon icon="mdi:fire" width="16" className="opacity-60 group-hover/item:text-yellow-500" /> Latest Episode
+                        <Icon
+                          icon="mdi:fire"
+                          width="16"
+                          className="opacity-60 group-hover/item:text-yellow-500"
+                        />{" "}
+                        Latest Episode
                       </li>
                     </ul>
                   </div>
                   {/* Submit a Podcast */}
                   <div className="min-w-[180px] flex flex-col gap-2">
                     <div className="font-bold text-xs text-gray-500 mb-2 uppercase tracking-wide flex items-center gap-2">
-                      <Icon icon="mdi:microphone-plus" width="18" className="text-(--text-accent)" />
+                      <Icon
+                        icon="mdi:microphone-plus"
+                        width="18"
+                        className="text-(--text-accent)"
+                      />
                       Community
                     </div>
                     <ul className="flex flex-col gap-2">
                       <li className="group/item flex items-center gap-2 rounded-lg px-3 py-2 cursor-pointer transition-all hover:bg-yellow-50 dark:hover:bg-(--bg-secondary) hover:shadow-md">
-                        <Icon icon="mdi:upload" width="16" className="opacity-60 group-hover/item:text-yellow-500" /> Submit a Podcast
+                        <Icon
+                          icon="mdi:upload"
+                          width="16"
+                          className="opacity-60 group-hover/item:text-yellow-500"
+                        />{" "}
+                        Submit a Podcast
                       </li>
                     </ul>
                   </div>
@@ -128,8 +178,7 @@ const Navbar = () => {
             <li
               className="relative"
               onMouseEnter={handleResourcesEnter}
-              onMouseLeave={handleResourcesLeave}
-            >
+              onMouseLeave={handleResourcesLeave}>
               <div className="flex items-center gap-1 hover:text-(--text-accent) transition cursor-pointer select-none">
                 <span>Resources</span>
                 <Icon icon="mdi:chevron-down" width="20" height="20" />
@@ -337,11 +386,97 @@ const Navbar = () => {
             <li className="hover:text-(--text-accent) transition cursor-pointer">
               NEWS
             </li>
-            <li className="hover:text-(--text-accent) transition cursor-pointer">
-              PODCASTS
+            {/* Podcasts Dropdown */}
+            <li>
+              <button
+                className="flex items-center w-full justify-between py-2 px-1 hover:text-(--text-accent) transition cursor-pointer"
+                onClick={() => setPodcastsOpen((prev) => !prev)}
+                aria-expanded={podcastsOpen}>
+                <span>Podcasts</span>
+                <Icon
+                  icon={podcastsOpen ? "mdi:chevron-up" : "mdi:chevron-down"}
+                  width="20"
+                  height="20"
+                />
+              </button>
+              <div
+                className={`transition-all duration-300 ease-in-out overflow-hidden ${podcastsOpen ? "max-h-96 opacity-100 mt-1" : "max-h-0 opacity-0"}`}
+                style={{ willChange: "max-height, opacity" }}>
+                <ul className="pl-4 flex flex-col gap-2">
+                  <li className="flex items-center gap-2 py-1 cursor-pointer">
+                    <Icon icon="mdi:playlist-play" width="16" />
+                    All Episodes
+                  </li>
+                  <li className="flex items-center gap-2 py-1 cursor-pointer">
+                    <Icon icon="mdi:tag-multiple-outline" width="16" />
+                    By Topic
+                  </li>
+                  <li className="flex items-center gap-2 py-1 cursor-pointer">
+                    <Icon icon="mdi:robot-outline" width="16" />
+                    AI Talks
+                  </li>
+                  <li className="flex items-center gap-2 py-1 cursor-pointer">
+                    <Icon icon="mdi:code-braces" width="16" />
+                    Dev Talks
+                  </li>
+                  <li className="flex items-center gap-2 py-1 cursor-pointer">
+                    <Icon icon="mdi:account-tie-outline" width="16" />
+                    Founder Stories
+                  </li>
+                  <li className="flex items-center gap-2 py-1 cursor-pointer">
+                    <Icon icon="mdi:star-outline" width="16" />
+                    Featured Episodes
+                  </li>
+                  <li className="flex items-center gap-2 py-1 cursor-pointer">
+                    <Icon icon="mdi:fire" width="16" />
+                    Latest Episode
+                  </li>
+                  <li className="flex items-center gap-2 py-1 cursor-pointer">
+                    <Icon icon="mdi:microphone-plus" width="16" />
+                    Community
+                  </li>
+                  <li className="flex items-center gap-2 py-1 cursor-pointer">
+                    <Icon icon="mdi:upload" width="16" />
+                    Submit a Podcast
+                  </li>
+                </ul>
+              </div>
             </li>
-            <li className="hover:text-(--text-accent) transition cursor-pointer">
-              RESOURCES
+            {/* Resources Dropdown */}
+            <li>
+              <button
+                className="flex items-center w-full justify-between py-2 px-1 hover:text-(--text-accent) transition cursor-pointer"
+                onClick={() => setResourcesOpen((prev) => !prev)}
+                aria-expanded={resourcesOpen}>
+                <span>Resources</span>
+                <Icon
+                  icon={resourcesOpen ? "mdi:chevron-up" : "mdi:chevron-down"}
+                  width="20"
+                  height="20"
+                />
+              </button>
+              <div
+                className={`transition-all duration-300 ease-in-out overflow-hidden ${resourcesOpen ? "max-h-96 opacity-100 mt-1" : "max-h-0 opacity-0"}`}
+                style={{ willChange: "max-height, opacity" }}>
+                <ul className="pl-4 flex flex-col gap-2">
+                  <li className="flex items-center gap-2 py-1 cursor-pointer">
+                    <Icon icon="mdi:map-marker-path" width="16" />
+                    Learning Paths
+                  </li>
+                  <li className="flex items-center gap-2 py-1 cursor-pointer">
+                    <Icon icon="mdi:file-document-outline" width="16" />
+                    Cheat Sheets
+                  </li>
+                  <li className="flex items-center gap-2 py-1 cursor-pointer">
+                    <Icon icon="mdi:tools" width="16" />
+                    Tools
+                  </li>
+                  <li className="flex items-center gap-2 py-1 cursor-pointer">
+                    <Icon icon="mdi:download-outline" width="16" />
+                    Downloads
+                  </li>
+                </ul>
+              </div>
             </li>
             <li>
               <button className="w-full bg-(--text-accent) text-black font-semibold px-5 py-2 rounded-lg shadow hover:bg-yellow-300 transition">
@@ -353,6 +488,6 @@ const Navbar = () => {
       )}
     </nav>
   );
-}
+};
 
 export default Navbar;

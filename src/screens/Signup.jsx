@@ -10,19 +10,26 @@ const Signup = () => {
     <div
       style={{
         minHeight: "100vh",
+        height: "100vh",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         background: "#f7f8fa",
+        overflow: "hidden",
       }}>
       <div
         style={{
           background: "#fff",
           borderRadius: 20,
           boxShadow: "0 2px 16px #e5e7eb",
-          padding: 40,
-          width: 480,
+          padding: 24,
+          width: 420,
           maxWidth: "98vw",
+          maxHeight: "95vh",
+          overflowY: "auto",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
         }}>
         <div
           style={{
@@ -64,31 +71,27 @@ const Signup = () => {
         </div>
         {activeTab === "signup" && (
           <>
-            <button style={providerBtnStyle}>
+            <button style={{ ...providerBtnStyle, marginBottom: 8 }}>
               <span style={{ marginRight: 8 }}>
-                {" "}
-                <b>G</b>{" "}
+                <b>G</b>
               </span>
               Continue with Google
             </button>
-            <button style={providerBtnStyle}>
+            <button style={{ ...providerBtnStyle, marginBottom: 8 }}>
               <span style={{ marginRight: 8 }}>
-                {" "}
-                <b></b>{" "}
+                <b></b>
               </span>
               Continue with Apple
             </button>
-            <button style={providerBtnStyle}>
+            <button style={{ ...providerBtnStyle, marginBottom: 8 }}>
               <span style={{ marginRight: 8 }}>
-                {" "}
-                <b>◇</b>{" "}
+                <b>◇</b>
               </span>
               Continue with Binance
             </button>
-            <button style={providerBtnStyle}>
+            <button style={{ ...providerBtnStyle, marginBottom: 8 }}>
               <span style={{ marginRight: 8 }}>
-                {" "}
-                <b>💳</b>{" "}
+                <b>💳</b>
               </span>
               Continue with Wallet
             </button>
@@ -96,11 +99,11 @@ const Signup = () => {
               style={{
                 textAlign: "center",
                 color: "#9ca3af",
-                margin: "16px 0",
+                margin: "0px 0",
               }}>
               OR
             </div>
-            <div style={{ marginBottom: 16 }}>
+            <div style={{ marginBottom: 0 }}>
               <label style={{ fontWeight: 500 }}>Email address</label>
               <input
                 type="email"
@@ -113,11 +116,11 @@ const Signup = () => {
                   borderRadius: 8,
                   border: "1px solid #e5e7eb",
                   marginTop: 6,
-                  marginBottom: 8,
+                  marginBottom: 4,
                 }}
               />
             </div>
-            <div style={{ marginBottom: 8 }}>
+            <div style={{ marginBottom: 0 }}>
               <label style={{ fontWeight: 500 }}>Password</label>
               <input
                 type="password"
@@ -130,6 +133,7 @@ const Signup = () => {
                   borderRadius: 8,
                   border: "1px solid #e5e7eb",
                   marginTop: 6,
+                  marginBottom: 4,
                 }}
               />
             </div>
@@ -140,17 +144,17 @@ const Signup = () => {
                 color: "#fff",
                 border: "none",
                 borderRadius: 8,
-                padding: 12,
+                padding: 10,
                 fontWeight: 600,
-                marginTop: 12,
-                marginBottom: 16,
+                marginTop: 8,
+                marginBottom: 8,
                 fontSize: 16,
                 cursor: "pointer",
               }}>
               Create an account
             </button>
             <div
-              style={{ display: "flex", alignItems: "center", marginTop: 8 }}>
+              style={{ display: "flex", alignItems: "center", marginTop: 4 }}>
               <input
                 type="checkbox"
                 checked={checked}
