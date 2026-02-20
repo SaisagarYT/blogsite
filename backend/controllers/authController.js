@@ -33,6 +33,7 @@ exports.googleAuth = async (req, res) => {
     }
     res.json({ success: true, user });
   } catch (error) {
+    console.error("Google Auth Error:", error); // Log full error object
     res.status(401).json({ success: false, error: error.message });
   }
 };

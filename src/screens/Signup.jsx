@@ -1,10 +1,35 @@
+import axios from "axios";
+import { signInWithPopup } from "firebase/auth";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { auth, provider } from "../config/firebase";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [checked, setChecked] = useState(false);
   const [activeTab, setActiveTab] = useState("signup");
+  const navigate = useNavigate();
+
+  // Google Auth handler
+  const handleGoogleAuth = async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const idToken = await result.user.getIdToken();
+      // Send idToken to backend
+      const res = await axios.post("http://localhost:5000/api/auth/google", {
+        idToken,
+      });
+      if (res.data.success) {
+        // Optionally store user info in localStorage/session
+        navigate("/dashboard");
+      } else {
+        alert(res.data.error || "Google authentication failed");
+      }
+    } catch (err) {
+      alert(err.message || "Google authentication failed");
+    }
+  };
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-[#f7f8fa] px-0 md:px-8">
@@ -49,7 +74,9 @@ const Signup = () => {
         </div>
         {activeTab === "signup" && (
           <>
-            <button style={{ ...providerBtnStyle, marginBottom: 8 }}>
+            <button
+              style={{ ...providerBtnStyle, marginBottom: 8 }}
+              onClick={handleGoogleAuth}>
               <span style={{ marginRight: 8 }}>
                 <b>G</b>
               </span>

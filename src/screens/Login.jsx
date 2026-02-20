@@ -1,6 +1,10 @@
 import { Icon } from "@iconify/react";
+import axios from "axios";
+import { signInWithPopup } from "firebase/auth";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import bgImg from "../assets/katerina-kerdi--YiJvbfNDqk-unsplash.jpg";
+import { auth, provider } from "../config/firebase";
 
 const providerBtnStyle = {
   width: "100%",
@@ -26,6 +30,27 @@ const Login = () => {
   const [signupEmail, setSignupEmail] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
   const [showSignupPassword, setShowSignupPassword] = useState(false);
+  const navigate = useNavigate();
+
+  // Google Auth handler
+  const handleGoogleAuth = async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const idToken = await result.user.getIdToken();
+      // Send idToken to backend
+      const res = await axios.post("http://localhost:5000/api/auth/google", {
+        idToken,
+      });
+      if (res.data.success) {
+        // Optionally store user info in localStorage/session
+        navigate("/dashboard");
+      } else {
+        alert(res.data.error || "Google authentication failed");
+      }
+    } catch (err) {
+      alert(err.message || "Google authentication failed");
+    }
+  };
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-white px-0 md:px-8">
@@ -166,7 +191,7 @@ const Login = () => {
                 }}>
                 OR
               </div>
-              <button style={providerBtnStyle}>
+              <button style={providerBtnStyle} onClick={handleGoogleAuth}>
                 <Icon
                   icon="logos:google-icon"
                   style={{ fontSize: 20, marginRight: 8 }}
@@ -216,7 +241,7 @@ const Login = () => {
           )}
           {activeTab === "signup" && (
             <>
-              <button style={providerBtnStyle}>
+              <button style={providerBtnStyle} onClick={handleGoogleAuth}>
                 <Icon
                   icon="logos:google-icon"
                   style={{ fontSize: 20, marginRight: 8 }}
