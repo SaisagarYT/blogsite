@@ -1,5 +1,6 @@
 import gsap from "gsap";
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import HomepageCategories from "../JSON/HomepageCategories.jsx";
 import Webassets from "../assets/Assets";
 import HomepageBlog from "../components/HomepageBlog.jsx";
@@ -13,6 +14,21 @@ import HomepageTestimonials from "../reusableComponents/HomepageTestimonials.jsx
 console.log(HomepageCategories);
 const Homepage = () => {
   const [tab, setTab] = useState("All");
+  const [user, setUser] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("user"));
+    } catch {
+      return null;
+    }
+  });
+  const navigate = useNavigate();
+
+  // Logout handler
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    setUser(null);
+    navigate("/login");
+  };
   // Refs for animated sections
   const heroRef = useRef(null);
   const statsRef = useRef(null);
@@ -68,6 +84,23 @@ const Homepage = () => {
 
   return (
     <section className="w-full min-h-screen bg-(--bg-main) flex flex-col items-center justify-start overflow-x-hidden">
+      <div className="w-full flex justify-end p-4">
+        {user ? (
+          <button
+            onClick={handleLogout}
+            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
+          >
+            Logout
+          </button>
+        ) : (
+          <button
+            onClick={() => navigate("/login")}
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+          >
+            Login
+          </button>
+        )}
+      </div>
       <Navbar />
       <div
         ref={heroRef}

@@ -7,7 +7,10 @@ require("dotenv").config();
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+	origin: "http://localhost:5174",
+	credentials: true,
+}));
 
 // Initialize MongoDB and Firebase
 require("./config/mongodb");
@@ -17,4 +20,8 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 // Auth routes
+
+// User registration routes
+app.use("/api/user", require("./routes/userRegistration"));
+
 app.use("/api/auth", require("./routes/auth"));

@@ -4,7 +4,9 @@ import VercelSpeedInsights from "./components/VercelSpeedInsights";
 import Authentication from "./screens/Authentication";
 import DashPage from "./screens/DashPage";
 import Homepage from "./screens/Homepage";
+
 import Login from "./screens/Login";
+import OtpVerification from "./screens/OtpVerification";
 
 const App = () => {
   useEffect(() => {
@@ -22,6 +24,7 @@ const App = () => {
         <Route path="/" element={<Homepage />} />
         <Route path="/auth" element={<Authentication />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/otp-verification" element={<OtpVerification />} />
         <Route path="/dashboard" element={<DashPage />} />
       </Routes>
       <VercelSpeedInsights />

@@ -1,7 +1,9 @@
 import { Icon } from "@iconify/react";
 import axios from "axios";
 import { signInWithPopup } from "firebase/auth";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Toster from "../components/Toster";
+import Loading from "../components/Loading";
 import { useNavigate } from "react-router-dom";
 import bgImg from "../assets/katerina-kerdi--YiJvbfNDqk-unsplash.jpg";
 import { auth, provider } from "../config/firebase";
@@ -24,13 +26,76 @@ const providerBtnStyle = {
 
 const Login = () => {
   const [activeTab, setActiveTab] = useState("login");
+  const [checkingAuth, setCheckingAuth] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [signupEmail, setSignupEmail] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
   const [showSignupPassword, setShowSignupPassword] = useState(false);
+  const [signupLoading, setSignupLoading] = useState(false);
+  const [signupError, setSignupError] = useState("");
+  const [loginLoading, setLoginLoading] = useState(false);
+  const [loginError, setLoginError] = useState("");
+  const [toster, setToster] = useState({ message: "", type: "info" });
   const navigate = useNavigate();
+    // Login handler for email/password
+    const handleLogin = async (e) => {
+      e.preventDefault();
+      setLoginLoading(true);
+      setLoginError("");
+      try {
+        const res = await axios.post("http://localhost:5000/api/user/login", { email, password });
+        if (res.data.success) {
+          localStorage.setItem("user", JSON.stringify(res.data.user));
+          setToster({ message: "Login successful!", type: "success" });
+          setTimeout(() => navigate("/dashboard"), 800);
+        } else {
+          setLoginError(res.data.error || "Login failed");
+          setToster({ message: res.data.error || "Login failed", type: "error" });
+        }
+      } catch (err) {
+        setLoginError(err.response?.data?.error || "Login failed");
+        setToster({ message: err.response?.data?.error || "Login failed", type: "error" });
+      } finally {
+        setLoginLoading(false);
+      }
+    };
+  // Signup handler for registration and OTP
+  const handleSignup = async (e) => {
+    e.preventDefault();
+    setSignupLoading(true);
+    setSignupError("");
+    try {
+      const res = await axios.post("http://localhost:5000/api/user/register", { email: signupEmail, password: signupPassword });
+      if (res.data.success) {
+        setToster({ message: "Registration successful! Please verify OTP.", type: "success" });
+        navigate("/otp-verification", { state: { email: signupEmail } });
+      } else {
+        setSignupError(res.data.error || "Registration failed");
+        setToster({ message: res.data.error || "Registration failed", type: "error" });
+      }
+    } catch (err) {
+      setSignupError(err.response?.data?.error || "Registration failed");
+      setToster({ message: err.response?.data?.error || "Registration failed", type: "error" });
+    } finally {
+      setSignupLoading(false);
+    }
+  };
+
+  // Redirect if already logged in
+  useEffect(() => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (user) {
+        navigate("/dashboard");
+      } else {
+        setCheckingAuth(false);
+      }
+    } catch {
+      setCheckingAuth(false);
+    }
+  }, [navigate]);
 
   // Google Auth handler
   const handleGoogleAuth = async () => {
@@ -42,18 +107,22 @@ const Login = () => {
         idToken,
       });
       if (res.data.success) {
-        // Optionally store user info in localStorage/session
-        navigate("/dashboard");
+        setToster({ message: "Google login successful!", type: "success" });
+        setTimeout(() => navigate("/dashboard"), 800);
       } else {
-        alert(res.data.error || "Google authentication failed");
+        setToster({ message: res.data.error || "Google authentication failed", type: "error" });
       }
     } catch (err) {
-      alert(err.message || "Google authentication failed");
+      setToster({ message: err.message || "Google authentication failed", type: "error" });
     }
   };
 
+  if (checkingAuth) return <Loading />;
+
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-white px-0 md:px-8">
+    <>
+      <Toster message={toster.message} type={toster.type} onClose={() => setToster({ message: "", type: "info" })} />
+      <div className="min-h-screen w-full flex items-center justify-center bg-white px-0 md:px-8">
       <div
         className="w-full md:w-[60em] max-w-full md:max-w-[95vw] min-h-screen md:min-h-[40em] flex flex-col md:flex-row rounded-none md:rounded-2xl shadow-none md:shadow-xl overflow-visible md:overflow-hidden bg-white md:bg-opacity-90"
         style={{ height: "fit-content" }}>
@@ -99,90 +168,95 @@ const Login = () => {
           </div>
           {activeTab === "login" && (
             <>
-              <div style={{ marginBottom: 0 }}>
-                <label style={{ fontWeight: 500 }}>Email address</label>
-                <input
-                  type="email"
-                  placeholder="Enter your email address"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  style={{
-                    width: "100%",
-                    padding: 10,
-                    borderRadius: 8,
-                    border: "1px solid #e5e7eb",
-                    marginTop: 6,
-                    marginBottom: 8,
-                    color: "#23272f",
-                    background: "#fff",
-                  }}
-                  className="placeholder-gray-400"
-                />
-              </div>
-              <div style={{ marginBottom: 8, position: "relative" }}>
-                <label style={{ fontWeight: 500 }}>Password</label>
-                <input
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Enter your password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  style={{
-                    width: "100%",
-                    padding: 10,
-                    borderRadius: 8,
-                    border: "1px solid #e5e7eb",
-                    marginTop: 0,
-                    paddingRight: 36,
-                    color: "#23272f",
-                    background: "#fff",
-                  }}
-                  className="placeholder-gray-400"
-                />
-                <span
-                  style={{
-                    position: "absolute",
-                    right: 8,
-                    top: 41,
-                    cursor: "pointer",
-                    color: "#6b7280",
-                    fontSize: 20,
-                  }}
-                  onClick={() => setShowPassword((prev) => !prev)}
-                  aria-label={showPassword ? "Hide password" : "Show password"}>
-                  <Icon
-                    icon={
-                      showPassword ? "mdi:eye-off-outline" : "mdi:eye-outline"
-                    }
+              <form onSubmit={handleLogin}>
+                <div style={{ marginBottom: 0 }}>
+                  <label style={{ fontWeight: 500 }}>Email address</label>
+                  <input
+                    type="email"
+                    placeholder="Enter your email address"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    style={{
+                      width: "100%",
+                      padding: 10,
+                      borderRadius: 8,
+                      border: "1px solid #e5e7eb",
+                      marginTop: 6,
+                      marginBottom: 8,
+                      color: "#23272f",
+                      background: "#fff",
+                    }}
+                    className="placeholder-gray-400"
                   />
-                </span>
-              </div>
-              <div style={{ textAlign: "right", marginBottom: 8 }}>
-                <span
+                </div>
+                <div style={{ marginBottom: 8, position: "relative" }}>
+                  <label style={{ fontWeight: 500 }}>Password</label>
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    style={{
+                      width: "100%",
+                      padding: 10,
+                      borderRadius: 8,
+                      border: "1px solid #e5e7eb",
+                      marginTop: 0,
+                      paddingRight: 36,
+                      color: "#23272f",
+                      background: "#fff",
+                    }}
+                    className="placeholder-gray-400"
+                  />
+                  <span
+                    style={{
+                      position: "absolute",
+                      right: 8,
+                      top: 41,
+                      cursor: "pointer",
+                      color: "#6b7280",
+                      fontSize: 20,
+                    }}
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    aria-label={showPassword ? "Hide password" : "Show password"}>
+                    <Icon
+                      icon={
+                        showPassword ? "mdi:eye-off-outline" : "mdi:eye-outline"
+                      }
+                    />
+                  </span>
+                </div>
+                <div style={{ textAlign: "right", marginBottom: 8 }}>
+                  <span
+                    style={{
+                      fontSize: 12,
+                      color: "#6b7280",
+                      cursor: "pointer",
+                    }}>
+                    Forgot password?
+                  </span>
+                </div>
+                <button
+                  type="submit"
+                  disabled={loginLoading}
                   style={{
-                    fontSize: 12,
-                    color: "#6b7280",
-                    cursor: "pointer",
+                    width: "100%",
+                    background:
+                      "linear-gradient(90deg, #23272f 0%, #23272f 100%)",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: 8,
+                    padding: 12,
+                    fontWeight: 600,
+                    marginTop: 12,
+                    marginBottom: 16,
+                    fontSize: 16,
+                    cursor: loginLoading ? "not-allowed" : "pointer",
                   }}>
-                  Forgot password?
-                </span>
-              </div>
-              <button
-                style={{
-                  width: "100%",
-                  background:
-                    "linear-gradient(90deg, #23272f 0%, #23272f 100%)",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: 8,
-                  padding: 12,
-                  fontWeight: 600,
-                  marginTop: 12,
-                  marginBottom: 16,
-                  fontSize: 16,
-                  cursor: "pointer",
-                }}>
-                Log In
-              </button>
+                  {loginLoading ? "Logging in..." : "Log In"}
+                </button>
+                {loginError && <div style={{ color: "#dc2626", marginBottom: 8 }}>{loginError}</div>}
+              </form>
               <div
                 style={{
                   textAlign: "center",
@@ -277,84 +351,89 @@ const Login = () => {
                 }}>
                 OR
               </div>
-              <div style={{ marginBottom: 0 }}>
-                <label style={{ fontWeight: 500 }}>Email address</label>
-                <input
-                  type="email"
-                  placeholder="Enter your email address"
-                  value={signupEmail}
-                  onChange={(e) => setSignupEmail(e.target.value)}
-                  style={{
-                    width: "100%",
-                    padding: 10,
-                    borderRadius: 8,
-                    border: "1px solid #e5e7eb",
-                    marginTop: 0,
-                    marginBottom: 0,
-                    color: "#23272f",
-                    background: "#fff",
-                  }}
-                  className="placeholder-gray-400"
-                />
-              </div>
-              <div style={{ marginBottom: 0, position: "relative" }}>
-                <label style={{ fontWeight: 500 }}>Password</label>
-                <input
-                  type={showSignupPassword ? "text" : "password"}
-                  placeholder="Enter your password"
-                  value={signupPassword}
-                  onChange={(e) => setSignupPassword(e.target.value)}
-                  style={{
-                    width: "100%",
-                    padding: 10,
-                    borderRadius: 8,
-                    border: "1px solid #e5e7eb",
-                    marginTop: 6,
-                    paddingRight: 36,
-                    color: "#23272f",
-                    background: "#fff",
-                  }}
-                  className="placeholder-gray-400"
-                />
-                <span
-                  style={{
-                    position: "absolute",
-                    right: 8,
-                    top: 41,
-                    cursor: "pointer",
-                    color: "#6b7280",
-                    fontSize: 20,
-                  }}
-                  onClick={() => setShowSignupPassword((prev) => !prev)}
-                  aria-label={
-                    showSignupPassword ? "Hide password" : "Show password"
-                  }>
-                  <Icon
-                    icon={
-                      showSignupPassword
-                        ? "mdi:eye-off-outline"
-                        : "mdi:eye-outline"
-                    }
+              <form onSubmit={handleSignup}>
+                <div style={{ marginBottom: 0 }}>
+                  <label style={{ fontWeight: 500 }}>Email address</label>
+                  <input
+                    type="email"
+                    placeholder="Enter your email address"
+                    value={signupEmail}
+                    onChange={(e) => setSignupEmail(e.target.value)}
+                    style={{
+                      width: "100%",
+                      padding: 10,
+                      borderRadius: 8,
+                      border: "1px solid #e5e7eb",
+                      marginTop: 0,
+                      marginBottom: 0,
+                      color: "#23272f",
+                      background: "#fff",
+                    }}
+                    className="placeholder-gray-400"
                   />
-                </span>
-              </div>
-              <button
-                style={{
-                  width: "100%",
-                  background:
-                    "linear-gradient(90deg, #23272f 0%, #23272f 100%)",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: 8,
-                  padding: 12,
-                  fontWeight: 600,
-                  marginTop: 12,
-                  marginBottom: 16,
-                  fontSize: 16,
-                  cursor: "pointer",
-                }}>
-                Create an account
-              </button>
+                </div>
+                <div style={{ marginBottom: 0, position: "relative" }}>
+                  <label style={{ fontWeight: 500 }}>Password</label>
+                  <input
+                    type={showSignupPassword ? "text" : "password"}
+                    placeholder="Enter your password"
+                    value={signupPassword}
+                    onChange={(e) => setSignupPassword(e.target.value)}
+                    style={{
+                      width: "100%",
+                      padding: 10,
+                      borderRadius: 8,
+                      border: "1px solid #e5e7eb",
+                      marginTop: 6,
+                      paddingRight: 36,
+                      color: "#23272f",
+                      background: "#fff",
+                    }}
+                    className="placeholder-gray-400"
+                  />
+                  <span
+                    style={{
+                      position: "absolute",
+                      right: 8,
+                      top: 41,
+                      cursor: "pointer",
+                      color: "#6b7280",
+                      fontSize: 20,
+                    }}
+                    onClick={() => setShowSignupPassword((prev) => !prev)}
+                    aria-label={
+                      showSignupPassword ? "Hide password" : "Show password"
+                    }>
+                    <Icon
+                      icon={
+                        showSignupPassword
+                          ? "mdi:eye-off-outline"
+                          : "mdi:eye-outline"
+                      }
+                    />
+                  </span>
+                </div>
+                <button
+                  type="submit"
+                  disabled={signupLoading}
+                  style={{
+                    width: "100%",
+                    background:
+                      "linear-gradient(90deg, #23272f 0%, #23272f 100%)",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: 8,
+                    padding: 12,
+                    fontWeight: 600,
+                    marginTop: 12,
+                    marginBottom: 16,
+                    fontSize: 16,
+                    cursor: signupLoading ? "not-allowed" : "pointer",
+                  }}>
+                  {signupLoading ? "Registering..." : "Create an account"}
+                </button>
+                {signupError && <div style={{ color: "#dc2626", marginBottom: 8 }}>{signupError}</div>}
+              </form>
               <div
                 style={{ display: "flex", alignItems: "center", marginTop: 8 }}>
                 <input type="checkbox" style={{ marginRight: 8 }} />
@@ -377,7 +456,7 @@ const Login = () => {
                     fontWeight: 500,
                     cursor: "pointer",
                   }}
-                  onClick={() => setActiveTab("login")}>
+                  onClick={() => setActiveTab("login")}> 
                   Login
                 </span>
               </div>
@@ -386,6 +465,7 @@ const Login = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

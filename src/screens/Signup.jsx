@@ -5,11 +5,33 @@ import { useNavigate } from "react-router-dom";
 import { auth, provider } from "../config/firebase";
 
 const Signup = () => {
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [checked, setChecked] = useState(false);
   const [activeTab, setActiveTab] = useState("signup");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
+  // Email/password registration handler
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    try {
+      const res = await axios.post("http://localhost:5000/api/user/register", { email, password });
+      if (res.data.success) {
+        // Go to OTP page, pass email in location state
+        navigate("/otp-verification", { state: { email } });
+      } else {
+        setError(res.data.error || "Registration failed");
+      }
+    } catch (err) {
+      setError(err.response?.data?.error || "Registration failed");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Google Auth handler
   const handleGoogleAuth = async () => {
@@ -108,56 +130,62 @@ const Signup = () => {
               }}>
               OR
             </div>
-            <div style={{ marginBottom: 0 }}>
-              <label style={{ fontWeight: 500 }}>Email address</label>
-              <input
-                type="email"
-                placeholder="Enter your email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+            <form onSubmit={handleRegister}>
+              <div style={{ marginBottom: 0 }}>
+                <label style={{ fontWeight: 500 }}>Email address</label>
+                <input
+                  type="email"
+                  placeholder="Enter your email address"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: 10,
+                    borderRadius: 8,
+                    border: "1px solid #e5e7eb",
+                    marginTop: 6,
+                    marginBottom: 4,
+                  }}
+                />
+              </div>
+              <div style={{ marginBottom: 0 }}>
+                <label style={{ fontWeight: 500 }}>Password</label>
+                <input
+                  type="password"
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: 10,
+                    borderRadius: 8,
+                    border: "1px solid #e5e7eb",
+                    marginTop: 6,
+                    marginBottom: 4,
+                  }}
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={loading}
                 style={{
                   width: "100%",
-                  padding: 10,
+                  background: "linear-gradient(90deg, #23272f 0%, #23272f 100%)",
+                  color: "#fff",
+                  border: "none",
                   borderRadius: 8,
-                  border: "1px solid #e5e7eb",
-                  marginTop: 6,
-                  marginBottom: 4,
-                }}
-              />
-            </div>
-            <div style={{ marginBottom: 0 }}>
-              <label style={{ fontWeight: 500 }}>Password</label>
-              <input
-                type="password"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                style={{
-                  width: "100%",
                   padding: 10,
-                  borderRadius: 8,
-                  border: "1px solid #e5e7eb",
-                  marginTop: 6,
-                  marginBottom: 4,
+                  fontWeight: 600,
+                  marginTop: 8,
+                  marginBottom: 8,
+                  fontSize: 16,
+                  cursor: loading ? "not-allowed" : "pointer",
                 }}
-              />
-            </div>
-            <button
-              style={{
-                width: "100%",
-                background: "linear-gradient(90deg, #23272f 0%, #23272f 100%)",
-                color: "#fff",
-                border: "none",
-                borderRadius: 8,
-                padding: 10,
-                fontWeight: 600,
-                marginTop: 8,
-                marginBottom: 8,
-                fontSize: 16,
-                cursor: "pointer",
-              }}>
-              Create an account
-            </button>
+              >
+                {loading ? "Registering..." : "Create an account"}
+              </button>
+              {error && <div style={{ color: "#dc2626", marginBottom: 8 }}>{error}</div>}
+            </form>-
             <div
               style={{ display: "flex", alignItems: "center", marginTop: 4 }}>
               <input

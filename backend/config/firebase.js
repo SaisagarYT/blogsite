@@ -1,6 +1,6 @@
 // Firebase Admin SDK config
 const admin = require("firebase-admin");
-const serviceAccount = require("../dailydose-b5bd3-firebase-adminsdk-fbsvc-887b9278b6.json");
+const serviceAccount = require("../dailydose-b5bd3-firebase-adminsdk-fbsvc-7bf6947554.json");
 
 if (!admin.apps.length) {
   admin.initializeApp({
