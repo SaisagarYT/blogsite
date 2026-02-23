@@ -85,19 +85,12 @@ const Homepage = () => {
   return (
     <section className="w-full min-h-screen bg-(--bg-main) flex flex-col items-center justify-start overflow-x-hidden">
       <div className="w-full flex justify-end p-4">
-        {user ? (
+        {user && (
           <button
             onClick={handleLogout}
             className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
           >
             Logout
-          </button>
-        ) : (
-          <button
-            onClick={() => navigate("/login")}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
-          >
-            Login
           </button>
         )}
       </div>
