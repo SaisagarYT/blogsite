@@ -121,7 +121,7 @@ const Homepage = () => {
             </p>
             {/* Reference image section moved here for mobile */}
             <div className="block md:hidden mt-4">
-              <HomepagePersons type="BTN" />
+              <HomepagePersons type="BTN" />auth
             </div>
           </div>
           <ul ref={statsRef} className="flex w-full flex-col md:flex-row">

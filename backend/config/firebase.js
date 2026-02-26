@@ -1,6 +1,13 @@
 // Firebase Admin SDK config
+
 const admin = require("firebase-admin");
-const serviceAccount = require("../dailydose-b5bd3-firebase-adminsdk-fbsvc-7bf6947554.json");
+require("dotenv").config();
+
+const serviceAccount = {
+  project_id: process.env.project_id,
+  client_email: process.env.client_email,
+  private_key: process.env.private_key?.replace(/\\n/g, '\n'),
+};
 
 if (!admin.apps.length) {
   admin.initializeApp({
