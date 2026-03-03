@@ -8,6 +8,8 @@ function normalizePrivateKey(rawKey) {
 
   let normalized = String(rawKey).trim();
 
+  normalized = normalized.replace(/^private_key\s*=\s*/i, "");
+
   if (
     (normalized.startsWith('"') && normalized.endsWith('"')) ||
     (normalized.startsWith("'") && normalized.endsWith("'"))
@@ -15,10 +17,16 @@ function normalizePrivateKey(rawKey) {
     normalized = normalized.slice(1, -1);
   }
 
-  normalized = normalized.replace(/\\n/g, "\n").replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+  normalized = normalized
+    .replace(/\\\\n/g, "\n")
+    .replace(/\\n/g, "\n")
+    .replace(/\r\n/g, "\n")
+    .replace(/\r/g, "\n");
 
-  const beginMarker = "-----BEGIN PRIVATE KEY-----";
-  const endMarker = "-----END PRIVATE KEY-----";
+  const beginMatch = normalized.match(/-----BEGIN ([A-Z ]+PRIVATE KEY)-----/);
+  const keyLabel = beginMatch?.[1] || "PRIVATE KEY";
+  const beginMarker = `-----BEGIN ${keyLabel}-----`;
+  const endMarker = `-----END ${keyLabel}-----`;
   const beginIndex = normalized.indexOf(beginMarker);
   const endIndex = normalized.indexOf(endMarker);
 
@@ -34,10 +42,37 @@ function normalizePrivateKey(rawKey) {
   return normalized;
 }
 
-const projectId = process.env.project_id || process.env.FIREBASE_PROJECT_ID;
-const clientEmail = process.env.client_email || process.env.FIREBASE_CLIENT_EMAIL;
+function readServiceAccountFromJsonEnv() {
+  const jsonRaw = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
+  const jsonBase64 = process.env.FIREBASE_SERVICE_ACCOUNT_JSON_BASE64;
+
+  if (!jsonRaw && !jsonBase64) return null;
+
+  const decoded = jsonBase64
+    ? Buffer.from(jsonBase64, "base64").toString("utf8")
+    : jsonRaw;
+
+  const parsed = JSON.parse(decoded);
+  return {
+    project_id: parsed.project_id,
+    client_email: parsed.client_email,
+    private_key: normalizePrivateKey(parsed.private_key),
+  };
+}
+
+const serviceAccountFromJsonEnv = readServiceAccountFromJsonEnv();
+
+const projectId =
+  serviceAccountFromJsonEnv?.project_id ||
+  process.env.project_id ||
+  process.env.FIREBASE_PROJECT_ID;
+const clientEmail =
+  serviceAccountFromJsonEnv?.client_email ||
+  process.env.client_email ||
+  process.env.FIREBASE_CLIENT_EMAIL;
 
 const privateKeyRaw =
+  serviceAccountFromJsonEnv?.private_key ||
   process.env.private_key ||
   process.env.FIREBASE_PRIVATE_KEY ||
   (process.env.FIREBASE_PRIVATE_KEY_BASE64
