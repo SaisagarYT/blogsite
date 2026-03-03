@@ -1,5 +1,6 @@
 import { Icon } from "@iconify/react";
 import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -7,6 +8,7 @@ const Navbar = () => {
     () => localStorage.getItem("color") || "dark",
   );
   const [podcastsOpen, setPodcastsOpen] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     document.documentElement.setAttribute("theme", theme);
@@ -65,11 +67,29 @@ const Navbar = () => {
           </div>
           {/* Desktop Menu */}
           <ul className="hidden md:flex gap-8 items-center font-medium text-(--text-main)">
-            <li className="hover:text-(--text-accent) transition cursor-pointer">
-              HOME
+            <li>
+              <Link 
+                to="/" 
+                className={`px-4 py-2 rounded-lg transition cursor-pointer ${
+                  location.pathname === '/' 
+                    ? 'bg-(--text-accent) text-(--text-button)' 
+                    : 'hover:text-(--text-accent)'
+                }`}
+              >
+                HOME
+              </Link>
             </li>
-            <li className="hover:text-(--text-accent) transition cursor-pointer">
-              NEWS
+            <li>
+              <Link 
+                to="/news" 
+                className={`px-4 py-2 rounded-lg transition cursor-pointer ${
+                  location.pathname === '/news' 
+                    ? 'bg-(--text-accent) text-(--text-button)' 
+                    : 'hover:text-(--text-accent)'
+                }`}
+              >
+                TECHNEWS
+              </Link>
             </li>
             <li
               className="relative"

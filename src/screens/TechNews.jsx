@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Icon } from '@iconify/react';
+import gsap from 'gsap';
 import Navbar from '../components/Navbar';
 import NewsHeroCard from '../reusableComponents/NewsHeroCard';
 import NewsCard from '../reusableComponents/NewsCard';
@@ -8,6 +9,14 @@ import VideoCard from '../reusableComponents/VideoCard';
 
 const TechNews = () => {
   const [activeCategory, setActiveCategory] = useState('All');
+
+  // Refs for animated sections
+  const heroRef = useRef(null);
+  const featuredRef = useRef(null);
+  const cardsRef = useRef(null);
+  const discoverRef = useRef(null);
+  const videosRef = useRef(null);
+  const ctaRef = useRef(null);
 
   const categories = ['All', 'Technology', 'Politics', 'Health', 'Economics', 'Sports'];
 
@@ -127,12 +136,57 @@ const TechNews = () => {
     }
   ];
 
+  useEffect(() => {
+    if (heroRef.current) {
+      gsap.fromTo(
+        heroRef.current,
+        { opacity: 0, y: 60 },
+        { opacity: 1, y: 0, duration: 1, ease: "power3.out" },
+      );
+    }
+    if (featuredRef.current) {
+      gsap.fromTo(
+        featuredRef.current,
+        { opacity: 0, y: 60 },
+        { opacity: 1, y: 0, duration: 1, delay: 0.2, ease: "power3.out" },
+      );
+    }
+    if (cardsRef.current) {
+      gsap.fromTo(
+        cardsRef.current,
+        { opacity: 0, y: 60 },
+        { opacity: 1, y: 0, duration: 1, delay: 0.4, ease: "power3.out" },
+      );
+    }
+    if (discoverRef.current) {
+      gsap.fromTo(
+        discoverRef.current,
+        { opacity: 0, y: 60 },
+        { opacity: 1, y: 0, duration: 1, delay: 0.6, ease: "power3.out" },
+      );
+    }
+    if (videosRef.current) {
+      gsap.fromTo(
+        videosRef.current,
+        { opacity: 0, y: 60 },
+        { opacity: 1, y: 0, duration: 1, delay: 0.8, ease: "power3.out" },
+      );
+    }
+    if (ctaRef.current) {
+      gsap.fromTo(
+        ctaRef.current,
+        { opacity: 0, y: 60 },
+        { opacity: 1, y: 0, duration: 1, delay: 1, ease: "power3.out" },
+      );
+    }
+  }, []);
+
   return (
     <div className="min-h-screen bg-(--bg-background) text-(--text-main)">
       <Navbar />
       
       {/* Hero Section */}
-      <section className="pt-36 pb-20 px-4">
+      <section ref={heroRef} className="pt-36 pb-20 px-4">
         <div className="max-w-screen px-40 mx-auto">
           <div className="mb-20 flex items-end justify-between gap-16">
             <div className="flex-1">
@@ -148,10 +202,12 @@ const TechNews = () => {
           </div>
 
           {/* Featured Article */}
-          <NewsHeroCard {...heroArticle} />
+          <div ref={featuredRef}>
+            <NewsHeroCard {...heroArticle} />
+          </div>
 
           {/* Three Column Cards */}
-          <div className="grid grid-cols-3 gap-8 mt-10">
+          <div ref={cardsRef} className="grid grid-cols-3 gap-8 mt-10">
             {newsCards.map((card, index) => (
               <NewsCard key={index} {...card} />
             ))}
@@ -160,7 +216,7 @@ const TechNews = () => {
       </section>
 
       {/* Discover Headlines Section */}
-      <section className="py-20 px-4 bg-(--bg-secondary)">
+      <section ref={discoverRef} className="py-20 px-4 bg-(--bg-secondary)">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between mb-12">
             <div>
@@ -204,9 +260,9 @@ const TechNews = () => {
       </section>
 
       {/* Visual Insights Section */}
-      <section className="py-20 px-4">
+      <section ref={videosRef} className="py-24 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between mb-12">
+          <div className="flex items-center justify-between mb-16">
             <div>
               <p className="text-sm text-(--text-secondary) mb-3 tracking-wide">
                 Random Videos
@@ -222,7 +278,7 @@ const TechNews = () => {
           </div>
 
           {/* Video Grid */}
-          <div className="grid grid-cols-2 gap-10">
+          <div className="grid grid-cols-2 gap-16">
             {videoCards.map((video, index) => (
               <VideoCard key={index} {...video} />
             ))}
@@ -231,44 +287,48 @@ const TechNews = () => {
       </section>
 
       {/* Call to Action Section */}
-      <section className="py-20 px-4 bg-(--bg-secondary)">
+      <section ref={ctaRef} className="py-24 px-4 bg-(--bg-secondary)">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <div className="flex items-center justify-center gap-3 mb-6">
-              <div className="w-20 h-20 bg-(--text-accent) rounded-3xl flex items-center justify-center transform rotate-12">
-                <Icon icon="mdi:atom" className="text-4xl text-(--text-button) transform -rotate-12" />
-              </div>
+          <div className="flex gap-16 items-start mb-24">
+            {/* Left Icon */}
+            <div className="flex-shrink-0">
+              <Icon icon="mdi:atom" className="text-9xl text-(--text-accent)" />
             </div>
-            <p className="text-sm text-(--text-secondary) mb-3 tracking-wide">
-              Learn, Connect and Innovate
-            </p>
-            <h2 className="text-5xl font-bold text-(--text-main) mb-6">
-              Be Part of the Future Tech Revolution
-            </h2>
-            <p className="text-(--text-secondary) text-lg max-w-4xl mx-auto leading-relaxed">
-              Immerse yourself in the world of technology innovation. Stay updated on the latest advancements, engage with fellow tech enthusiasts, and explore community-driven events and insights.
-            </p>
+            
+            {/* Right Content */}
+            <div className="flex-1">
+              <p className="text-sm text-(--text-secondary) mb-4 tracking-widest uppercase">
+                Learn, Connect, and Innovate
+              </p>
+              <h2 className="text-6xl font-bold text-(--text-main) mb-6 leading-tight">
+                Be Part of the Future Tech Revolution
+              </h2>
+              <p className="text-(--text-secondary) text-base leading-relaxed">
+                Immerse yourself in the world of future technology. Explore our comprehensive resources, connect with fellow tech enthusiasts, and drive innovation in the industry. Join a dynamic community of forward-thinkers.
+              </p>
+            </div>
           </div>
 
           {/* Feature Cards Grid */}
-          <div className="grid grid-cols-3 gap-10">
+          <div className="grid grid-cols-3 gap-6">
             {featureCards.map((feature, index) => (
               <div
                 key={index}
-                className="bg-(--bg-background) rounded-3xl p-10 hover:shadow-xl transition-all duration-300 cursor-pointer"
+                className="bg-transparent border border-gray-700 rounded-3xl p-8 hover:border-gray-600 transition-all duration-300 cursor-pointer"
               >
-                <div className="w-16 h-16 bg-(--text-accent) rounded-2xl flex items-center justify-center mb-6">
-                  <Icon icon={feature.icon} className="text-3xl text-(--text-button)" />
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold text-(--text-main) mb-4">
+                      {feature.title}
+                    </h3>
+                    <p className="text-(--text-secondary) text-sm leading-relaxed">
+                      {feature.description}
+                    </p>
+                  </div>
+                  <div className="w-12 h-12 bg-(--text-accent) rounded-full flex items-center justify-center flex-shrink-0 ml-4">
+                    <Icon icon="mdi:arrow-top-right" className="text-xl text-(--text-button)" />
+                  </div>
                 </div>
-                <h3 className="text-2xl font-bold text-(--text-main) mb-4">
-                  {feature.title}
-                </h3>
-                <p className="text-(--text-secondary) text-base leading-relaxed mb-6">
-                  {feature.description}
-                </p>
-                <button className="text-(--text-accent) hover:text-(--bg-yellow) transition-colors font-semibold flex items-center gap-2 text-base">
-                  <Icon icon="mdi:arrow-right" className="text-xl" />
-                </button>
               </div>
             ))}
           </div>
