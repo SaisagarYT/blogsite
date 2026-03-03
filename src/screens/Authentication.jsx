@@ -3,6 +3,7 @@ import RegisterpageInput from '../reusableComponents/RegisterpageInput';
 import HomepageButton from '../reusableComponents/HomepageButton';
 import RegisterpageButton from '../reusableComponents/RegisterpageButton';
 import axios from 'axios';
+import API_BASE_URL from '../config/api';
 
 const Authentication = () => {
     const [state, setState] = useState("signin");
@@ -23,9 +24,14 @@ const Authentication = () => {
       const {name, value} = e.target;
       setSignin({...signin,[name]:value});
     }
+
+    const handleSignup = (e) =>{
+      const {name, value} = e.target;
+      setSignup({...signup,[name]:value});
+    }
     
     const signinUser = async() =>{
-        const response = await axios.post('http://localhost:8080/user/api/signin',signin);
+      const response = await axios.post(`${API_BASE_URL}/api/user/login`, signin);
         console.log(response.data);
     }
   return (
@@ -48,11 +54,11 @@ const Authentication = () => {
               </div>
               : 
               <div className='flex flex-col gap-2'>
-                  <RegisterpageInput title={'Username'} placeholder={'Alice Border'}/>
-                  <RegisterpageInput title={'Email'} placeholder={'example@gmail.com'}/>
-                  <RegisterpageInput title={'Phone'} placeholder={'xxxxxxxxx'}/>
-                  <RegisterpageInput title={'Password'} placeholder={'Password'}/>
-                  <RegisterpageInput title={'Confirm Password'} placeholder={'Password'}/>
+                  <RegisterpageInput title={'Username'} value={signup.username} name={'username'} onChange={handleSignup} placeholder={'Alice Border'}/>
+                  <RegisterpageInput title={'Email'} value={signup.email} name={'email'} onChange={handleSignup} placeholder={'example@gmail.com'}/>
+                  <RegisterpageInput title={'Phone'} value={signup.phone} name={'phone'} onChange={handleSignup} placeholder={'xxxxxxxxx'}/>
+                  <RegisterpageInput title={'Password'} value={signup.password} name={'password'} onChange={handleSignup} placeholder={'Password'}/>
+                  <RegisterpageInput title={'Confirm Password'} value={signup.confirmPassword} name={'confirmPassword'} onChange={handleSignup} placeholder={'Password'}/>
                   <br />
                   <RegisterpageButton title={'Sign Up'}/>
               </div>

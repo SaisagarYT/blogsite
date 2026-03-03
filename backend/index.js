@@ -12,6 +12,8 @@ const defaultAllowedOrigins = [
 	"http://localhost:5173",
 	"http://localhost:5174",
 	"http://localhost:8080",
+	"https://keenshot.vercel.app",
+	"https://blogsite-sdql.onrender.com",
 ];
 
 const envAllowedOrigins = (process.env.CORS_ORIGINS || "")
