@@ -8,7 +8,7 @@ const DashPage = () => {
   // Logout handler
   const handleLogout = async () => {
     try {
-      await axios.post("http://localhost:5000/api/user/logout", {}, { withCredentials: true });
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/user/logout`, {}, { withCredentials: true });
     } catch {}
     localStorage.removeItem("user");
     navigate("/login");

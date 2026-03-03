@@ -20,7 +20,7 @@ const OtpVerification = () => {
       // Set cookies for email and otp
       document.cookie = `email=${email}; path=/`;
       document.cookie = `otp=${otp}; path=/`;
-      const res = await axios.post("http://localhost:5000/api/user/verify-otp", {}, { withCredentials: true });
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/user/verify-otp`, {}, { withCredentials: true });
       if (res.data.success) {
         localStorage.setItem("user", JSON.stringify(res.data.user));
         setToster({ message: "OTP verified! Login successful.", type: "success" });

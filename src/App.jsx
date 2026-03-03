@@ -1,9 +1,11 @@
 import { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import VercelSpeedInsights from "./components/VercelSpeedInsights";
+import ProtectedRoute from "./components/ProtectedRoute";
 import Authentication from "./screens/Authentication";
 import DashPage from "./screens/DashPage";
 import Homepage from "./screens/Homepage";
+import TechNews from "./screens/TechNews";
 
 import Login from "./screens/Login";
 import OtpVerification from "./screens/OtpVerification";
@@ -22,10 +24,11 @@ const App = () => {
       </div> */}
       <Routes>
         <Route path="/" element={<Homepage />} />
+        <Route path="/news" element={<TechNews />} />
         <Route path="/auth" element={<Authentication />} />
         <Route path="/login" element={<Login />} />
         <Route path="/otp-verification" element={<OtpVerification />} />
-        <Route path="/dashboard" element={<DashPage />} />
+        <Route path="/dashboard" element={<ProtectedRoute><DashPage /></ProtectedRoute>} />
       </Routes>
       <VercelSpeedInsights />
     </div>

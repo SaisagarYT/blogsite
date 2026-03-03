@@ -45,7 +45,7 @@ const Login = () => {
       setLoginLoading(true);
       setLoginError("");
       try {
-        const res = await axios.post("http://localhost:5000/api/user/login", { email, password });
+        const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/user/login`, { email, password });
         if (res.data.success) {
           localStorage.setItem("user", JSON.stringify(res.data.user));
           setToster({ message: "Login successful!", type: "success" });
@@ -67,7 +67,7 @@ const Login = () => {
     setSignupLoading(true);
     setSignupError("");
     try {
-      const res = await axios.post("http://localhost:5000/api/user/register", { email: signupEmail, password: signupPassword });
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/user/register`, { email: signupEmail, password: signupPassword });
       if (res.data.success) {
         setToster({ message: "Registration successful! Please verify OTP.", type: "success" });
         navigate("/otp-verification", { state: { email: signupEmail } });
@@ -97,23 +97,68 @@ const Login = () => {
     }
   }, [navigate]);
 
-  // Google Auth handler
+  // Google Auth handler for Login
   const handleGoogleAuth = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
       const idToken = await result.user.getIdToken();
       // Send idToken to backend
-      const res = await axios.post("http://localhost:5000/api/auth/google", {
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/google`, {
         idToken,
       });
       if (res.data.success) {
+        localStorage.setItem("user", JSON.stringify(res.data.user));
         setToster({ message: "Google login successful!", type: "success" });
         setTimeout(() => navigate("/dashboard"), 800);
+      } else if (res.data.isNewUser) {
+        // User not registered - show error popup
+        setToster({ message: res.data.error, type: "error" });
       } else {
         setToster({ message: res.data.error || "Google authentication failed", type: "error" });
       }
     } catch (err) {
-      setToster({ message: err.message || "Google authentication failed", type: "error" });
+      if (err.code === 'auth/popup-closed-by-user') {
+        setToster({ message: "Sign in cancelled", type: "info" });
+      } else if (err.code === 'auth/cancelled-popup-request') {
+        // Ignore - user clicked button multiple times
+        return;
+      } else {
+        setToster({ message: err.response?.data?.error || err.message || "Google authentication failed", type: "error" });
+      }
+    }
+  };
+
+  // Google Sign Up handler
+  const handleGoogleSignup = async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const idToken = await result.user.getIdToken();
+      const { displayName, email, photoURL } = result.user;
+      
+      // Send idToken and user details to backend for registration
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/google-signup`, {
+        idToken,
+        name: displayName,
+        email,
+        picture: photoURL,
+      });
+      
+      if (res.data.success) {
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+        setToster({ message: "Google registration successful!", type: "success" });
+        setTimeout(() => navigate("/dashboard"), 800);
+      } else {
+        setToster({ message: res.data.error || "Google registration failed", type: "error" });
+      }
+    } catch (err) {
+      if (err.code === 'auth/popup-closed-by-user') {
+        setToster({ message: "Sign up cancelled", type: "info" });
+      } else if (err.code === 'auth/cancelled-popup-request') {
+        // Ignore - user clicked button multiple times
+        return;
+      } else {
+        setToster({ message: err.response?.data?.error || err.message || "Google registration failed", type: "error" });
+      }
     }
   };
 
@@ -315,7 +360,7 @@ const Login = () => {
           )}
           {activeTab === "signup" && (
             <>
-              <button style={providerBtnStyle} onClick={handleGoogleAuth}>
+              <button style={providerBtnStyle} onClick={handleGoogleSignup}>
                 <Icon
                   icon="logos:google-icon"
                   style={{ fontSize: 20, marginRight: 8 }}
