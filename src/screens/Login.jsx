@@ -7,6 +7,7 @@ import Loading from "../components/Loading";
 import { useNavigate } from "react-router-dom";
 import bgImg from "../assets/katerina-kerdi--YiJvbfNDqk-unsplash.jpg";
 import { auth, provider } from "../config/firebase";
+import API_BASE_URL from "../config/api";
 
 const providerBtnStyle = {
   width: "100%",
@@ -45,7 +46,7 @@ const Login = () => {
       setLoginLoading(true);
       setLoginError("");
       try {
-        const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/user/login`, { email, password });
+        const res = await axios.post(`${API_BASE_URL}/api/user/login`, { email, password });
         if (res.data.success) {
           localStorage.setItem("user", JSON.stringify(res.data.user));
           setToster({ message: "Login successful!", type: "success" });
@@ -67,7 +68,7 @@ const Login = () => {
     setSignupLoading(true);
     setSignupError("");
     try {
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/user/register`, { email: signupEmail, password: signupPassword });
+      const res = await axios.post(`${API_BASE_URL}/api/user/register`, { email: signupEmail, password: signupPassword });
       if (res.data.success) {
         setToster({ message: "Registration successful! Please verify OTP.", type: "success" });
         navigate("/otp-verification", { state: { email: signupEmail } });
@@ -103,7 +104,7 @@ const Login = () => {
       const result = await signInWithPopup(auth, provider);
       const idToken = await result.user.getIdToken();
       // Send idToken to backend
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/google`, {
+      const res = await axios.post(`${API_BASE_URL}/api/auth/google`, {
         idToken,
       });
       if (res.data.success) {
@@ -136,7 +137,7 @@ const Login = () => {
       const { displayName, email, photoURL } = result.user;
       
       // Send idToken and user details to backend for registration
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/google-signup`, {
+      const res = await axios.post(`${API_BASE_URL}/api/auth/google-signup`, {
         idToken,
         name: displayName,
         email,

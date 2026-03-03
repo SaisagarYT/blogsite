@@ -3,6 +3,7 @@ import { signInWithPopup } from "firebase/auth";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { auth, provider } from "../config/firebase";
+import API_BASE_URL from "../config/api";
 
 const Signup = () => {
 
@@ -19,7 +20,7 @@ const Signup = () => {
     setLoading(true);
     setError("");
     try {
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/user/register`, { email, password });
+      const res = await axios.post(`${API_BASE_URL}/api/user/register`, { email, password });
       if (res.data.success) {
         // Go to OTP page, pass email in location state
         navigate("/otp-verification", { state: { email } });
@@ -39,7 +40,7 @@ const Signup = () => {
       const result = await signInWithPopup(auth, provider);
       const idToken = await result.user.getIdToken();
       // Send idToken to backend
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/google`, {
+      const res = await axios.post(`${API_BASE_URL}/api/auth/google`, {
         idToken,
       });
       if (res.data.success) {

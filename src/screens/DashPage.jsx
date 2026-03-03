@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import API_BASE_URL from "../config/api";
 
 const DashPage = () => {
   const navigate = useNavigate();
@@ -8,8 +9,10 @@ const DashPage = () => {
   // Logout handler
   const handleLogout = async () => {
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL}/api/user/logout`, {}, { withCredentials: true });
-    } catch {}
+      await axios.post(`${API_BASE_URL}/api/user/logout`, {}, { withCredentials: true });
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
     localStorage.removeItem("user");
     navigate("/login");
   };
