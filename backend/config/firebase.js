@@ -62,6 +62,14 @@ function readServiceAccountFromJsonEnv() {
 
 const serviceAccountFromJsonEnv = readServiceAccountFromJsonEnv();
 
+const firebaseCredentialMode = serviceAccountFromJsonEnv
+  ? process.env.FIREBASE_SERVICE_ACCOUNT_JSON_BASE64
+    ? "service-account-json-base64"
+    : "service-account-json"
+  : process.env.private_key || process.env.FIREBASE_PRIVATE_KEY || process.env.FIREBASE_PRIVATE_KEY_BASE64
+    ? "split-firebase-vars"
+    : "none";
+
 const projectId =
   serviceAccountFromJsonEnv?.project_id ||
   process.env.project_id ||
@@ -97,6 +105,7 @@ const serviceAccount = {
 };
 
 if (!admin.apps.length) {
+  console.log(`[firebase] credential mode: ${firebaseCredentialMode}`);
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
   });
