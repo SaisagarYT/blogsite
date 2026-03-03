@@ -200,7 +200,9 @@ const Homepage = () => {
         {HomepageCategories.map((item, index) => (
           <button
             onClick={() => setTab(item.head)}
-            className="w-full md:w-auto py-3 md:py-5 rounded-md border-(--bg-primary) border px-4 md:px-8 bg-(--bg-secondary) text-base md:text-lg transition-colors duration-200 hover:bg-(--text-button) focus:outline-none"
+            className={`w-full md:w-auto py-3 md:py-5 rounded-md border-(--bg-primary) border px-4 md:px-8 text-base md:text-lg transition-colors duration-200 focus:outline-none ${
+              tab === item.head ? "bg-(--text-button)" : "bg-(--bg-secondary) hover:bg-(--text-button)"
+            }`}
             key={index}>
             {item.head}
           </button>

@@ -1,20 +1,45 @@
+/* eslint-env node */
 // Entry point for the backend server
 const express = require("express");
 const cors = require("cors");
-const { default: mongoose } = require("mongoose");
 
 require("dotenv").config();
 
 const app = express();
 app.use(express.json());
-app.use(cors({
-	origin: ["http://localhost:5173", "http://localhost:5174", "http://localhost:8080"],
-	credentials: true,
-}));
+
+const defaultAllowedOrigins = [
+	"http://localhost:5173",
+	"http://localhost:5174",
+	"http://localhost:8080",
+];
+
+const envAllowedOrigins = (process.env.CORS_ORIGINS || "")
+	.split(",")
+	.map((origin) => origin.trim())
+	.filter(Boolean);
+
+const allowedOrigins = [...new Set([...defaultAllowedOrigins, ...envAllowedOrigins])];
+
+app.use(
+	cors({
+		origin: (origin, callback) => {
+			if (!origin || allowedOrigins.includes(origin)) {
+				return callback(null, true);
+			}
+			return callback(new Error("Not allowed by CORS"));
+		},
+		credentials: true,
+	})
+);
+
+app.get("/health", (req, res) => {
+	res.status(200).json({ status: "ok" });
+});
 
 // Initialize MongoDB and Firebase
 require("./config/mongodb");
-const admin = require("./config/firebase");
+require("./config/firebase");
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
