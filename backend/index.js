@@ -23,17 +23,27 @@ const envAllowedOrigins = (process.env.CORS_ORIGINS || "")
 
 const allowedOrigins = [...new Set([...defaultAllowedOrigins, ...envAllowedOrigins])];
 
-app.use(
-	cors({
-		origin: (origin, callback) => {
-			if (!origin || allowedOrigins.includes(origin)) {
-				return callback(null, true);
-			}
-			return callback(new Error("Not allowed by CORS"));
-		},
-		credentials: true,
-	})
-);
+const isAllowedOrigin = (origin) => {
+	if (!origin) return true;
+	if (allowedOrigins.includes(origin)) return true;
+	if (/^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(origin)) return true;
+	return false;
+};
+
+const corsOptions = {
+	origin: (origin, callback) => {
+		if (isAllowedOrigin(origin)) {
+			return callback(null, true);
+		}
+		return callback(new Error("Not allowed by CORS"));
+	},
+	credentials: true,
+	methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+	allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 
 app.get("/health", (req, res) => {
 	res.status(200).json({ status: "ok" });
