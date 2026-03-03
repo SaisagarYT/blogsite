@@ -5,6 +5,7 @@ import HomepageCategories from "../JSON/HomepageCategories.jsx";
 import Webassets from "../assets/Assets";
 import HomepageBlog from "../components/HomepageBlog.jsx";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import HomepageBooks from "../reusableComponents/HomepageBooks.jsx";
 import HomepageButton from "../reusableComponents/HomepageButton.jsx";
 import HomepageCard from "../reusableComponents/HomepageCard";
@@ -84,7 +85,7 @@ const Homepage = () => {
 
   return (
     <section className="w-full min-h-screen bg-(--bg-main) flex flex-col items-center justify-start overflow-x-hidden">
-      <div className="w-full flex justify-end p-4">
+      <div className="w-full flex justify-end p-4 hidden">
         {user && (
           <button
             onClick={handleLogout}
@@ -98,22 +99,22 @@ const Homepage = () => {
       <div
         ref={heroRef}
         className="w-full bg-(--bg-background) min-h-screen flex flex-col md:flex-row flex-wrap overflow-x-hidden">
-        <div className="flex flex-col md:justify-between md:items-center md:flex-col md:flex-1/2 border-t border-l border-(--bg-primary) w-full md:w-1/2 p-4 md:p-0">
-          <div className="flex flex-col gap-4 md:gap-8 w-full md:w-3/4 justify-center h-full ">
+        <div className="flex flex-col md:justify-between md:items-center md:flex-col md:flex-1/2 border-t border-l border-(--bg-primary) w-full md:w-1/2 p-4 md:p-6 lg:p-0">
+          <div className="flex flex-col gap-4 md:gap-6 lg:gap-8 w-full md:justify-center h-full ">
             {/* Decorative image at top right of hero section */}
             <img
               src={Webassets.lightSphere}
               alt="decorative rays"
-              className="absolute left-0 top-0 w-32 h-32 md:w-56 md:h-56 pointer-events-none select-none opacity-80"
+              className="absolute left-0 max-md:opacity-0 top-0 w-32 max-md:w-100 max-md:h-120 h-32 md:w-56 lg:w-80 md:h-56 lg:h-80 pointer-events-none select-none opacity-80"
               style={{ zIndex: 1 }}
             />
-            <h1 className="text-(--text-secondary) text-xl md:text-3xl">
+            <h1 className="text-(--text-secondary) text-base md:text-xl lg:text-3xl">
               Your Journey to Tomorrow Begins Here
             </h1>
-            <h1 className="text-3xl md:text-7xl">
+            <h1 className="text-2xl md:text-4xl lg:text-7xl font-bold">
               Explore the Frontiers of Artificial Intelligence
             </h1>
-            <p className="text-base md:text-lg text-(--text-secondary)">
+            <p className="text-sm md:text-base lg:text-lg text-(--text-secondary) leading-relaxed">
               Welcome to the epicenter of AI innovation. FutureTech AI News is
               your passport to a world where machines think, learn, and reshape
               the future. Join us on this visionary expedition into the heart of
@@ -125,17 +126,17 @@ const Homepage = () => {
             </div>
           </div>
           <ul ref={statsRef} className="flex w-full flex-col md:flex-row">
-            <li className="flex border-t justify-center items-center py-6 md:py-14 border-(--bg-primary) flex-col flex-1/2">
-              <p className="text-4xl">300+</p>
-              <p className="text-(--text-secondary)">Resource available</p>
+            <li className="flex border-t justify-center items-center py-4 md:py-8 lg:py-14 border-(--bg-primary) flex-col flex-1/2">
+              <p className="text-2xl md:text-3xl lg:text-4xl font-bold">300+</p>
+              <p className="text-(--text-secondary) text-xs md:text-sm">Resource available</p>
             </li>
-            <li className="flex py-6 md:py-14 items-center border-t border-r border-l border-(--bg-primary) flex-col flex-1/2">
-              <p className="text-4xl">12k+</p>
-              <p className="text-(--text-secondary)">Total Downloads</p>
+            <li className="flex py-4 md:py-8 lg:py-14 items-center border-t border-r border-l border-(--bg-primary) flex-col flex-1/2">
+              <p className="text-2xl md:text-3xl lg:text-4xl font-bold">12k+</p>
+              <p className="text-(--text-secondary) text-xs md:text-sm">Total Downloads</p>
             </li>
-            <li className="flex justify-center items-center py-6 md:py-14 border-t border-(--bg-primary) flex-col flex-1/2">
-              <p className="text-4xl">10k+</p>
-              <p className="text-(--text-secondary)">Active Users</p>
+            <li className="flex justify-center items-center py-4 md:py-8 lg:py-14 border-t border-(--bg-primary) flex-col flex-1/2">
+              <p className="text-2xl md:text-3xl lg:text-4xl font-bold">10k+</p>
+              <p className="text-(--text-secondary) text-xs md:text-sm">Active Users</p>
             </li>
           </ul>
         </div>
@@ -175,11 +176,11 @@ const Homepage = () => {
       </div>
       <div
         ref={categoriesRef}
-        className="w-full bg-(--bg-primary) py-10 md:py-20 px-4 md:px-30 flex items-start gap-2 md:gap-4 justify-center flex-col">
-        <p className="bg-(--text-button) py-2 px-4 rounded-sm text-(--text-secondary)">
+        className="w-full bg-(--bg-primary) py-8 md:py-12 lg:py-20 px-4 md:px-8 lg:px-30 flex items-start gap-2 md:gap-3 lg:gap-4 justify-center flex-col">
+        <p className="bg-(--text-button) py-2 px-4 rounded-sm text-(--text-secondary) text-xs md:text-sm">
           Unlock the Power of
         </p>
-        <h1 className="text-6xl text-(--text-accent)">FutureTech Features</h1>
+        <h1 className="text-3xl md:text-4xl lg:text-6xl font-bold text-(--text-accent)">FutureTech Features</h1>
       </div>
       <div ref={blogsRef} className="px-2 md:px-0">
         <HomepageFeatureCard
@@ -205,7 +206,7 @@ const Homepage = () => {
           </button>
         ))}
       </div>
-      <div className="w-full md:grid-cols-2 max-sm:flex max-sm:flex-col max-sm:grid-cols-1 lg:grid-cols-4 gap-4 px-2 md:px-4 overflow-x-hidden">
+      <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-3 lg:gap-4 px-2 md:px-4 overflow-x-hidden">
         <HomepageBlog
           image={Webassets.person1}
           name="Sagar Sylada"
@@ -239,12 +240,12 @@ const Homepage = () => {
           description="Lorem ipsum dolor sit amet consectetur adipisicing elit.Quo repudiandae odio magni, magnam eius officiis at quaerat suscipit nemo dignissimos voluptate hic recusandae ea vero tenetur nobis est, a in?"
         />
       </div>
-      <div className="w-full max-sm:mt-5 bg-(--bg-primary) py-10 md:py-20 px-4 md:px-30 flex flex-col md:flex-row items-center gap-4 max-sm:justify-start max-sm:w-full md:gap-10 justify-start">
+      <div className="w-full mt-4 md:mt-0 bg-(--bg-primary) py-8 md:py-12 lg:py-20 px-4 md:px-8 lg:px-30 flex flex-col md:flex-row items-center gap-4 md:gap-6 lg:gap-10 justify-start">
         <div className="flex flex-col items-start w-full md:w-4/5">
-          <p className="bg-(--text-button) text-(--text-secondary) py-2 px-4 rounded-sm">
+          <p className="bg-(--text-button) text-(--text-secondary) py-2 px-4 rounded-sm text-xs md:text-sm">
             Your Gateway to In-Depth Information
           </p>
-          <h1 className="text-6xl max-sm:text-4xl text-(--text-accent)">
+          <h1 className="text-2xl md:text-4xl lg:text-6xl font-bold text-(--text-accent)">
             Unlock Valuable Knowledge with FutureTech's Resources
           </h1>
         </div>
@@ -270,18 +271,18 @@ const Homepage = () => {
         title2="Variety of Topics"
         desc2="Topics include AI in education (25%), renewable energy (20%), healthcare (15%), space exploration (25%), and biotechnology (15%)."
       />
-      <div className="w-full bg-(--bg-primary) py-10 md:py-20 px-4 md:px-30 flex flex-col md:flex-row items-center gap-4 md:gap-4 justify-between">
+      <div className="w-full bg-(--bg-primary) py-8 md:py-12 lg:py-20 px-4 md:px-8 lg:px-30 flex flex-col md:flex-row items-center gap-4 md:gap-4 justify-between">
         <div className="flex flex-col gap-2 md:gap-4 items-start w-full md:w-auto">
-          <p className="bg-(--text-button) text-(--text-secondary) py-2 px-4 rounded-sm">
+          <p className="bg-(--text-button) text-(--text-secondary) py-2 px-4 rounded-sm text-xs md:text-sm">
             What Our Readers Say
           </p>
-          <h1 className="text-6xl text-(--text-accent)">
+          <h1 className="text-2xl md:text-4xl lg:text-6xl font-bold text-(--text-accent)">
             Real Words from Real Readers
           </h1>
         </div>
         <HomepageButton text="Testimonials" icon={Webassets.arrowMark} />
       </div>
-      <div className="w-full max-sm:p-0 py-4 px-2 md:px-4 grid grid-cols-1 md:grid-cols-3 gap-4 flex-wrap">
+      <div className="w-full py-4 md:py-6 lg:py-8 px-2 md:px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 flex-wrap">
         <HomepageTestimonials
           image={Webassets.person1}
           userName="Saisagar"
@@ -319,54 +320,7 @@ const Homepage = () => {
           review="Lorem ipsum dolor, sit amet consectetur adipisicing elit. Libero maxime perspiciatis a natus modi aperiam quis."
         />
       </div>
-      <div className="w-full bg-(--bg-secondary) py-6 md:py-10 grid px-2 md:px-4 grid-cols-2 md:grid-cols-5 gap-4 overflow-x-auto">
-        <ul className="text-(--text-secondary) flex flex-col gap-2">
-          <h1 className="font-bold text-xl mb-3 text-(--text-main)">Home</h1>
-          <li className="cursor-pointer">Features</li>
-          <li className="cursor-pointer">Blogs</li>
-          <li className="cursor-pointer">Resources</li>
-          <li className="cursor-pointer">Testimonials</li>
-          <li className="cursor-pointer">Contact Us</li>
-          <li className="cursor-pointer">Newsletter</li>
-        </ul>
-        <ul className="text-(--text-secondary) flex flex-col gap-2">
-          <h1 className="font-bold text-xl mb-3 text-(--text-main)">Home</h1>
-          <li className="cursor-pointer">Features</li>
-          <li className="cursor-pointer">Blogs</li>
-          <li className="cursor-pointer">Resources</li>
-          <li className="cursor-pointer">Testimonials</li>
-          <li className="cursor-pointer">Contact Us</li>
-          <li className="cursor-pointer">Newsletter</li>
-        </ul>
-        <ul className="text-(--text-secondary) flex flex-col gap-2">
-          <h1 className="font-bold text-xl mb-3 text-(--text-main)">Home</h1>
-          <li className="cursor-pointer">Features</li>
-          <li className="cursor-pointer">Blogs</li>
-          <li className="cursor-pointer">Resources</li>
-          <li className="cursor-pointer">Testimonials</li>
-          <li className="cursor-pointer">Contact Us</li>
-          <li className="cursor-pointer">Newsletter</li>
-        </ul>
-        <ul className="text-(--text-secondary) flex flex-col gap-2">
-          <h1 className="font-bold text-xl mb-3 text-(--text-main)">Home</h1>
-          <li className="cursor-pointer">Features</li>
-          <li className="cursor-pointer">Blogs</li>
-          <li className="cursor-pointer">Resources</li>
-          <li className="cursor-pointer">Testimonials</li>
-          <li className="cursor-pointer">Contact Us</li>
-          <li className="cursor-pointer">Newsletter</li>
-        </ul>
-        <ul className="text-(--text-secondary) flex flex-col gap-2">
-          <h1 className="font-bold text-xl mb-3 text-(--text-main)">Home</h1>
-          <li className="cursor-pointer">Features</li>
-          <li className="cursor-pointer">Blogs</li>
-          <li className="cursor-pointer">Resources</li>
-          <li className="cursor-pointer">Testimonials</li>
-          <li className="cursor-pointer">Contact Us</li>
-          <li className="cursor-pointer">Newsletter</li>
-        </ul>
-      </div>
-      <div className=""></div>
+      <Footer />
     </section>
   );
 };

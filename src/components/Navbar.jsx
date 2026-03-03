@@ -41,28 +41,28 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="w-full fixed top-6 left-0 z-50">
+    <nav className="w-full fixed top-2 md:top-6 left-0 z-50 px-2 md:px-0">
       <div className="max-w-7xl mx-auto">
         <div
-          className="flex justify-between items-center h-20 rounded-2xl px-8 py-4 backdrop-blur-lg bg-white/30 border border-white/40 shadow-lg"
+          className="flex justify-between items-center h-16 md:h-20 rounded-2xl px-4 md:px-8 py-3 md:py-4 backdrop-blur-lg bg-(--bg-secondary) border border-(--text-border) shadow-lg"
           style={{
             boxShadow: "0 4px 32px 0 rgba(0,0,0,0.10)",
             borderRadius: "2rem",
           }}>
-          {/* Logo (hidden on mobile), Hamburger menu (shown on mobile) */}
+          {/* Logo + Hamburger menu */}
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-amber-400 flex items-center justify-center font-bold text-lg text-black shadow-md hidden md:flex">
-              TM
-            </div>
-            <span className="font-extrabold text-xl tracking-wide text-(--text-main) hidden md:inline">
-              TECHMESTORY
-            </span>
+            
             {/* Hamburger menu icon for mobile */}
             <button
-              className="md:hidden flex items-center justify-center p-2"
+              className="md:hidden w-10 h-10 flex items-center justify-center rounded-full bg-(--text-accent) border border-yellow-300 shadow-sm"
               onClick={() => setMenuOpen(!menuOpen)}
               aria-label="Open menu">
-              <Icon icon="mdi:menu" width="32" height="32" />
+              <Icon
+                icon={menuOpen ? "mdi:close" : "sidekickicons:blockquote-solid"}
+                width="22"
+                height="22"
+                className="text-black"
+              />
             </button>
           </div>
           {/* Desktop Menu */}
@@ -375,21 +375,21 @@ const Navbar = () => {
             <button
               onClick={toggleTheme}
               className={`w-10 h-10 flex items-center justify-center rounded-full border border-(--text-border) transition-all duration-200
-                ${theme === "dark" ? "bg-black" : "bg-yellow-300"}`}
+                ${theme === "dark" ? "bg-(--bg-primary)" : "bg-(--text-accent)"}`}
               aria-label="Toggle theme">
               {theme === "dark" ? (
                 <Icon
                   icon="mdi:weather-night"
                   width="24"
                   height="24"
-                  className="text-yellow-300"
+                  className="text-(--text-accent)"
                 />
               ) : (
                 <Icon
                   icon="mdi:weather-sunny"
                   width="24"
                   height="24"
-                  className="text-black"
+                  className="text-(--text-button)"
                 />
               )}
             </button>
@@ -398,13 +398,31 @@ const Navbar = () => {
       </div>
       {/* Mobile Menu */}
       {menuOpen && (
-        <div className="md:hidden bg-(--bg-primary) px-4 pb-4 pt-2 shadow-lg animate-fade-in-down">
+        <div className="md:hidden bg-(--bg-secondary) border border-(--text-border) px-4 pb-4 pt-2 shadow-lg animate-fade-in-down rounded-2xl mt-2">
           <ul className="flex flex-col gap-4 font-medium text-(--text-main)">
-            <li className="hover:text-(--text-accent) transition cursor-pointer">
-              HOME
+            <li>
+              <Link
+                to="/"
+                onClick={() => setMenuOpen(false)}
+                className={`block w-full py-2 px-3 rounded-lg transition ${
+                  location.pathname === "/"
+                    ? "bg-(--text-accent) text-(--text-button)"
+                    : "hover:text-(--text-accent)"
+                }`}>
+                HOME
+              </Link>
             </li>
-            <li className="hover:text-(--text-accent) transition cursor-pointer">
-              NEWS
+            <li>
+              <Link
+                to="/news"
+                onClick={() => setMenuOpen(false)}
+                className={`block w-full py-2 px-3 rounded-lg transition ${
+                  location.pathname === "/news"
+                    ? "bg-(--text-accent) text-(--text-button)"
+                    : "hover:text-(--text-accent)"
+                }`}>
+                TECHNEWS
+              </Link>
             </li>
             {/* Podcasts Dropdown */}
             <li>

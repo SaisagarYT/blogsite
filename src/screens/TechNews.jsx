@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Icon } from '@iconify/react';
 import gsap from 'gsap';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 import NewsHeroCard from '../reusableComponents/NewsHeroCard';
 import NewsCard from '../reusableComponents/NewsCard';
 import NewsListItem from '../reusableComponents/NewsListItem';
@@ -186,16 +187,16 @@ const TechNews = () => {
       <Navbar />
       
       {/* Hero Section */}
-      <section ref={heroRef} className="pt-36 pb-20 px-4">
-        <div className="max-w-screen px-40 mx-auto">
-          <div className="mb-20 flex items-end justify-between gap-16">
+      <section ref={heroRef} className="pt-24 md:pt-36 pb-12 md:pb-20 px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-12  md:mb-20 flex flex-col md:items-start md:justify-between gap-8 md:gap-16">
             <div className="flex-1">
-              <h1 className="text-7xl font-bold text-(--text-main) leading-tight">
+              <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold text-(--text-main) leading-tight">
                 Today's Headlines: Stay <br />Informed
               </h1>
             </div>
             <div className="flex-1">
-              <p className="text-(--text-secondary) text-base leading-relaxed">
+              <p className="text-(--text-secondary) text-sm md:text-base leading-relaxed">
                 Explore the latest news from around the world. We bring you up-to-the-minute updates on the most significant events, trends, and stories. Discover the world through our news coverage.
               </p>
             </div>
@@ -207,7 +208,7 @@ const TechNews = () => {
           </div>
 
           {/* Three Column Cards */}
-          <div ref={cardsRef} className="grid grid-cols-3 gap-8 mt-10">
+          <div ref={cardsRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mt-8 md:mt-10">
             {newsCards.map((card, index) => (
               <NewsCard key={index} {...card} />
             ))}
@@ -216,30 +217,30 @@ const TechNews = () => {
       </section>
 
       {/* Discover Headlines Section */}
-      <section ref={discoverRef} className="py-20 px-4 bg-(--bg-secondary)">
+      <section ref={discoverRef} className="py-12 md:py-20 px-4 bg-(--bg-secondary)">
         <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between mb-12">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-8 md:mb-12">
             <div>
-              <p className="text-sm text-(--text-secondary) mb-3 tracking-wide">
+              <p className="text-xs md:text-sm text-(--text-secondary) mb-2 md:mb-3 tracking-wide">
                 Welcome to Our NewsHub
               </p>
-              <h2 className="text-5xl font-bold text-(--text-main)">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-(--text-main)">
                 Discover the World of Headlines
               </h2>
             </div>
-            <button className="flex items-center gap-3 text-(--text-accent) hover:text-(--bg-yellow) transition-colors font-semibold text-lg">
+            <button className="hidden md:flex items-center gap-3 text-(--text-accent) hover:text-(--bg-yellow) transition-colors font-semibold text-lg">
               View All News
               <Icon icon="mdi:arrow-right" className="text-2xl" />
             </button>
           </div>
 
           {/* Category Filter */}
-          <div className="flex gap-5 mb-12">
+          <div className="flex flex-wrap gap-2 md:gap-5 mb-8 md:mb-12">
             {categories.map((category) => (
               <button
                 key={category}
                 onClick={() => setActiveCategory(category)}
-                className={`px-8 py-3 rounded-full transition-all duration-300 text-sm font-semibold ${
+                className={`px-4 md:px-8 py-2 md:py-3 rounded-full transition-all duration-300 text-xs md:text-sm font-semibold ${
                   activeCategory === category
                     ? 'bg-(--text-accent) text-(--text-button)'
                     : 'bg-(--bg-background) text-(--text-secondary) hover:text-(--text-main)'
@@ -260,25 +261,25 @@ const TechNews = () => {
       </section>
 
       {/* Visual Insights Section */}
-      <section ref={videosRef} className="py-24 px-4">
+      <section ref={videosRef} className="py-12 md:py-24 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between mb-16">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-8 md:mb-16">
             <div>
-              <p className="text-sm text-(--text-secondary) mb-3 tracking-wide">
+              <p className="text-xs md:text-sm text-(--text-secondary) mb-2 md:mb-3 tracking-wide">
                 Random Videos
               </p>
-              <h2 className="text-5xl font-bold text-(--text-main)">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-(--text-main)">
                 Visual Insights for the Modern Viewer
               </h2>
             </div>
-            <button className="flex items-center gap-3 text-(--text-accent) hover:text-(--bg-yellow) transition-colors font-semibold text-lg">
+            <button className="hidden md:flex items-center gap-3 text-(--text-accent) hover:text-(--bg-yellow) transition-colors font-semibold text-lg">
               View All
               <Icon icon="mdi:arrow-right" className="text-2xl" />
             </button>
           </div>
 
           {/* Video Grid */}
-          <div className="grid grid-cols-2 gap-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12">
             {videoCards.map((video, index) => (
               <VideoCard key={index} {...video} />
             ))}
@@ -287,46 +288,46 @@ const TechNews = () => {
       </section>
 
       {/* Call to Action Section */}
-      <section ref={ctaRef} className="py-24 px-4 bg-(--bg-secondary)">
+      <section ref={ctaRef} className="py-12 md:py-24 px-4 bg-(--bg-secondary)">
         <div className="max-w-7xl mx-auto">
-          <div className="flex gap-16 items-start mb-24">
-            {/* Left Icon */}
-            <div className="flex-shrink-0">
-              <Icon icon="mdi:atom" className="text-9xl text-(--text-accent)" />
+          <div className="flex flex-col md:flex-row gap-8 md:gap-16 items-start md:items-start mb-12 md:mb-24">
+            {/* Left Icon - Hidden on mobile */}
+            <div className="hidden md:flex flex-shrink-0">
+              <Icon icon="mdi:atom" className="text-7xl md:text-9xl text-(--text-accent)" />
             </div>
             
             {/* Right Content */}
             <div className="flex-1">
-              <p className="text-sm text-(--text-secondary) mb-4 tracking-widest uppercase">
+              <p className="text-xs md:text-sm text-(--text-secondary) mb-3 md:mb-4 tracking-widest uppercase">
                 Learn, Connect, and Innovate
               </p>
-              <h2 className="text-6xl font-bold text-(--text-main) mb-6 leading-tight">
+              <h2 className="text-3xl md:text-4xl lg:text-6xl font-bold text-(--text-main) mb-4 md:mb-6 leading-tight">
                 Be Part of the Future Tech Revolution
               </h2>
-              <p className="text-(--text-secondary) text-base leading-relaxed">
+              <p className="text-(--text-secondary) text-sm md:text-base leading-relaxed">
                 Immerse yourself in the world of future technology. Explore our comprehensive resources, connect with fellow tech enthusiasts, and drive innovation in the industry. Join a dynamic community of forward-thinkers.
               </p>
             </div>
           </div>
 
           {/* Feature Cards Grid */}
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             {featureCards.map((feature, index) => (
               <div
                 key={index}
-                className="bg-transparent border border-gray-700 rounded-3xl p-8 hover:border-gray-600 transition-all duration-300 cursor-pointer"
+                className="bg-transparent border border-gray-700 rounded-2xl md:rounded-3xl p-5 md:p-8 hover:border-gray-600 transition-all duration-300 cursor-pointer"
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <h3 className="text-xl font-bold text-(--text-main) mb-4">
+                    <h3 className="text-lg md:text-xl font-bold text-(--text-main) mb-3 md:mb-4">
                       {feature.title}
                     </h3>
-                    <p className="text-(--text-secondary) text-sm leading-relaxed">
+                    <p className="text-(--text-secondary) text-xs md:text-sm leading-relaxed">
                       {feature.description}
                     </p>
                   </div>
-                  <div className="w-12 h-12 bg-(--text-accent) rounded-full flex items-center justify-center flex-shrink-0 ml-4">
-                    <Icon icon="mdi:arrow-top-right" className="text-xl text-(--text-button)" />
+                  <div className="w-10 md:w-12 h-10 md:h-12 bg-(--text-accent) rounded-full flex items-center justify-center flex-shrink-0 ml-3 md:ml-4">
+                    <Icon icon="mdi:arrow-top-right" className="text-lg md:text-xl text-(--text-button)" />
                   </div>
                 </div>
               </div>
@@ -336,61 +337,7 @@ const TechNews = () => {
       </section>
 
       {/* Footer */}
-      <footer className="py-16 px-4 border-t border-(--text-border)">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-4 gap-12 mb-12">
-            <div>
-              <h3 className="text-lg font-bold text-(--text-main) mb-6">Home</h3>
-              <ul className="space-y-3">
-                <li><a href="#" className="text-(--text-secondary) hover:text-(--text-accent) transition-colors">Features</a></li>
-                <li><a href="#" className="text-(--text-secondary) hover:text-(--text-accent) transition-colors">Blogs</a></li>
-                <li><a href="#" className="text-(--text-secondary) hover:text-(--text-accent) transition-colors">Resources</a></li>
-                <li><a href="#" className="text-(--text-secondary) hover:text-(--text-accent) transition-colors">Testimonials</a></li>
-                <li><a href="#" className="text-(--text-secondary) hover:text-(--text-accent) transition-colors">Contact Us</a></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-(--text-main) mb-6">News</h3>
-              <ul className="space-y-3">
-                <li><a href="#" className="text-(--text-secondary) hover:text-(--text-accent) transition-colors">Trending Stories</a></li>
-                <li><a href="#" className="text-(--text-secondary) hover:text-(--text-accent) transition-colors">Featured Articles</a></li>
-                <li><a href="#" className="text-(--text-secondary) hover:text-(--text-accent) transition-colors">Latest News</a></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-(--text-main) mb-6">Blogs</h3>
-              <ul className="space-y-3">
-                <li><a href="#" className="text-(--text-secondary) hover:text-(--text-accent) transition-colors">Technology</a></li>
-                <li><a href="#" className="text-(--text-secondary) hover:text-(--text-accent) transition-colors">Product Reviews</a></li>
-                <li><a href="#" className="text-(--text-secondary) hover:text-(--text-accent) transition-colors">Events</a></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-(--text-main) mb-6">Podcasts</h3>
-              <ul className="space-y-3">
-                <li><a href="#" className="text-(--text-secondary) hover:text-(--text-accent) transition-colors">Latest Episodes</a></li>
-                <li><a href="#" className="text-(--text-secondary) hover:text-(--text-accent) transition-colors">Subscribe</a></li>
-              </ul>
-            </div>
-          </div>
-          <div className="flex items-center justify-between pt-10 border-t border-(--text-border)">
-            <p className="text-(--text-secondary) text-sm">
-              © 2024 TechTech. All rights reserved.
-            </p>
-            <div className="flex gap-6">
-              <a href="#" className="text-(--text-secondary) hover:text-(--text-accent) transition-colors">
-                <Icon icon="mdi:twitter" className="text-2xl" />
-              </a>
-              <a href="#" className="text-(--text-secondary) hover:text-(--text-accent) transition-colors">
-                <Icon icon="mdi:linkedin" className="text-2xl" />
-              </a>
-              <a href="#" className="text-(--text-secondary) hover:text-(--text-accent) transition-colors">
-                <Icon icon="mdi:youtube" className="text-2xl" />
-              </a>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };

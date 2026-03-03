@@ -3,9 +3,9 @@ import { Icon } from '@iconify/react';
 
 const VideoCard = ({ image, title, description, duration }) => {
   return (
-    <div className="bg-(--bg-secondary) rounded-3xl overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group border border-gray-700">
+    <div className="bg-(--bg-secondary) rounded-3xl overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group">
       {/* Video Thumbnail */}
-      <div className="relative h-96 overflow-hidden">
+      <div className="relative h-80 overflow-hidden">
         <img 
           src={image} 
           alt={title} 
@@ -26,7 +26,7 @@ const VideoCard = ({ image, title, description, duration }) => {
       </div>
       
       {/* Content Section */}
-      <div className="p-8">
+      <div className="p-7">
         <h3 className="text-lg font-bold text-(--text-main) mb-3 leading-tight">
           {title}
         </h3>
