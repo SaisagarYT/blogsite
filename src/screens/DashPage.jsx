@@ -314,6 +314,162 @@ const DashPage = () => {
             </div>
           </div>
         </section>
+
+        <section
+          style={{ backgroundColor: "var(--dash-popular-bg)" }}
+          className="mt-6 md:mt-8 rounded-2xl border border-(--bg-primary) p-4 md:p-7 lg:p-9">
+          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 md:gap-8">
+            <div className="max-w-2xl">
+              <h2
+                style={{ color: "var(--dash-popular-title)" }}
+                className="text-4xl sm:text-5xl lg:text-7xl leading-[1.02] font-black tracking-tight">
+                Our most
+                <br />
+                popular articles
+              </h2>
+              <p
+                style={{ color: "var(--dash-popular-subtitle)" }}
+                className="mt-3 md:mt-4 text-base md:text-2xl leading-relaxed max-w-xl">
+                The latest news, tips and advice to help you run your business with less fuss
+              </p>
+            </div>
+
+            <button
+              style={{
+                backgroundColor: "var(--dash-popular-cta-bg)",
+                color: "var(--dash-popular-cta-text)",
+              }}
+              className="self-start md:self-center rounded-full px-4 md:px-6 py-2 md:py-2.5 text-xs md:text-base font-medium">
+              Read All Article
+            </button>
+          </div>
+
+          <div className="mt-5 md:mt-8 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-5">
+            {[
+              { image: bgImg1, title: "Everything you need to know about VAT for your business" },
+              { image: bgImg2, title: "Everything you need to know about VAT for your business" },
+              { image: bgImg3, title: "Everything you need to know about VAT for your business" },
+            ].map((article, index) => (
+              <article
+                key={index}
+                className="relative rounded-2xl overflow-hidden min-h-[340px] md:min-h-[420px] border"
+                style={{
+                  borderColor: "var(--dash-popular-card-border)",
+                  backgroundImage: `url(${article.image})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }}>
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background: "var(--dash-popular-card-overlay)",
+                  }}
+                />
+                <div className="absolute inset-x-4 bottom-4 md:inset-x-5 md:bottom-5 z-10">
+                  <span
+                    style={{
+                      backgroundColor: "var(--dash-popular-card-chip)",
+                      color: "var(--dash-popular-card-chip-text)",
+                    }}
+                    className="inline-flex px-2.5 py-1 rounded-full text-[10px] md:text-sm font-medium mb-2 md:mb-3">
+                    CREATORS
+                  </span>
+                  <h3
+                    style={{ color: "var(--dash-popular-card-text)" }}
+                    className="text-2xl md:text-3xl leading-tight font-semibold">
+                    {article.title}
+                  </h3>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section
+          style={{ backgroundColor: "var(--dash-tips-bg)" }}
+          className="mt-6 md:mt-8 rounded-2xl border border-(--bg-primary) px-4 py-6 md:px-8 md:py-10 lg:px-10 lg:py-12 overflow-hidden">
+          <div className="text-center">
+            <h2
+              style={{ color: "var(--dash-tips-title)" }}
+              className="text-4xl md:text-6xl lg:text-7xl font-black leading-tight tracking-tight">
+              Useful tips
+              <br />
+              for your <span style={{ color: "var(--dash-tips-title-accent)" }}>business</span>
+            </h2>
+          </div>
+
+          <div className="mt-6 md:mt-8 flex gap-4 overflow-x-auto pb-2 md:grid md:grid-cols-2 xl:grid-cols-4 md:overflow-visible md:pb-0">
+            {[
+              {
+                icon: Webassets.icon1,
+                title: "Business Creators",
+                desc: "Everything you need to know to launch your own company.",
+              },
+              {
+                icon: Webassets.icon2,
+                title: "Freelancers",
+                desc: "Focus on what's important - here are the essentials to help you drive.",
+              },
+              {
+                icon: Webassets.icon3,
+                title: "Trends and News",
+                desc: "What's happening in the world of entrepreneurship.",
+              },
+              {
+                icon: Webassets.icon4,
+                title: "Operations",
+                desc: "Practical systems to keep your team running efficiently every day.",
+              },
+            ].map((item, index) => (
+              <article
+                key={index}
+                style={{
+                  backgroundColor: "var(--dash-tips-card-bg)",
+                  borderColor: "var(--dash-tips-card-border)",
+                }}
+                className="min-w-[280px] md:min-w-0 rounded-2xl border p-5 md:p-6 flex flex-col items-center text-center">
+                <img src={item.icon} alt={item.title} className="w-16 h-16 md:w-20 md:h-20 object-contain mb-4 md:mb-5 opacity-90" />
+                <h3 style={{ color: "var(--dash-tips-card-title)" }} className="text-2xl md:text-4xl font-semibold">
+                  {item.title}
+                </h3>
+                <p style={{ color: "var(--dash-tips-card-text)" }} className="mt-2 md:mt-3 text-sm md:text-xl leading-relaxed max-w-xs">
+                  {item.desc}
+                </p>
+                <button
+                  style={{
+                    backgroundColor: "var(--dash-tips-discover-bg)",
+                    color: "var(--dash-tips-discover-text)",
+                    borderColor: "var(--dash-tips-discover-border)",
+                  }}
+                  className="mt-5 md:mt-6 rounded-full border px-4 py-1.5 md:px-5 md:py-2 text-xs md:text-base">
+                  Discover
+                </button>
+              </article>
+            ))}
+          </div>
+
+          <div className="mt-7 md:mt-9 flex items-center justify-center gap-3 md:gap-4">
+            <button
+              style={{
+                backgroundColor: "var(--dash-tips-arrow-outline-bg)",
+                color: "var(--dash-tips-arrow-outline-text)",
+                borderColor: "var(--dash-tips-arrow-outline-border)",
+              }}
+              className="w-11 h-11 md:w-14 md:h-14 rounded-full border flex items-center justify-center"
+              aria-label="Previous tips">
+              <Icon icon="mdi:arrow-left" width="22" height="22" />
+            </button>
+            <button
+              style={{
+                backgroundColor: "var(--dash-tips-arrow-solid-bg)",
+                color: "var(--dash-tips-arrow-solid-text)",
+              }}
+              className="w-11 h-11 md:w-14 md:h-14 rounded-full flex items-center justify-center"
+              aria-label="Next tips">
+              <Icon icon="mdi:arrow-right" width="22" height="22" />
+            </button>
+          </div>
+        </section>
       </div>
     </div>
   );

@@ -45,6 +45,31 @@
   --dash-tag-text: #111827;
   --dash-btn-bg: #ffffffde;
   --dash-btn-text: #111827;
+  --dash-popular-bg: #d8d0e8;
+  --dash-popular-title: #0f172a;
+  --dash-popular-subtitle: #334155;
+  --dash-popular-cta-bg: #0b0b0f;
+  --dash-popular-cta-text: #f8fafc;
+  --dash-popular-card-border: #ffffff66;
+  --dash-popular-card-overlay: linear-gradient(180deg, rgba(0, 0, 0, 0.12) 35%, rgba(0, 0, 0, 0.72) 100%);
+  --dash-popular-card-chip: #ffffffe6;
+  --dash-popular-card-chip-text: #0f172a;
+  --dash-popular-card-text: #f8fafc;
+  --dash-tips-bg: #07090d;
+  --dash-tips-title: #f8fafc;
+  --dash-tips-title-accent: #22c55e;
+  --dash-tips-card-bg: #15171b;
+  --dash-tips-card-border: #ffffff1f;
+  --dash-tips-card-title: #f8fafc;
+  --dash-tips-card-text: #d1d5db;
+  --dash-tips-discover-bg: transparent;
+  --dash-tips-discover-border: #ffffff80;
+  --dash-tips-discover-text: #f8fafc;
+  --dash-tips-arrow-outline-bg: transparent;
+  --dash-tips-arrow-outline-border: #f8fafcd1;
+  --dash-tips-arrow-outline-text: #f8fafc;
+  --dash-tips-arrow-solid-bg: #f8fafc;
+  --dash-tips-arrow-solid-text: #0f172a;
 }
 
 body {
@@ -78,6 +103,31 @@ nav {
   --dash-tag-text: #f8fafc;
   --dash-btn-bg: #1f2937e6;
   --dash-btn-text: #f9fafb;
+  --dash-popular-bg: #272036;
+  --dash-popular-title: #f8fafc;
+  --dash-popular-subtitle: #cbd5e1;
+  --dash-popular-cta-bg: #f8fafc;
+  --dash-popular-cta-text: #0f172a;
+  --dash-popular-card-border: #ffffff33;
+  --dash-popular-card-overlay: linear-gradient(180deg, rgba(0, 0, 0, 0.2) 35%, rgba(0, 0, 0, 0.82) 100%);
+  --dash-popular-card-chip: #0f172ae0;
+  --dash-popular-card-chip-text: #f8fafc;
+  --dash-popular-card-text: #f8fafc;
+  --dash-tips-bg: #0a0d12;
+  --dash-tips-title: #f8fafc;
+  --dash-tips-title-accent: #4ade80;
+  --dash-tips-card-bg: #171b22;
+  --dash-tips-card-border: #ffffff24;
+  --dash-tips-card-title: #f8fafc;
+  --dash-tips-card-text: #d1d5db;
+  --dash-tips-discover-bg: transparent;
+  --dash-tips-discover-border: #e2e8f080;
+  --dash-tips-discover-text: #f8fafc;
+  --dash-tips-arrow-outline-bg: transparent;
+  --dash-tips-arrow-outline-border: #e2e8f0d1;
+  --dash-tips-arrow-outline-text: #f8fafc;
+  --dash-tips-arrow-solid-bg: #f8fafc;
+  --dash-tips-arrow-solid-text: #0f172a;
 }
 
 
