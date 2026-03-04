@@ -1,3 +1,5 @@
+const User = require("../models/User");
+const nodemailer = require("nodemailer");
 // POST /api/logout
 exports.logout = async (req, res) => {
   // If using cookies for session, clear them here
@@ -25,8 +27,6 @@ exports.login = async (req, res) => {
 // controllers/userRegistrationController.js
 // Handles registration with email/password and OTP verification
 
-const User = require("../models/User");
-const nodemailer = require("nodemailer");
 
 // Store OTPs temporarily (for demo; use Redis or DB in production)
 const otpStore = {};
@@ -63,7 +63,7 @@ exports.register = async (req, res) => {
       text: `Your OTP is ${otp}`,
     });
     res.json({ success: true, message: "OTP sent to email" });
-  } catch (err) {
+  } catch {
     res.status(500).json({ success: false, error: "Failed to send OTP" });
   }
 };

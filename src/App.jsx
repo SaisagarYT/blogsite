@@ -9,6 +9,7 @@ import TechNews from "./screens/TechNews";
 
 import Login from "./screens/Login";
 import OtpVerification from "./screens/OtpVerification";
+import ForgotPassword from "./screens/ForgotPassword";
 
 const App = () => {
   useEffect(() => {
@@ -27,6 +28,7 @@ const App = () => {
         <Route path="/news" element={<TechNews />} />
         <Route path="/auth" element={<Authentication />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/otp-verification" element={<OtpVerification />} />
         <Route path="/dashboard" element={<ProtectedRoute><DashPage /></ProtectedRoute>} />
       </Routes>

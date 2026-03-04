@@ -278,7 +278,8 @@ const Login = () => {
                       fontSize: 12,
                       color: "#6b7280",
                       cursor: "pointer",
-                    }}>
+                    }}
+                    onClick={() => navigate("/forgot-password")}>
                     Forgot password?
                   </span>
                 </div>
