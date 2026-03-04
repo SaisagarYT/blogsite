@@ -10,13 +10,15 @@ const {
 } = require("../controllers/authController");
 
 const router = express.Router();
+router.use(cookieParser());
 
 // Register route
 router.post("/register", userRegistrationController.register);
 // Login route
 router.post("/login", userRegistrationController.login);
+// Current user details route
+router.get("/me", userRegistrationController.getCurrentUserDetails);
 // OTP verification route
-router.use(cookieParser());
 router.post("/verify-otp", verifyCookie, userRegistrationController.verifyOtp);
 // Logout route
 router.post("/logout", userRegistrationController.logout);

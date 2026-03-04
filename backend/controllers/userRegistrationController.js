@@ -1,10 +1,12 @@
 const User = require("../models/User");
-const nodemailer = require("nodemailer");
+const { sendEmail } = require("../config/resend");
 // POST /api/logout
 exports.logout = async (req, res) => {
   // If using cookies for session, clear them here
   res.clearCookie("email");
   res.clearCookie("otp");
+  res.clearCookie("loggedInEmail");
+  res.clearCookie("loggedInUserId");
   // For stateless JWT/localStorage, just respond OK
   res.json({ success: true, message: "Logged out" });
 };
@@ -22,7 +24,46 @@ exports.login = async (req, res) => {
   if (user.password !== password) {
     return res.status(401).json({ success: false, error: "Invalid password" });
   }
+  res.cookie("loggedInEmail", user.email, { sameSite: "lax" });
+  res.cookie("loggedInUserId", String(user._id), { sameSite: "lax" });
   res.json({ success: true, user });
+};
+
+// GET /api/user/me
+// Supports userId/email from query, headers, or login cookie
+exports.getCurrentUserDetails = async (req, res) => {
+  const userId =
+    req.query.userId ||
+    req.headers["x-user-id"] ||
+    req.cookies?.loggedInUserId;
+
+  const email =
+    req.query.email ||
+    req.headers["x-user-email"] ||
+    req.cookies?.loggedInEmail;
+
+  if (!userId && !email) {
+    return res.status(400).json({
+      success: false,
+      error: "Missing current user identifier (userId or email)",
+    });
+  }
+
+  try {
+    const query = userId ? { _id: userId } : { email };
+    const user = await User.findOne(query).select("-password");
+
+    if (!user) {
+      return res.status(404).json({ success: false, error: "User not found" });
+    }
+
+    return res.json({ success: true, user });
+  } catch (error) {
+    console.error("Get current user details error:", error);
+    return res
+      .status(500)
+      .json({ success: false, error: "Failed to fetch user details" });
+  }
 };
 // controllers/userRegistrationController.js
 // Handles registration with email/password and OTP verification
@@ -49,21 +90,15 @@ exports.register = async (req, res) => {
 
   // Send OTP to email
   try {
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_PASS,
-      },
-    });
-    await transporter.sendMail({
-      from: process.env.GMAIL_USER,
+    await sendEmail({
       to: email,
       subject: "Your OTP for Registration",
+      html: `<p>Your OTP is <strong>${otp}</strong></p>`,
       text: `Your OTP is ${otp}`,
     });
     res.json({ success: true, message: "OTP sent to email" });
-  } catch {
+  } catch (error) {
+    console.error("Registration OTP send error:", error);
     res.status(500).json({ success: false, error: "Failed to send OTP" });
   }
 };

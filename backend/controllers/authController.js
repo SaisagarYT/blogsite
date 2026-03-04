@@ -3,30 +3,11 @@
 
 const User = require("../models/User");
 const admin = require("../config/firebase");
-const nodemailer = require("nodemailer");
+const { sendEmail } = require("../config/resend");
 
 const forgotPasswordOtpStore = {};
 
 const createOtp = () => Math.floor(100000 + Math.random() * 900000).toString();
-
-const createMailer = () =>
-  nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 587,
-    secure: false,
-    family: 4,
-    connectionTimeout: 20000,
-    greetingTimeout: 15000,
-    socketTimeout: 20000,
-    auth: {
-      user: process.env.GMAIL_USER,
-      pass: process.env.GMAIL_PASS,
-    },
-    tls: {
-      rejectUnauthorized: false,
-      family: 4,
-    },
-  });
 
 const verifyGoogleToken = async (idToken) => {
   const decodedToken = await admin.auth().verifyIdToken(idToken);
@@ -155,11 +136,10 @@ exports.sendForgotPasswordOtp = async (req, res) => {
       expires: Date.now() + 10 * 60 * 1000,
     };
 
-    const transporter = createMailer();
-    await transporter.sendMail({
-      from: process.env.GMAIL_USER,
+    await sendEmail({
       to: email,
       subject: "Your password reset OTP",
+      html: `<p>Your OTP is <strong>${otp}</strong>. It will expire in 10 minutes.</p>`,
       text: `Your OTP is ${otp}. It will expire in 10 minutes.`,
     });
 
