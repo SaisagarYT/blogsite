@@ -23,6 +23,8 @@ const DashPage = () => {
   const [profileImageError, setProfileImageError] = useState(false);
   const [activeSlide, setActiveSlide] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileThemeOpen, setMobileThemeOpen] = useState(false);
+  const [themeMode, setThemeMode] = useState(localStorage.getItem("color") || "dark");
   const dashboardRef = useRef(null);
   const cursorRef = useRef(null);
   const profileImage = currentUser?.picture || "";
@@ -120,6 +122,11 @@ const DashPage = () => {
 
     return () => clearInterval(intervalId);
   }, [slides.length]);
+
+  useEffect(() => {
+    document.documentElement.setAttribute("theme", themeMode);
+    localStorage.setItem("color", themeMode);
+  }, [themeMode]);
 
   useEffect(() => {
     const fetchCurrentUser = async () => {
@@ -400,6 +407,46 @@ const DashPage = () => {
                     Resources
                   </button>
                 </nav>
+
+                <div className="mt-4 pt-4 border-t border-white/15">
+                  <button
+                    onClick={() => setMobileThemeOpen((prev) => !prev)}
+                    className="w-full text-left text-white px-3 py-2 rounded-lg hover:bg-white/10 flex items-center justify-between"
+                    aria-label="Toggle theme options">
+                    <span className="flex items-center gap-2">
+                      <Icon icon={themeMode === "dark" ? "mdi:moon-waning-crescent" : "mdi:white-balance-sunny"} width="18" height="18" />
+                      Theme: {themeMode === "dark" ? "Dark" : "Light"}
+                    </span>
+                    <Icon icon={mobileThemeOpen ? "mdi:chevron-up" : "mdi:chevron-down"} width="18" height="18" />
+                  </button>
+
+                  {mobileThemeOpen && (
+                    <div className="mt-2 grid grid-cols-2 gap-2">
+                      <button
+                        onClick={() => {
+                          setThemeMode("light");
+                          setMobileThemeOpen(false);
+                        }}
+                        className={`px-3 py-2 rounded-lg border text-sm flex items-center justify-center gap-2 ${
+                          themeMode === "light" ? "bg-white text-black border-white" : "text-white border-white/30 hover:bg-white/10"
+                        }`}>
+                        <Icon icon="mdi:white-balance-sunny" width="16" height="16" />
+                        Light
+                      </button>
+                      <button
+                        onClick={() => {
+                          setThemeMode("dark");
+                          setMobileThemeOpen(false);
+                        }}
+                        className={`px-3 py-2 rounded-lg border text-sm flex items-center justify-center gap-2 ${
+                          themeMode === "dark" ? "bg-white text-black border-white" : "text-white border-white/30 hover:bg-white/10"
+                        }`}>
+                        <Icon icon="mdi:moon-waning-crescent" width="16" height="16" />
+                        Dark
+                      </button>
+                    </div>
+                  )}
+                </div>
               </aside>
             </div>
 
