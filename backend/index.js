@@ -55,12 +55,13 @@ app.get("/health", (req, res) => {
 require("./config/mongodb");
 require("./config/firebase");
 
+app.use("/api/user", require("./routes/userRegistration"));
+
+app.use("/api/auth", require("./routes/auth"));
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 // Auth routes
 
 // User registration routes
-app.use("/api/user", require("./routes/userRegistration"));
-
-app.use("/api/auth", require("./routes/auth"));
