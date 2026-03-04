@@ -1,343 +1,155 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Icon } from '@iconify/react';
-import gsap from 'gsap';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
-import NewsHeroCard from '../reusableComponents/NewsHeroCard';
-import NewsCard from '../reusableComponents/NewsCard';
-import NewsListItem from '../reusableComponents/NewsListItem';
-import VideoCard from '../reusableComponents/VideoCard';
+import { Icon } from "@iconify/react";
+import { useNavigate } from "react-router-dom";
+import bgImg1 from "../assets/alps-snow-mountains-3840x2160-25451.jpg";
+import bgImg2 from "../assets/os-x-lion-twilight-3840x2160-24060.jpg";
+import bgImg3 from "../assets/katerina-kerdi--YiJvbfNDqk-unsplash.jpg";
+import Webassets from "../assets/Assets";
 
 const TechNews = () => {
-  const [activeCategory, setActiveCategory] = useState('All');
+  const navigate = useNavigate();
 
-  // Refs for animated sections
-  const heroRef = useRef(null);
-  const featuredRef = useRef(null);
-  const cardsRef = useRef(null);
-  const discoverRef = useRef(null);
-  const videosRef = useRef(null);
-  const ctaRef = useRef(null);
-
-  const categories = ['All', 'Technology', 'Politics', 'Health', 'Economics', 'Sports'];
-
-  const heroArticle = {
-    image: 'https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=800&h=600&fit=crop',
-    category: 'Environment',
-    title: 'Global Climate Summit Addresses Urgent Climate Action',
-    description: 'World leaders gathered at the Global Climate Summit to discuss urgent actions needed to combat climate change and reduce carbon emissions worldwide, with new measures being introduced.',
-    author: 'Jane Smith',
-    date: 'October 15, 2025',
-    likes: 1.2,
-    comments: 234
-  };
-
-  const newsCards = [
+  const sidebarStories = [
     {
-      image: 'https://images.unsplash.com/photo-1495954222046-2c427ecb546d?w=800&h=600&fit=crop',
-      title: 'A Decisive Victory for Progressive Politics',
-      category: 'Politics',
-      likes: 9.8,
-      comments: 81
+      date: "OCT 21, 2022",
+      title: "Celebrities claim that opera gloves are becoming casual",
     },
     {
-      image: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800&h=600&fit=crop',
-      title: 'Tech Giants Unveil Cutting-Edge AI Innovation',
-      category: 'Technology',
-      likes: 9.8,
-      comments: 57
+      date: "JAN 01, 2022",
+      title: 'In support of the "naked dress," Ciara attended Paris Fashion Week',
     },
     {
-      image: 'https://images.unsplash.com/photo-1631549916768-4119b2e5f926?w=800&h=600&fit=crop',
-      title: 'COVID-19 Vaccines',
-      category: 'Health',
-      likes: 7.8,
-      comments: 874
-    }
+      date: "DEC 28, 2021",
+      title: "The historical attire worn by these women of color is a form of contemporary art",
+    },
   ];
 
-  const newsListItems = [
+  const bottomCards = [
     {
-      avatar: 'https://i.pravatar.cc/150?img=1',
-      author: 'John Techson',
-      role: 'Technology',
-      date: 'October 15, 2023',
-      title: 'Tech Giants Announce New Product Line',
-      description: 'In a major development for the tech industry, several leading companies unveiled their latest innovations and products that are expected to revolutionize the digital landscape.',
-      featured: true,
-      likes: 1.2,
-      comments: 95
+      image: bgImg2,
+      title: "Tailored minimalism the street style way",
+      author: "Bambieta Basterbine",
     },
     {
-      avatar: 'https://i.pravatar.cc/150?img=33',
-      author: 'Sarah Dillard',
-      role: 'Technology',
-      date: 'October 15, 2023',
-      title: 'The Future of Autonomous Vehicles',
-      description: 'A complete analysis of how self-driving cars and autonomous technology is transforming transportation and what it means for the future of urban mobility and the auto industry.',
-      featured: false,
-      likes: 3.3,
-      comments: 142
+      image: bgImg3,
+      title: "All the cool kids are wearing balaclavas",
+      author: "Gerard Valkyrie",
     },
-    {
-      avatar: 'https://i.pravatar.cc/150?img=12',
-      author: 'Anonymous X',
-      role: 'Technology',
-      date: 'October 15, 2023',
-      title: 'Tech Startups Secure Record Funding',
-      description: 'In a rare of events for the world, new U.S tech startups managed to secure impressive seed funding from top investors, signaling growing confidence in the technology sector.',
-      featured: false,
-      likes: 5.4,
-      comments: 200
-    }
   ];
-
-  const videoCards = [
-    {
-      image: 'https://images.unsplash.com/photo-1495616811223-4d98c6e9c869?w=800&h=600&fit=crop',
-      title: 'Mars Exploration: Unveiling Alien Landscapes',
-      description: 'Witness breathtaking footage from NASA\'s latest Mars mission, showcasing the red planet\'s diverse terrain and what it means for future colonization efforts.',
-      duration: '7:52 min'
-    },
-    {
-      image: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&h=600&fit=crop',
-      title: 'Blockchain Explained: A Revolution in Finance',
-      description: 'Dive deep into the world of blockchain technology, understanding how decentralized systems are transforming financial transactions and investment strategies.',
-      duration: '5:30 min'
-    },
-    {
-      image: 'https://images.unsplash.com/photo-1559757175-0eb30cd8c063?w=800&h=600&fit=crop',
-      title: 'Breaking the Silence: Mental Health Awareness in the Workplace',
-      description: 'An important conversation about mental health challenges in professional environments and why companies need to prioritize employee wellbeing and support.',
-      duration: '8:15 min'
-    },
-    {
-      image: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&h=600&fit=crop',
-      title: 'Revolutionizing Investment Strategies',
-      description: 'Explore cutting-edge investment approaches and how technology is enabling smarter financial decisions for retail and institutional investors alike.',
-      duration: '6:42 min'
-    }
-  ];
-
-  const featureCards = [
-    {
-      icon: 'mdi:browser',
-      title: 'Broaden Access',
-      description: 'Our platform ensures that news and information are easily accessible to all, breaking down barriers and fostering inclusivity.'
-    },
-    {
-      icon: 'mdi:account-group',
-      title: 'Community Forum',
-      description: 'Join our vibrant community forum where you can discuss, debate, and share your perspectives on the latest news and topics.'
-    },
-    {
-      icon: 'mdi:trophy',
-      title: 'Tech Events',
-      description: 'Stay updated on upcoming tech conferences, webinars, and events where you can network and learn from industry leaders and experts.'
-    }
-  ];
-
-  useEffect(() => {
-    if (heroRef.current) {
-      gsap.fromTo(
-        heroRef.current,
-        { opacity: 0, y: 60 },
-        { opacity: 1, y: 0, duration: 1, ease: "power3.out" },
-      );
-    }
-    if (featuredRef.current) {
-      gsap.fromTo(
-        featuredRef.current,
-        { opacity: 0, y: 60 },
-        { opacity: 1, y: 0, duration: 1, delay: 0.2, ease: "power3.out" },
-      );
-    }
-    if (cardsRef.current) {
-      gsap.fromTo(
-        cardsRef.current,
-        { opacity: 0, y: 60 },
-        { opacity: 1, y: 0, duration: 1, delay: 0.4, ease: "power3.out" },
-      );
-    }
-    if (discoverRef.current) {
-      gsap.fromTo(
-        discoverRef.current,
-        { opacity: 0, y: 60 },
-        { opacity: 1, y: 0, duration: 1, delay: 0.6, ease: "power3.out" },
-      );
-    }
-    if (videosRef.current) {
-      gsap.fromTo(
-        videosRef.current,
-        { opacity: 0, y: 60 },
-        { opacity: 1, y: 0, duration: 1, delay: 0.8, ease: "power3.out" },
-      );
-    }
-    if (ctaRef.current) {
-      gsap.fromTo(
-        ctaRef.current,
-        { opacity: 0, y: 60 },
-        { opacity: 1, y: 0, duration: 1, delay: 1, ease: "power3.out" },
-      );
-    }
-  }, []);
 
   return (
-    <div className="min-h-screen bg-(--bg-background) text-(--text-main)">
-      <Navbar />
-      
-      {/* Hero Section */}
-      <section ref={heroRef} className="pt-24 md:pt-36 pb-12 md:pb-20 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="mb-12  md:mb-20 flex flex-col md:items-start md:justify-between gap-8 md:gap-16">
-            <div className="flex-1">
-              <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold text-(--text-main) leading-tight">
-                Today's Headlines: Stay <br />Informed
-              </h1>
-            </div>
-            <div className="flex-1">
-              <p className="text-(--text-secondary) text-sm md:text-base leading-relaxed">
-                Explore the latest news from around the world. We bring you up-to-the-minute updates on the most significant events, trends, and stories. Discover the world through our news coverage.
-              </p>
-            </div>
-          </div>
+    <div className="min-h-screen bg-(--bg-background) text-(--text-main) p-3 md:p-5">
+      <div className="w-full mb-3 md:mb-4">
+        <button
+          onClick={() => navigate("/dashboard")}
+          aria-label="Back to dashboard"
+          className="w-10 h-10 md:w-11 md:h-11 rounded-full border border-(--bg-primary) bg-(--bg-secondary) text-(--text-main) flex items-center justify-center hover:scale-105 transition-transform"
+        >
+          <Icon icon="mdi:arrow-left" width="20" height="20" />
+        </button>
+      </div>
 
-          {/* Featured Article */}
-          <div ref={featuredRef}>
-            <NewsHeroCard {...heroArticle} />
-          </div>
-
-          {/* Three Column Cards */}
-          <div ref={cardsRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mt-8 md:mt-10">
-            {newsCards.map((card, index) => (
-              <NewsCard key={index} {...card} />
-            ))}
-          </div>
+      <section
+        style={{
+          backgroundColor: "var(--tech-fashion-bg)",
+          color: "var(--tech-fashion-text)",
+        }}
+        className="w-full rounded-2xl border border-(--bg-primary) px-4 py-5 md:px-8 md:py-8 lg:px-10 lg:py-10 overflow-hidden"
+      >
+        <div className="flex items-center justify-between gap-3">
+          <h1
+            style={{ color: "var(--tech-fashion-heading)" }}
+            className="text-4xl md:text-6xl lg:text-7xl font-light tracking-tight uppercase"
+          >
+            Fashion
+          </h1>
+          <button
+            onClick={() => navigate("/dashboard")}
+            style={{ color: "var(--tech-fashion-heading)" }}
+            className="uppercase text-sm md:text-base font-medium flex items-center gap-2 opacity-90 hover:opacity-100 transition-opacity"
+          >
+            View all
+            <Icon icon="mdi:arrow-top-right" width="18" height="18" />
+          </button>
         </div>
-      </section>
 
-      {/* Discover Headlines Section */}
-      <section ref={discoverRef} className="py-12 md:py-20 px-4 bg-(--bg-secondary)">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-8 md:mb-12">
-            <div>
-              <p className="text-xs md:text-sm text-(--text-secondary) mb-2 md:mb-3 tracking-wide">
-                Welcome to Our NewsHub
-              </p>
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-(--text-main)">
-                Discover the World of Headlines
-              </h2>
-            </div>
-            <button className="hidden md:flex items-center gap-3 text-(--text-accent) hover:text-(--bg-yellow) transition-colors font-semibold text-lg">
-              View All News
-              <Icon icon="mdi:arrow-right" className="text-2xl" />
-            </button>
+        <div className="mt-5 grid grid-cols-1 lg:grid-cols-5 gap-4 md:gap-6 lg:gap-7">
+          <div className="lg:col-span-3 rounded-xl overflow-hidden min-h-[260px] md:min-h-[420px]">
+            <img src={bgImg1} alt="Fashion lead" className="w-full h-full object-cover" />
           </div>
 
-          {/* Category Filter */}
-          <div className="flex flex-wrap gap-2 md:gap-5 mb-8 md:mb-12">
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => setActiveCategory(category)}
-                className={`px-4 md:px-8 py-2 md:py-3 rounded-full transition-all duration-300 text-xs md:text-sm font-semibold ${
-                  activeCategory === category
-                    ? 'bg-(--text-accent) text-(--text-button)'
-                    : 'bg-(--bg-background) text-(--text-secondary) hover:text-(--text-main)'
-                }`}
+          <article className="lg:col-span-2 rounded-xl border border-(--tech-fashion-divider) p-4 md:p-5 flex flex-col justify-start pt-1">
+            <div className="flex items-center gap-2 text-[10px] md:text-xs uppercase tracking-wide">
+              <span
+                style={{ borderColor: "var(--tech-fashion-chip-border)", color: "var(--tech-fashion-chip-text)" }}
+                className="px-2 py-0.5 rounded-full border"
               >
-                {category}
-              </button>
-            ))}
-          </div>
-
-          {/* News List */}
-          <div className="bg-(--bg-secondary)">
-            {newsListItems.map((item, index) => (
-              <NewsListItem key={index} {...item} />
-            ))}
-          </div>
+                Fashion
+              </span>
+              <span style={{ color: "var(--tech-fashion-subtle)" }}>Aug 09, 2022</span>
+            </div>
+            <h2 style={{ color: "var(--tech-fashion-heading)" }} className="mt-4 text-3xl md:text-5xl leading-tight uppercase max-w-md">
+              Short suits: the must-have fashion investment for spring
+            </h2>
+            <p style={{ color: "var(--tech-fashion-subtle)" }} className="mt-4 text-sm md:text-base flex items-center gap-2">
+              <span>✦</span>
+              Written by <span className="font-semibold" style={{ color: "var(--tech-fashion-text)" }}>Jonathan Lopez</span>
+            </p>
+          </article>
         </div>
-      </section>
 
-      {/* Visual Insights Section */}
-      <section ref={videosRef} className="py-12 md:py-24 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-8 md:mb-16">
-            <div>
-              <p className="text-xs md:text-sm text-(--text-secondary) mb-2 md:mb-3 tracking-wide">
-                Random Videos
-              </p>
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-(--text-main)">
-                Visual Insights for the Modern Viewer
-              </h2>
-            </div>
-            <button className="hidden md:flex items-center gap-3 text-(--text-accent) hover:text-(--bg-yellow) transition-colors font-semibold text-lg">
-              View All
-              <Icon icon="mdi:arrow-right" className="text-2xl" />
-            </button>
-          </div>
-
-          {/* Video Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12">
-            {videoCards.map((video, index) => (
-              <VideoCard key={index} {...video} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Call to Action Section */}
-      <section ref={ctaRef} className="py-12 md:py-24 px-4 bg-(--bg-secondary)">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row gap-8 md:gap-16 items-start md:items-start mb-12 md:mb-24">
-            {/* Left Icon - Hidden on mobile */}
-            <div className="hidden md:flex flex-shrink-0">
-              <Icon icon="mdi:atom" className="text-7xl md:text-9xl text-(--text-accent)" />
-            </div>
-            
-            {/* Right Content */}
-            <div className="flex-1">
-              <p className="text-xs md:text-sm text-(--text-secondary) mb-3 md:mb-4 tracking-widest uppercase">
-                Learn, Connect, and Innovate
-              </p>
-              <h2 className="text-3xl md:text-4xl lg:text-6xl font-bold text-(--text-main) mb-4 md:mb-6 leading-tight">
-                Be Part of the Future Tech Revolution
-              </h2>
-              <p className="text-(--text-secondary) text-sm md:text-base leading-relaxed">
-                Immerse yourself in the world of future technology. Explore our comprehensive resources, connect with fellow tech enthusiasts, and drive innovation in the industry. Join a dynamic community of forward-thinkers.
-              </p>
-            </div>
-          </div>
-
-          {/* Feature Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-            {featureCards.map((feature, index) => (
-              <div
-                key={index}
-                className="bg-transparent border border-gray-700 rounded-2xl md:rounded-3xl p-5 md:p-8 hover:border-gray-600 transition-all duration-300 cursor-pointer"
-              >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <h3 className="text-lg md:text-xl font-bold text-(--text-main) mb-3 md:mb-4">
-                      {feature.title}
-                    </h3>
-                    <p className="text-(--text-secondary) text-xs md:text-sm leading-relaxed">
-                      {feature.description}
-                    </p>
-                  </div>
-                  <div className="w-10 md:w-12 h-10 md:h-12 bg-(--text-accent) rounded-full flex items-center justify-center flex-shrink-0 ml-3 md:ml-4">
-                    <Icon icon="mdi:arrow-top-right" className="text-lg md:text-xl text-(--text-button)" />
-                  </div>
+        <div className="mt-5 grid grid-cols-1 xl:grid-cols-5 gap-4 md:gap-6 lg:gap-7">
+          <div className="xl:col-span-2 space-y-3 md:space-y-4">
+            {sidebarStories.map((story) => (
+              <article key={story.title} className="rounded-xl border p-3 md:p-4" style={{ borderColor: "var(--tech-fashion-divider)" }}>
+                <div className="flex items-center gap-2 text-[9px] md:text-[10px] uppercase tracking-wide mb-2">
+                  <span
+                    style={{ borderColor: "var(--tech-fashion-chip-border)", color: "var(--tech-fashion-chip-text)" }}
+                    className="px-2 py-0.5 rounded-full border"
+                  >
+                    Fashion
+                  </span>
+                  <span style={{ color: "var(--tech-fashion-subtle)" }}>{story.date}</span>
                 </div>
-              </div>
+                <h3 className="uppercase text-lg md:text-2xl leading-tight" style={{ color: "var(--tech-fashion-heading)" }}>
+                  {story.title}
+                </h3>
+              </article>
+            ))}
+          </div>
+
+          <div className="xl:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+            {bottomCards.map((card) => (
+              <article key={card.title} className="rounded-xl border border-(--tech-fashion-divider) p-3 md:p-4">
+                <div className="rounded-xl overflow-hidden min-h-[220px] md:min-h-[260px]">
+                  <img src={card.image} alt={card.title} className="w-full h-full object-cover" />
+                </div>
+                <div className="mt-3">
+                  <div className="flex items-center gap-2 text-[10px] md:text-xs uppercase tracking-wide mb-2">
+                    <span
+                      style={{ borderColor: "var(--tech-fashion-chip-border)", color: "var(--tech-fashion-chip-text)" }}
+                      className="px-2 py-0.5 rounded-full border"
+                    >
+                      Fashion
+                    </span>
+                    <span style={{ color: "var(--tech-fashion-subtle)" }}>Aug 11, 2022</span>
+                  </div>
+                  <h3 className="uppercase text-2xl md:text-4xl leading-tight" style={{ color: "var(--tech-fashion-heading)" }}>
+                    {card.title}
+                  </h3>
+                  <p style={{ color: "var(--tech-fashion-subtle)" }} className="mt-3 text-xs md:text-sm flex items-center gap-2">
+                    <span>✦</span>
+                    Written by <span className="font-semibold" style={{ color: "var(--tech-fashion-text)" }}>{card.author}</span>
+                  </p>
+                </div>
+              </article>
             ))}
           </div>
         </div>
-      </section>
 
-      {/* Footer */}
-      <Footer />
+        <div className="mt-6 md:mt-8 flex justify-center">
+          <img src={Webassets.arrowMark} alt="decorative divider" className="opacity-60 w-16 md:w-20" />
+        </div>
+      </section>
     </div>
   );
 };

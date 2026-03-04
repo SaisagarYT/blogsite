@@ -27,6 +27,90 @@ const DashPage = () => {
   const profileImage = currentUser?.picture || "";
   const effectiveProfileImage = profileImageError ? "" : profileImage;
   const slides = [bgImg1, bgImg2, bgImg3];
+  const blogCategories = ["All", "Destination", "Culinary", "Lifestyle", "Tips & Hacks"];
+  const blogPosts = [
+    {
+      image: bgImg1,
+      category: "Destination",
+      date: "30 Jan 2024",
+      readTime: "10 mins read",
+      title: "Unveiling the Secrets Beyond the Tourist Trails",
+      description: "Dive into the local culture, discover hidden spots, and experience authentic destination charm.",
+      author: "Seraphina Isabella",
+    },
+    {
+      image: Webassets.image1,
+      category: "Lifestyle",
+      date: "29 Jan 2024",
+      readTime: "5 mins read",
+      title: "A Fashionista's Guide to Wanderlust",
+      description: "Explore the intersection of fashion and travel as we delve into effortless style for globe-trotters.",
+      author: "Maximilian Bartholomew",
+    },
+    {
+      image: Webassets.image2,
+      category: "Tips & Hacks",
+      date: "26 Jan 2024",
+      readTime: "15 mins read",
+      title: "Top 5 Apps and Gadgets That Will Transform Your Journeys",
+      description: "Uncover must-have tools and apps to make every trip smoother, safer, and more productive.",
+      author: "Anastasia Evangeline",
+    },
+    {
+      image: bgImg2,
+      category: "Culinary",
+      date: "24 Jan 2024",
+      readTime: "10 mins read",
+      title: "Savoring Mosaic Resto Gastronomic Delights",
+      description: "From street food to fine dining, uncover remarkable culinary gems and local specialties.",
+      author: "Nathaniel Reginald",
+    },
+    {
+      image: bgImg3,
+      category: "Destination",
+      date: "20 Jan 2024",
+      readTime: "8 mins read",
+      title: "Journey Through Time",
+      description: "Wander through ancient streets and iconic landmarks while immersing yourself in timeless culture.",
+      author: "Percival Thaddeus",
+    },
+    {
+      image: bgImg1,
+      category: "Culinary",
+      date: "18 Jan 2024",
+      readTime: "6 mins read",
+      title: "Experiencing Sustainable Culinary Tourism",
+      description: "Join us on a sustainable culinary voyage spotlighting farm-to-table destinations.",
+      author: "Sebastian Montgomery",
+    },
+    {
+      image: bgImg2,
+      category: "Lifestyle",
+      date: "17 Jan 2024",
+      readTime: "5 mins read",
+      title: "Navigating the Traveler's Lifestyle",
+      description: "Embrace a balanced travel life and keep your goals moving while exploring the world.",
+      author: "Arabella Serenity",
+    },
+    {
+      image: Webassets.image2,
+      category: "Tips & Hacks",
+      date: "12 Jan 2024",
+      readTime: "8 mins read",
+      title: "10 Essential Packing Hacks for Stress-Free Travel",
+      description: "Discover packing methods that reduce stress and save space while staying organized.",
+      author: "Benjamin Augustus",
+    },
+    {
+      image: bgImg3,
+      category: "Destination",
+      date: "10 Jan 2024",
+      readTime: "10 mins read",
+      title: "Adrenaline-Pumping Adventures",
+      description: "Explore awe-inspiring experiences and thrilling routes for adventure-seeking travelers.",
+      author: "Catalista Gwendolyn",
+    },
+  ];
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -607,6 +691,232 @@ const DashPage = () => {
               <Icon icon="mdi:arrow-right" width="22" height="22" />
             </button>
           </div>
+        </section>
+
+        <section
+          style={{ backgroundColor: "var(--dash-blog-surface)" }}
+          className="dash-reveal mt-6 md:mt-8 rounded-2xl border border-(--bg-primary) p-4 md:p-6"
+        >
+          <div className="flex flex-col gap-2">
+            <h2 style={{ color: "var(--dash-blog-title)" }} className="text-2xl md:text-3xl font-bold">Blog</h2>
+            <p style={{ color: "var(--dash-blog-subtitle)" }} className="text-xs md:text-sm">
+              Here, we share travel tips, destination guides, and stories that inspire your next adventure.
+            </p>
+          </div>
+
+          <div className="mt-4 md:mt-5 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+            <div className="flex flex-wrap gap-2">
+              {blogCategories.map((category, index) => (
+                <button
+                  key={category}
+                  style={{
+                    backgroundColor: index === 0 ? "var(--dash-blog-pill-active-bg)" : "var(--dash-blog-pill-bg)",
+                    color: index === 0 ? "var(--dash-blog-pill-active-text)" : "var(--dash-blog-pill-text)",
+                  }}
+                  className="dash-gsap-hover px-3 py-1.5 rounded-lg text-xs md:text-sm font-medium"
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+
+            <button
+              style={{ backgroundColor: "var(--dash-blog-sort-bg)", color: "var(--dash-blog-pill-text)" }}
+              className="dash-gsap-hover self-start lg:self-auto px-3 py-1.5 rounded-lg text-xs md:text-sm font-medium flex items-center gap-2 border border-(--bg-primary)"
+            >
+              Sort by
+              <span style={{ color: "var(--dash-blog-title)" }} className="font-semibold">Newest</span>
+              <Icon icon="mdi:chevron-down" width="16" height="16" />
+            </button>
+          </div>
+
+          <div className="dash-stagger mt-4 md:mt-5 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 md:gap-4">
+            {blogPosts.map((post, index) => (
+              <article
+                key={`${post.title}-${index}`}
+                style={{
+                  backgroundColor: "var(--dash-blog-card-bg)",
+                  borderColor: "var(--dash-blog-card-border)",
+                }}
+                className="dash-stagger-item dash-gsap-hover rounded-xl border p-2.5 md:p-3"
+              >
+                <div className="relative rounded-lg overflow-hidden h-40 md:h-44">
+                  <img src={post.image} alt={post.title} className="w-full h-full object-cover" />
+                  <span
+                    style={{
+                      backgroundColor: "var(--dash-blog-chip-bg)",
+                      color: "var(--dash-blog-chip-text)",
+                    }}
+                    className="absolute top-2 left-2 text-[10px] md:text-xs px-2 py-0.5 rounded-full"
+                  >
+                    {post.category}
+                  </span>
+                </div>
+
+                <p style={{ color: "var(--dash-blog-meta)" }} className="mt-2 text-[10px] md:text-xs">
+                  {post.date} • {post.readTime}
+                </p>
+                <h3 style={{ color: "var(--dash-blog-card-title)" }} className="mt-1 text-base md:text-lg font-semibold leading-snug">
+                  {post.title}
+                </h3>
+                <p style={{ color: "var(--dash-blog-desc)" }} className="mt-1 text-xs md:text-sm leading-relaxed">
+                  {post.description}
+                </p>
+
+                <div className="mt-3 pt-2 border-t border-(--bg-primary) flex items-center gap-2">
+                  <img src={Webassets.person1} alt={post.author} className="w-6 h-6 rounded-full object-cover" />
+                  <p style={{ color: "var(--dash-blog-author)" }} className="text-xs md:text-sm font-medium">
+                    {post.author}
+                  </p>
+                </div>
+              </article>
+            ))}
+          </div>
+
+          <div className="mt-5 md:mt-6 flex items-center justify-center gap-2">
+            {["chevron-left", "1", "2", "3", "4", "5", "chevron-right"].map((item, index) => {
+              const isNumber = !item.includes("chevron");
+              const isActive = item === "1";
+
+              return (
+                <button
+                  key={`${item}-${index}`}
+                  style={{
+                    backgroundColor: isActive ? "var(--dash-blog-pagination-active-bg)" : "var(--dash-blog-pagination-bg)",
+                    color: isActive ? "var(--dash-blog-pagination-active-text)" : "var(--dash-blog-pagination-text)",
+                  }}
+                  className="dash-gsap-hover w-8 h-8 md:w-9 md:h-9 rounded-md border border-(--bg-primary) text-xs md:text-sm flex items-center justify-center"
+                >
+                  {isNumber ? item : <Icon icon={`mdi:${item}`} width="16" height="16" />}
+                </button>
+              );
+            })}
+          </div>
+        </section>
+
+        <section
+          style={{ backgroundColor: "var(--dash-explore-bg)" }}
+          className="dash-reveal mt-6 md:mt-8 rounded-2xl border border-(--bg-primary) p-2 md:p-3 overflow-hidden"
+        >
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 md:gap-3">
+            <div className="lg:col-span-1 grid grid-rows-2 gap-2 md:gap-3">
+              <article
+                style={{ backgroundColor: "var(--dash-explore-card-dark)" }}
+                className="rounded-xl p-4 md:p-6 relative overflow-hidden min-h-[220px] md:min-h-[270px]"
+              >
+                <div className="absolute inset-0 opacity-30" style={{ backgroundImage: `url(${bgImg2})`, backgroundSize: "cover", backgroundPosition: "center" }} />
+                <div className="absolute inset-0" style={{ backgroundColor: "var(--dash-explore-overlay)" }} />
+                <div className="relative z-10 flex flex-col h-full justify-between">
+                  <div>
+                    <span
+                      style={{ backgroundColor: "var(--dash-explore-chip-bg)", color: "var(--dash-explore-chip-text)" }}
+                      className="w-10 h-10 rounded-xl flex items-center justify-center"
+                    >
+                      <Icon icon="mdi:web" width="20" height="20" />
+                    </span>
+                    <h3 style={{ color: "var(--dash-explore-text)" }} className="mt-4 text-3xl md:text-4xl font-semibold leading-tight">
+                      Explore more to get your comfort zone
+                    </h3>
+                    <p style={{ color: "var(--dash-explore-subtext)" }} className="mt-2 text-sm md:text-base">
+                      Book your perfect stay with us.
+                    </p>
+                  </div>
+                  <button
+                    style={{ backgroundColor: "var(--dash-explore-btn-bg)", color: "var(--dash-explore-btn-text)" }}
+                    className="dash-gsap-hover mt-4 w-max px-4 py-2 rounded-lg text-sm md:text-base font-medium flex items-center gap-2"
+                  >
+                    Booking Now
+                    <Icon icon="mdi:arrow-right" width="16" height="16" />
+                  </button>
+                </div>
+              </article>
+
+              <article className="rounded-xl overflow-hidden relative min-h-[180px] md:min-h-[210px]">
+                <img src={bgImg2} alt="Article available" className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/10 to-black/65" />
+                <div className="absolute left-4 bottom-4 z-10 text-white">
+                  <p className="text-lg md:text-2xl font-medium">Article Available</p>
+                  <p className="text-4xl md:text-5xl font-bold">78</p>
+                </div>
+              </article>
+            </div>
+
+            <article className="lg:col-span-2 rounded-xl overflow-hidden relative min-h-[280px] md:min-h-[500px]">
+              <img src={bgImg1} alt="Beyond accommodation" className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-black/20" />
+              <div className="absolute inset-0 flex items-center justify-center px-5">
+                <h3 className="text-white text-4xl md:text-6xl text-center leading-tight font-medium max-w-3xl">
+                  Beyond accommodation, creating memories of a lifetime
+                </h3>
+              </div>
+            </article>
+          </div>
+
+          <footer
+            style={{ backgroundColor: "var(--dash-explore-footer-bg)", color: "var(--dash-explore-footer-text)" }}
+            className="mt-2 md:mt-3 rounded-xl p-4 md:p-6"
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+              <div>
+                <h4 className="text-2xl md:text-3xl font-bold">Horizone</h4>
+                <p style={{ color: "var(--dash-explore-footer-muted)" }} className="mt-3 text-sm md:text-base leading-relaxed">
+                  Our mission is to equip modern explorers with cutting-edge, functional, and stylish bags that elevate every adventure.
+                </p>
+              </div>
+
+              <div>
+                <h5 className="text-xl md:text-2xl font-semibold mb-2">About</h5>
+                <ul style={{ color: "var(--dash-explore-footer-muted)" }} className="space-y-2 text-sm md:text-base">
+                  <li>About Us</li>
+                  <li>Blog</li>
+                  <li>Career</li>
+                </ul>
+              </div>
+
+              <div>
+                <h5 className="text-xl md:text-2xl font-semibold mb-2">Support</h5>
+                <ul style={{ color: "var(--dash-explore-footer-muted)" }} className="space-y-2 text-sm md:text-base">
+                  <li>Contact Us</li>
+                  <li>Return</li>
+                  <li>FAQ</li>
+                </ul>
+              </div>
+
+              <div>
+                <h5 className="text-xl md:text-2xl font-semibold mb-3">Get Updates</h5>
+                <div className="flex items-center gap-2 rounded-lg p-1" style={{ backgroundColor: "var(--dash-explore-input-bg)" }}>
+                  <input
+                    type="text"
+                    placeholder="Enter your email"
+                    style={{ color: "var(--dash-explore-input-text)" }}
+                    className="flex-1 bg-transparent px-3 py-2 text-sm md:text-base outline-none"
+                  />
+                  <button className="dash-gsap-hover px-4 py-2 rounded-md bg-white text-black text-sm font-semibold">
+                    Subscribe
+                  </button>
+                </div>
+
+                <div className="mt-4 flex items-center gap-2">
+                  {["mdi:instagram", "mdi:twitter", "mdi:facebook", "mdi:discord", "mdi:music-note"].map((icon) => (
+                    <button
+                      key={icon}
+                      className="dash-gsap-hover w-9 h-9 rounded-full border border-white/20 flex items-center justify-center"
+                    >
+                      <Icon icon={icon} width="18" height="18" />
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 pt-4 border-t border-white/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-sm">
+              <p style={{ color: "var(--dash-explore-footer-muted)" }}>©2024 Horizone. All rights reserved.</p>
+              <div className="flex items-center gap-4" style={{ color: "var(--dash-explore-footer-muted)" }}>
+                <button className="hover:text-white transition-colors">Privacy Policy</button>
+                <button className="hover:text-white transition-colors">Terms of Service</button>
+              </div>
+            </div>
+          </footer>
         </section>
       </div>
     </div>
