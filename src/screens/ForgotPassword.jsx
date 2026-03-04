@@ -17,14 +17,37 @@ const ForgotPassword = () => {
   const [error, setError] = useState("");
   const [toster, setToster] = useState({ message: "", type: "info" });
 
+  const postWithFallback = async (paths, payload) => {
+    let lastError;
+
+    for (const path of paths) {
+      try {
+        return await axios.post(`${API_BASE_URL}${path}`, payload, {
+          timeout: 15000,
+        });
+      } catch (err) {
+        lastError = err;
+        if (err.response?.status !== 404) {
+          throw err;
+        }
+      }
+    }
+
+    throw lastError;
+  };
+
   const handleSendOtp = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
     try {
-      const res = await axios.post(`${API_BASE_URL}/api/auth/forgot-password/send-otp`, {
-        email,
-      });
+      const res = await postWithFallback(
+        [
+          "/api/auth/forgot-password/send-otp",
+          "/api/user/forgot-password/send-otp",
+        ],
+        { email },
+      );
 
       if (res.data.success) {
         setOtpSent(true);
@@ -35,7 +58,12 @@ const ForgotPassword = () => {
         setToster({ message: errMsg, type: "error" });
       }
     } catch (err) {
-      const errMsg = err.response?.data?.error || "Failed to send OTP";
+      const errMsg =
+        err.code === "ECONNABORTED"
+          ? "Request timed out. Please try again."
+          : err.response?.status === 404
+            ? "Forgot password service is not available on server yet."
+            : err.response?.data?.error || "Failed to send OTP";
       setError(errMsg);
       setToster({ message: errMsg, type: "error" });
     } finally {
@@ -48,11 +76,17 @@ const ForgotPassword = () => {
     setLoading(true);
     setError("");
     try {
-      const res = await axios.post(`${API_BASE_URL}/api/auth/forgot-password/verify-otp`, {
-        email,
-        otp,
-        newPassword,
-      });
+      const res = await postWithFallback(
+        [
+          "/api/auth/forgot-password/verify-otp",
+          "/api/user/forgot-password/verify-otp",
+        ],
+        {
+          email,
+          otp,
+          newPassword,
+        },
+      );
 
       if (res.data.success) {
         setToster({ message: "Password reset successful", type: "success" });
@@ -63,7 +97,12 @@ const ForgotPassword = () => {
         setToster({ message: errMsg, type: "error" });
       }
     } catch (err) {
-      const errMsg = err.response?.data?.error || "OTP verification failed";
+      const errMsg =
+        err.code === "ECONNABORTED"
+          ? "Request timed out. Please try again."
+          : err.response?.status === 404
+            ? "Forgot password service is not available on server yet."
+            : err.response?.data?.error || "OTP verification failed";
       setError(errMsg);
       setToster({ message: errMsg, type: "error" });
     } finally {

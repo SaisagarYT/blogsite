@@ -168,9 +168,19 @@ const Login = () => {
   return (
     <>
       <Toster message={toster.message} type={toster.type} onClose={() => setToster({ message: "", type: "info" })} />
-      <div className="min-h-screen w-full flex items-center justify-center bg-white px-0 md:px-8">
+      <div className="min-h-screen w-full flex items-center justify-center px-0 md:px-8 relative overflow-hidden">
       <div
-        className="w-full md:w-[60em] max-w-full md:max-w-[95vw] min-h-screen md:min-h-[40em] flex flex-col md:flex-row rounded-none md:rounded-2xl shadow-none md:shadow-xl overflow-visible md:overflow-hidden bg-white md:bg-opacity-90"
+        className="absolute inset-0"
+        style={{
+          backgroundImage: `url(${bgImg})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          filter: "blur(10px)",
+          transform: "scale(1.06)",
+        }}
+      />
+      <div
+        className="w-full md:w-[60em] max-w-full md:max-w-[95vw] min-h-screen md:min-h-[40em] flex flex-col md:flex-row rounded-none md:rounded-2xl shadow-none md:shadow-xl overflow-visible md:overflow-hidden bg-white md:bg-opacity-90 relative z-10"
         style={{ height: "fit-content" }}>
         {/* Side image - hidden on mobile */}
         <div
@@ -192,6 +202,7 @@ const Login = () => {
               background: `url(${bgImg})`,
               backgroundSize: "cover",
               backgroundPosition: "center",
+              transform: "scaleForgotPassword.jsx:25  POST https://blogsite-sdql.onrender.com/api/auth/forgot-password/send-otp 404 (Not Found)(1.03)",
             }}></div>
         </div>
         {/* Login/Register form */}
