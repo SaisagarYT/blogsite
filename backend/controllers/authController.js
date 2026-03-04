@@ -14,14 +14,17 @@ const createMailer = () =>
     host: "smtp.gmail.com",
     port: 587,
     secure: false,
-    requireTLS: true,
     family: 4,
-    connectionTimeout: 15000,
-    greetingTimeout: 10000,
+    connectionTimeout: 20000,
+    greetingTimeout: 15000,
     socketTimeout: 20000,
     auth: {
       user: process.env.GMAIL_USER,
       pass: process.env.GMAIL_PASS,
+    },
+    tls: {
+      rejectUnauthorized: false,
+      family: 4,
     },
   });
 
