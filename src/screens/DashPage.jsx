@@ -22,6 +22,7 @@ const DashPage = () => {
   const [currentUser, setCurrentUser] = useState(localUser);
   const [profileImageError, setProfileImageError] = useState(false);
   const [activeSlide, setActiveSlide] = useState(0);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const dashboardRef = useRef(null);
   const cursorRef = useRef(null);
   const profileImage = currentUser?.picture || "";
@@ -337,7 +338,69 @@ const DashPage = () => {
                     <Icon icon="mdi:account-outline" width="20" height="20" />
                   )}
                 </button>
+
+                <button
+                  onClick={() => setMobileMenuOpen(true)}
+                  className="md:hidden dash-gsap-hover w-9 h-9 rounded-full border border-white/60 hover:bg-white/10 flex items-center justify-center"
+                  aria-label="Open mobile menu">
+                  <Icon icon="mdi:menu" width="20" height="20" />
+                </button>
               </div>
+            </div>
+
+            <div
+              className={`md:hidden fixed inset-0 z-[70] transition-opacity duration-300 ${
+                mobileMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+              }`}>
+              <button
+                className="absolute inset-0 bg-black/50"
+                onClick={() => setMobileMenuOpen(false)}
+                aria-label="Close mobile menu overlay"
+              />
+
+              <aside
+                className={`absolute top-3 right-3 h-[calc(100%-24px)] w-64 rounded-2xl border border-white/25 bg-black/85 backdrop-blur-md p-4 transition-transform duration-300 ${
+                  mobileMenuOpen ? "translate-x-0" : "translate-x-full"
+                }`}>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-white font-semibold">Menu</h3>
+                  <button
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="w-8 h-8 rounded-full border border-white/40 text-white flex items-center justify-center"
+                    aria-label="Close mobile menu">
+                    <Icon icon="mdi:close" width="18" height="18" />
+                  </button>
+                </div>
+
+                <nav className="flex flex-col gap-2">
+                  <button
+                    onClick={() => {
+                      navigate("/");
+                      setMobileMenuOpen(false);
+                    }}
+                    className="text-left text-white px-3 py-2 rounded-lg hover:bg-white/10">
+                    HOME
+                  </button>
+                  <button
+                    onClick={() => {
+                      navigate("/news");
+                      setMobileMenuOpen(false);
+                    }}
+                    className="text-left text-white px-3 py-2 rounded-lg hover:bg-white/10">
+                    TECHNEWS
+                  </button>
+                  <button
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-left text-white px-3 py-2 rounded-lg hover:bg-white/10">
+                    Explore
+                  </button>
+                  <button
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-left text-white px-3 py-2 rounded-lg hover:bg-white/10">
+                    Resources
+                  </button>
+                </nav>
+              </aside>
             </div>
 
             <div className="dash-hero-animate max-w-2xl text-white pb-2 md:pb-4">
