@@ -29,6 +29,22 @@
   --bg-yellow:#e4b700;
   --text-button:#333333;
   --text-border:#343434;
+  --dash-soft-surface: #f3f4f6;
+  --dash-soft-surface-hover: #e5e7eb;
+  --dash-soft-text: #111827;
+  --dash-overlay-card-bg: #ffffff;
+  --dash-overlay-card-text: #111111;
+  --dash-overlay-card-subtext: #4b5563;
+  --dash-accent-circle-bg: #d9f99d;
+  --dash-ad-bg: #d9f99d;
+  --dash-ad-chip-bg: #f8fafc;
+  --dash-ad-chip-text: #111827;
+  --dash-ad-divider: #1f293733;
+  --dash-tag-panel-bg: #d8b4fe;
+  --dash-tag-bg: #ecfccb;
+  --dash-tag-text: #111827;
+  --dash-btn-bg: #ffffffde;
+  --dash-btn-text: #111827;
 }
 
 body {
@@ -46,6 +62,22 @@ nav {
   --text-secondary: #98989A;
   --text-accent: #FFD11A;
   --bg-yellow:#3f3300;
+  --dash-soft-surface: #262626;
+  --dash-soft-surface-hover: #303030;
+  --dash-soft-text: #f9fafb;
+  --dash-overlay-card-bg: #171717;
+  --dash-overlay-card-text: #f3f4f6;
+  --dash-overlay-card-subtext: #d1d5db;
+  --dash-accent-circle-bg: #bef264;
+  --dash-ad-bg: #3f6212;
+  --dash-ad-chip-bg: #0f172acc;
+  --dash-ad-chip-text: #e5e7eb;
+  --dash-ad-divider: #d1d5db4d;
+  --dash-tag-panel-bg: #4c1d95;
+  --dash-tag-bg: #365314;
+  --dash-tag-text: #f8fafc;
+  --dash-btn-bg: #1f2937e6;
+  --dash-btn-text: #f9fafb;
 }
 
 

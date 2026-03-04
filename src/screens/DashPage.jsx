@@ -6,6 +6,7 @@ import API_BASE_URL from "../config/api";
 import bgImg1 from "../assets/alps-snow-mountains-3840x2160-25451.jpg";
 import bgImg2 from "../assets/os-x-lion-twilight-3840x2160-24060.jpg";
 import bgImg3 from "../assets/katerina-kerdi--YiJvbfNDqk-unsplash.jpg";
+import Webassets from "../assets/Assets";
 
 const DashPage = () => {
   const navigate = useNavigate();
@@ -59,21 +60,10 @@ const DashPage = () => {
   }, [localUser?._id, localUser?.email]);
 
 
-  // Logout handler
-  const handleLogout = async () => {
-    try {
-      await axios.post(`${API_BASE_URL}/api/user/logout`, {}, { withCredentials: true });
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
-    localStorage.removeItem("user");
-    navigate("/login");
-  };
-
   return (
-    <div className="h-screen w-screen bg-(--bg-background) text-(--text-main)">
-      <div className="w-full h-full bg-(--bg-secondary) border border-(--bg-primary) p-3 md:p-5 shadow-xl">
-        <div className="relative w-full h-full rounded-xl overflow-hidden border border-white/40">
+    <div className="min-h-screen w-screen bg-(--bg-background) text-(--text-main) overflow-x-hidden">
+      <div className="w-full bg-(--bg-secondary) border border-(--bg-primary) p-3 md:p-5 shadow-xl">
+        <div className="relative w-full h-[88vh] rounded-xl overflow-hidden border border-white/40">
           {slides.map((slide, index) => (
             <div
               key={slide}
@@ -130,11 +120,6 @@ const DashPage = () => {
                     <Icon icon="mdi:account-outline" width="20" height="20" />
                   )}
                 </button>
-                <button
-                  className="px-3 py-1.5 md:px-4 md:py-2 rounded-lg bg-(--text-accent) text-(--text-button) text-xs md:text-sm font-semibold"
-                  onClick={handleLogout}>
-                  Logout
-                </button>
               </div>
             </div>
 
@@ -163,6 +148,172 @@ const DashPage = () => {
             </div>
           </div>
         </div>
+
+        <section className="mt-6 md:mt-8 rounded-xl border border-(--bg-primary) bg-(--bg-secondary) p-3 md:p-5">
+          <div className="flex items-center justify-between gap-3 mb-4 md:mb-6">
+            <h2 className="text-2xl md:text-5xl font-bold italic tracking-tight">Best blog of the week ...</h2>
+            <button
+              style={{
+                backgroundColor: "var(--dash-soft-surface)",
+                color: "var(--dash-soft-text)",
+              }}
+              className="px-4 py-2 md:px-5 md:py-2.5 rounded-xl text-sm md:text-base font-medium flex items-center gap-2 transition-colors"
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = "var(--dash-soft-surface-hover)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "var(--dash-soft-surface)";
+              }}>
+              See all post
+              <Icon icon="mdi:arrow-right" width="18" height="18" />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-3 md:gap-4">
+            <article
+              className="xl:col-span-2 relative min-h-[360px] md:min-h-[560px] rounded-3xl overflow-hidden border border-black/10"
+              style={{
+                backgroundImage: `url(${bgImg1})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}>
+              <div className="absolute inset-0 bg-gradient-to-b from-black/15 via-black/10 to-black/65" />
+
+              <div className="absolute top-4 right-4 flex items-center gap-2 z-10">
+                <span
+                  style={{
+                    backgroundColor: "var(--dash-overlay-card-bg)",
+                    color: "var(--dash-overlay-card-text)",
+                  }}
+                  className="text-xs px-3 py-1 rounded-full">
+                  Jan 06,2024
+                </span>
+                <span className="text-xs bg-black/70 text-white px-3 py-1 rounded-full border border-white/20">Travel</span>
+              </div>
+
+              <div className="absolute bottom-4 md:bottom-6 left-4 md:left-6 right-4 flex items-end justify-between gap-3 z-10">
+                <div
+                  style={{ backgroundColor: "var(--dash-overlay-card-bg)" }}
+                  className="rounded-xl md:rounded-2xl px-4 py-3 md:px-5 md:py-4 max-w-[80%]">
+                  <span style={{ color: "var(--dash-overlay-card-subtext)" }} className="text-xs block mb-1">• Travel</span>
+                  <h3 style={{ color: "var(--dash-overlay-card-text)" }} className="text-3xl md:text-6xl leading-tight font-black italic">
+                    Get to your dream
+                    <br />
+                    now destinations with
+                    <br />
+                    TravelPro
+                  </h3>
+                </div>
+                <button
+                  style={{
+                    backgroundColor: "var(--dash-accent-circle-bg)",
+                    color: "var(--dash-overlay-card-text)",
+                  }}
+                  className="w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center shrink-0">
+                  <Icon icon="mdi:arrow-top-right" width="28" height="28" />
+                </button>
+              </div>
+            </article>
+
+            <div className="grid grid-rows-[1fr_1fr] gap-3 md:gap-4">
+              <article
+                style={{ backgroundColor: "var(--dash-ad-bg)" }}
+                className="rounded-3xl border border-black/10 p-4 md:p-5 relative overflow-hidden">
+                <div
+                  className="absolute inset-0 opacity-20"
+                  style={{
+                    backgroundImage: `url(${Webassets.lightSphere})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                  }}
+                />
+                <div className="relative z-10">
+                  <div className="flex items-start justify-between gap-2">
+                    <span
+                      style={{
+                        backgroundColor: "var(--dash-ad-chip-bg)",
+                        color: "var(--dash-ad-chip-text)",
+                      }}
+                      className="text-xs border border-black/20 rounded-full px-2.5 py-1">
+                      • ADS
+                    </span>
+                    <button
+                      style={{
+                        backgroundColor: "var(--dash-ad-chip-bg)",
+                        color: "var(--dash-ad-chip-text)",
+                      }}
+                      className="w-12 h-12 rounded-full flex items-center justify-center">
+                      <Icon icon="mdi:arrow-top-right" width="24" height="24" />
+                    </button>
+                  </div>
+                  <p style={{ color: "var(--dash-soft-text)" }} className="mt-3 text-sm italic">Become A Broadcast Member</p>
+                  <h3 style={{ color: "var(--dash-soft-text)" }} className="mt-2 text-3xl md:text-5xl font-black italic leading-tight">Real talk in a corporate world</h3>
+                  <div style={{ borderColor: "var(--dash-ad-divider)" }} className="mt-3 border-t" />
+                  <div style={{ borderColor: "var(--dash-ad-divider)" }} className="py-2.5 border-b flex justify-between items-center gap-2">
+                    <p className="text-base md:text-2xl font-semibold italic">How to work out in a limited space</p>
+                    <Icon icon="mdi:arrow-top-right" width="20" height="20" />
+                  </div>
+                  <div className="py-2.5 flex justify-between items-center gap-2">
+                    <p className="text-base md:text-2xl font-semibold italic">How to read golf green gran like a pro</p>
+                    <Icon icon="mdi:arrow-top-right" width="20" height="20" />
+                  </div>
+                </div>
+              </article>
+
+              <div className="grid grid-cols-2 gap-3 md:gap-4">
+                <article
+                  className="rounded-3xl border border-black/10 overflow-hidden relative min-h-[190px]"
+                  style={{
+                    backgroundImage: `url(${Webassets.image1})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                  }}>
+                  <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/20 to-black/75" />
+                  <div className="absolute top-3 left-3 text-xs bg-black/45 text-white border border-white/30 rounded-full px-2.5 py-1">• Gym</div>
+                  <div className="absolute bottom-3 left-3 right-3 text-white">
+                    <p className="text-xs text-white/90 mb-1">5 mins, 22 Jan 2024</p>
+                    <h4 className="text-base md:text-xl font-bold italic leading-tight">Athletic Training i soft and hard styles of training</h4>
+                  </div>
+                </article>
+
+                <article
+                  style={{ backgroundColor: "var(--dash-tag-panel-bg)" }}
+                  className="rounded-3xl border border-black/10 p-3 md:p-4 flex flex-col justify-between">
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      "Medical Knowledge",
+                      "Bodybuilding",
+                      "Life Style",
+                      "Diet",
+                      "Health Food",
+                      "Sickness",
+                      "Diseases",
+                    ].map((tag) => (
+                      <span
+                        key={tag}
+                        style={{
+                          backgroundColor: "var(--dash-tag-bg)",
+                          color: "var(--dash-tag-text)",
+                        }}
+                        className="text-xs px-3 py-1 rounded-full border border-black/10">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                  <button
+                    style={{
+                      backgroundColor: "var(--dash-btn-bg)",
+                      color: "var(--dash-btn-text)",
+                    }}
+                    className="mt-3 w-full rounded-xl text-sm md:text-base py-2.5 font-medium flex items-center justify-center gap-2">
+                    View All Categories
+                    <Icon icon="mdi:arrow-right" width="18" height="18" />
+                  </button>
+                </article>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
     </div>
   );
