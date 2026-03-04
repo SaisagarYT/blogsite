@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
 import axios from "axios";
 import API_BASE_URL from "../config/api";
-import bgImg from "../assets/katerina-kerdi--YiJvbfNDqk-unsplash.jpg";
+import bgImg1 from "../assets/alps-snow-mountains-3840x2160-25451.jpg";
+import bgImg2 from "../assets/os-x-lion-twilight-3840x2160-24060.jpg";
 
 const DashPage = () => {
   const navigate = useNavigate();
@@ -16,8 +17,18 @@ const DashPage = () => {
   })();
   const [currentUser, setCurrentUser] = useState(localUser);
   const [profileImageError, setProfileImageError] = useState(false);
+  const [activeSlide, setActiveSlide] = useState(0);
   const profileImage = currentUser?.picture || "";
   const effectiveProfileImage = profileImageError ? "" : profileImage;
+  const slides = [bgImg1, bgImg2];
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setActiveSlide((prev) => (prev + 1) % slides.length);
+    }, 5000);
+
+    return () => clearInterval(intervalId);
+  }, [slides.length]);
 
   useEffect(() => {
     const fetchCurrentUser = async () => {
@@ -61,13 +72,20 @@ const DashPage = () => {
   return (
     <div className="h-screen w-screen bg-(--bg-background) text-(--text-main)">
       <div className="w-full h-full bg-(--bg-secondary) border border-(--bg-primary) p-3 md:p-5 shadow-xl">
-        <div
-          className="relative w-full h-full rounded-xl overflow-hidden border border-white/40"
-          style={{
-            backgroundImage: `url(${bgImg})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}>
+        <div className="relative w-full h-full rounded-xl overflow-hidden border border-white/40">
+          {slides.map((slide, index) => (
+            <div
+              key={slide}
+              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+                index === activeSlide ? "opacity-100" : "opacity-0"
+              }`}
+              style={{
+                backgroundImage: `url(${slide})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            />
+          ))}
           <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-black/15 to-black/60" />
 
           <div className="relative z-10 p-3 md:p-5 h-full flex flex-col justify-between">
@@ -129,6 +147,18 @@ const DashPage = () => {
               <p className="mt-2 text-sm md:text-base text-white/90">
                 Explore your latest updates and continue your reading journey.
               </p>
+              <div className="flex items-center gap-2 mt-4">
+                {slides.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setActiveSlide(index)}
+                    aria-label={`Go to slide ${index + 1}`}
+                    className={`w-3 h-3 rounded-full border border-white/70 transition-all ${
+                      index === activeSlide ? "bg-white" : "bg-white/20"
+                    }`}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </div>
