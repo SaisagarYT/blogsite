@@ -5,6 +5,7 @@ import axios from "axios";
 import API_BASE_URL from "../config/api";
 import bgImg1 from "../assets/alps-snow-mountains-3840x2160-25451.jpg";
 import bgImg2 from "../assets/os-x-lion-twilight-3840x2160-24060.jpg";
+import bgImg3 from "../assets/katerina-kerdi--YiJvbfNDqk-unsplash.jpg";
 
 const DashPage = () => {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ const DashPage = () => {
   const [activeSlide, setActiveSlide] = useState(0);
   const profileImage = currentUser?.picture || "";
   const effectiveProfileImage = profileImageError ? "" : profileImage;
-  const slides = [bgImg1, bgImg2];
+  const slides = [bgImg1, bgImg2, bgImg3];
 
   useEffect(() => {
     const intervalId = setInterval(() => {
