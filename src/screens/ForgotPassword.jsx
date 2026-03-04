@@ -58,6 +58,7 @@ const ForgotPassword = () => {
         setToster({ message: errMsg, type: "error" });
       }
     } catch (err) {
+      console.error("Forgot password send OTP error:", err);
       const errMsg =
         err.code === "ECONNABORTED"
           ? "Request timed out. Please try again."
@@ -97,6 +98,7 @@ const ForgotPassword = () => {
         setToster({ message: errMsg, type: "error" });
       }
     } catch (err) {
+      console.error("Forgot password verify OTP error:", err);
       const errMsg =
         err.code === "ECONNABORTED"
           ? "Request timed out. Please try again."

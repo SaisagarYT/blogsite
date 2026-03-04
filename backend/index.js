@@ -2,8 +2,10 @@
 // Entry point for the backend server
 const express = require("express");
 const cors = require("cors");
+const dns = require("dns");
 
 require("dotenv").config();
+dns.setDefaultResultOrder("ipv4first");
 
 const app = express();
 app.use(express.json());
