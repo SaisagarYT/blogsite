@@ -1,4 +1,5 @@
 import { Icon } from "@iconify/react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import bgImg1 from "../assets/alps-snow-mountains-3840x2160-25451.jpg";
 import bgImg2 from "../assets/os-x-lion-twilight-3840x2160-24060.jpg";
@@ -7,6 +8,21 @@ import Webassets from "../assets/Assets";
 
 const TechNews = () => {
   const navigate = useNavigate();
+  const [categoriesOpen, setCategoriesOpen] = useState(false);
+  const [profileImageError, setProfileImageError] = useState(false);
+
+  const localUser = (() => {
+    try {
+      return JSON.parse(localStorage.getItem("user"));
+    } catch {
+      return null;
+    }
+  })();
+
+  const profileImage = localUser?.picture || "";
+  const effectiveProfileImage = profileImageError ? "" : profileImage;
+
+  const categoryItems = ["Coding", "System Design", "Interviews", "Jobs", "Dev Knowledge", "Career Growth"];
 
   const sidebarStories = [
     {
@@ -55,6 +71,66 @@ const TechNews = () => {
         }}
         className="w-full rounded-2xl border border-(--bg-primary) px-4 py-5 md:px-8 md:py-8 lg:px-10 lg:py-10 overflow-hidden"
       >
+        <div className="mb-5 md:mb-7 rounded-xl bg-black/25 backdrop-blur-md px-3 py-3 md:px-4 md:py-3">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+            <div className="flex items-center gap-2 md:gap-3 flex-wrap">
+              <div className="relative">
+                <button
+                  onClick={() => setCategoriesOpen((prev) => !prev)}
+                  className="px-3 py-2 rounded-lg text-xs md:text-sm bg-white/10 text-white flex items-center gap-1.5"
+                >
+                  Categories
+                  <Icon icon={categoriesOpen ? "mdi:chevron-up" : "mdi:chevron-down"} width="16" height="16" />
+                </button>
+
+                <div
+                  className={`absolute top-full left-0 mt-1 w-48 rounded-lg bg-black/90 text-white p-1 z-30 transition-all duration-300 ease-out origin-top ${
+                    categoriesOpen
+                      ? "opacity-100 translate-y-0 scale-100 pointer-events-auto"
+                      : "opacity-0 -translate-y-1 scale-95 pointer-events-none"
+                  }`}>
+                    {categoryItems.map((item) => (
+                      <button
+                        key={item}
+                        onClick={() => setCategoriesOpen(false)}
+                        className="w-full text-left px-3 py-2 rounded-md hover:bg-white/10 text-xs md:text-sm"
+                      >
+                        {item}
+                      </button>
+                    ))}
+                </div>
+              </div>
+
+              <button className="px-3 py-2 rounded-lg text-xs md:text-sm text-white/90 hover:bg-white/10">Discover</button>
+              <button className="px-3 py-2 rounded-lg text-xs md:text-sm text-white/90 hover:bg-white/10">Prepare</button>
+              <button className="px-3 py-2 rounded-lg text-xs md:text-sm text-white/90 hover:bg-white/10">Essentials</button>
+            </div>
+
+            <div className="flex items-center gap-2 w-full lg:w-auto">
+              <div className="flex items-center gap-2 bg-white/10 rounded-lg px-3 py-2 flex-1 lg:w-72">
+                <Icon icon="mdi:magnify" width="18" height="18" className="text-white/80" />
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  className="w-full bg-transparent text-white text-xs md:text-sm placeholder-white/60 outline-none"
+                />
+              </div>
+              <button className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-white/10 text-white flex items-center justify-center overflow-hidden">
+                {effectiveProfileImage ? (
+                  <img
+                    src={effectiveProfileImage}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                    onError={() => setProfileImageError(true)}
+                  />
+                ) : (
+                  <Icon icon="mdi:account" width="18" height="18" />
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+
         <div className="flex items-center justify-between gap-3">
           <h1
             style={{ color: "var(--tech-fashion-heading)" }}

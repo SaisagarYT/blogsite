@@ -1,6 +1,6 @@
 import gsap from "gsap";
 import { useEffect, useRef, useState } from "react";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import HomepageCategories from "../JSON/HomepageCategories.jsx";
 import Webassets from "../assets/Assets";
 import HomepageBlog from "../components/HomepageBlog.jsx";
@@ -14,6 +14,7 @@ import HomepagePersons from "../reusableComponents/HomepagePersons.jsx";
 import HomepageTestimonials from "../reusableComponents/HomepageTestimonials.jsx";
 console.log(HomepageCategories);
 const Homepage = () => {
+  const navigate = useNavigate();
   const [tab, setTab] = useState("All");
 
 
@@ -196,6 +197,17 @@ const Homepage = () => {
           date="October 12,2025"
           title="The Perfect Technique to Launch Rocket"
           description="Lorem ipsum dolor sit amet consectetur adipisicing elit.Quo repudiandae odio magni, magnam eius officiis at quaerat suscipit nemo dignissimos voluptate hic recusandae ea vero tenetur nobis est, a in?"
+          onClick={() => navigate("/blog/the-perfect-technique-to-launch-rocket", {
+            state: {
+              post: {
+                category: "Technology",
+                date: "October 12, 2025",
+                readTime: "2 min read",
+                title: "The Perfect Technique to Launch Rocket",
+                author: "Sagar Sylada",
+              },
+            },
+          })}
         />
         <HomepageBlog
           image={Webassets.person1}
@@ -204,6 +216,17 @@ const Homepage = () => {
           date="October 12,2025"
           title="The Perfect Technique to Launch Rocket"
           description="Lorem ipsum dolor sit amet consectetur adipisicing elit.Quo repudiandae odio magni, magnam eius officiis at quaerat suscipit nemo dignissimos voluptate hic recusandae ea vero tenetur nobis est, a in?"
+          onClick={() => navigate("/blog/the-perfect-technique-to-launch-rocket", {
+            state: {
+              post: {
+                category: "Technology",
+                date: "October 12, 2025",
+                readTime: "2 min read",
+                title: "The Perfect Technique to Launch Rocket",
+                author: "Sagar Sylada",
+              },
+            },
+          })}
         />
         <HomepageBlog
           image={Webassets.person1}
@@ -212,6 +235,17 @@ const Homepage = () => {
           date="October 12,2025"
           title="The Perfect Technique to Launch Rocket"
           description="Lorem ipsum dolor sit amet consectetur adipisicing elit.Quo repudiandae odio magni, magnam eius officiis at quaerat suscipit nemo dignissimos voluptate hic recusandae ea vero tenetur nobis est, a in?"
+          onClick={() => navigate("/blog/the-perfect-technique-to-launch-rocket", {
+            state: {
+              post: {
+                category: "Technology",
+                date: "October 12, 2025",
+                readTime: "2 min read",
+                title: "The Perfect Technique to Launch Rocket",
+                author: "Sagar Sylada",
+              },
+            },
+          })}
         />
         <HomepageBlog
           image={Webassets.person1}
@@ -220,6 +254,17 @@ const Homepage = () => {
           date="October 12,2025"
           title="The Perfect Technique to Launch Rocket"
           description="Lorem ipsum dolor sit amet consectetur adipisicing elit.Quo repudiandae odio magni, magnam eius officiis at quaerat suscipit nemo dignissimos voluptate hic recusandae ea vero tenetur nobis est, a in?"
+          onClick={() => navigate("/blog/the-perfect-technique-to-launch-rocket", {
+            state: {
+              post: {
+                category: "Technology",
+                date: "October 12, 2025",
+                readTime: "2 min read",
+                title: "The Perfect Technique to Launch Rocket",
+                author: "Sagar Sylada",
+              },
+            },
+          })}
         />
       </div>
       <div className="w-full mt-4 md:mt-0 bg-(--bg-primary) py-8 md:py-12 lg:py-20 px-4 md:px-8 lg:px-30 flex flex-col md:flex-row items-center gap-4 md:gap-6 lg:gap-10 justify-start">

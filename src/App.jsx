@@ -6,6 +6,7 @@ import Authentication from "./screens/Authentication";
 import DashPage from "./screens/DashPage";
 import Homepage from "./screens/Homepage";
 import TechNews from "./screens/TechNews";
+import BlogDetail from "./screens/BlogDetail";
 
 import Login from "./screens/Login";
 import OtpVerification from "./screens/OtpVerification";
@@ -26,6 +27,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Homepage />} />
         <Route path="/news" element={<TechNews />} />
+        <Route path="/blog/:slug" element={<BlogDetail />} />
         <Route path="/auth" element={<Authentication />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />

@@ -1,9 +1,9 @@
 import React from 'react'
 import Webassets from '../assets/Assets'
 
-const HomepageButton = ({text,icon}) => {
+const HomepageButton = ({text,icon,onClick}) => {
   return (
-    <button className='flex cursor-pointer py-2 px-3 border items-center bg-(--bg-yellow) border-(--text-secondary) border-dashed rounded-lg'>
+    <button onClick={onClick} className='flex cursor-pointer py-2 px-3 border items-center bg-(--bg-yellow) border-(--text-secondary) border-dashed rounded-lg'>
         {text}
         <img className='scale-30' src={icon} alt="" />
     </button>

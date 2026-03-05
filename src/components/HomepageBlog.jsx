@@ -2,9 +2,9 @@ import React from 'react'
 import HomepageButton from '../reusableComponents/HomepageButton'
 import Webassets from '../assets/Assets'
 
-const HomepageBlog = ({image,name,tag,date,title,description,likes,comments,shares}) => {
+const HomepageBlog = ({image,name,tag,date,title,description,likes,comments,shares,onClick}) => {
   return (
-    <section className='w-full border border-(--bg-primary) p-4 md:p-5 lg:p-6 flex flex-col items-start gap-3 md:gap-4 h-full'>
+    <section onClick={onClick} className='w-full border border-(--bg-primary) p-4 md:p-5 lg:p-6 flex flex-col items-start gap-3 md:gap-4 h-full cursor-pointer'>
         <div className='w-full flex gap-3 items-center'>
           <img src={image} alt={name} className='w-10 md:w-12 h-10 md:h-12 rounded-full object-cover' />
           <div className=''>
@@ -18,7 +18,14 @@ const HomepageBlog = ({image,name,tag,date,title,description,likes,comments,shar
           <p className='text-(--text-secondary) text-xs md:text-sm line-clamp-3'>{description}</p>
         </div>
         <div className='mt-2'>
-          <HomepageButton text="View Blog" icon={Webassets.arrowMark}/>
+          <HomepageButton
+            onClick={(event) => {
+              event.stopPropagation();
+              onClick?.();
+            }}
+            text="View Blog"
+            icon={Webassets.arrowMark}
+          />
         </div>
       </section>
   )
