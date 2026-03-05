@@ -111,6 +111,28 @@
   --dash-explore-footer-muted: #94a3b8;
   --dash-explore-input-bg: #111827;
   --dash-explore-input-text: #e5e7eb;
+  --instructor-shell-bg: #f8fafc;
+  --instructor-shell-border: #e5e7eb;
+  --instructor-sidebar-bg: #ffffff;
+  --instructor-chip-bg: #fef3c7;
+  --instructor-chip-text: #92400e;
+  --instructor-badge-bg: #e11d48;
+  --instructor-badge-text: #ffffff;
+  --instructor-avatar-bg: #65a30d;
+  --instructor-avatar-text: #ffffff;
+  --instructor-cta-bg: #eef2ff;
+  --instructor-button-bg: #4f46e5;
+  --instructor-button-text: #f8fafc;
+  --instructor-highlight-bg: #eef2ff;
+  --instructor-highlight-border: #c7d2fe;
+  --instructor-status-review: #f5d0fe;
+  --instructor-status-editing: #ddd6fe;
+  --instructor-status-revision: #fde68a;
+  --instructor-status-approved: #bbf7d0;
+  --instructor-status-text: #111827;
+  --instructor-project-1: #22c55e;
+  --instructor-project-2: #06b6d4;
+  --instructor-project-3: #a855f7;
 }
 
 body {
@@ -210,6 +232,221 @@ nav {
   --dash-explore-footer-muted: #94a3b8;
   --dash-explore-input-bg: #0f172a;
   --dash-explore-input-text: #e5e7eb;
+  --instructor-shell-bg: #0f1218;
+  --instructor-shell-border: #1f2937;
+  --instructor-sidebar-bg: #0b0f15;
+  --instructor-chip-bg: #3f3300;
+  --instructor-chip-text: #fef3c7;
+  --instructor-badge-bg: #be123c;
+  --instructor-badge-text: #fdf2f8;
+  --instructor-avatar-bg: #4d7c0f;
+  --instructor-avatar-text: #ecfccb;
+  --instructor-cta-bg: #1e1b4b;
+  --instructor-button-bg: #6366f1;
+  --instructor-button-text: #f8fafc;
+  --instructor-highlight-bg: #1e293b;
+  --instructor-highlight-border: #334155;
+  --instructor-status-review: #701a75;
+  --instructor-status-editing: #3730a3;
+  --instructor-status-revision: #854d0e;
+  --instructor-status-approved: #14532d;
+  --instructor-status-text: #f8fafc;
+  --instructor-project-1: #22c55e;
+  --instructor-project-2: #06b6d4;
+  --instructor-project-3: #a855f7;
+}
+
+.instructor-editorjs .ce-toolbar__plus,
+.instructor-editorjs .ce-toolbar__settings-btn,
+.instructor-editorjs .ce-conversion-toolbar,
+.instructor-editorjs .cdx-search-field,
+.instructor-editorjs .ce-popover,
+.instructor-editorjs .tc-popover,
+.instructor-editorjs .ce-inline-toolbar {
+  color: var(--text-main);
+  background: var(--bg-secondary);
+  border-color: var(--instructor-shell-border);
+}
+
+.instructor-editorjs .ce-block,
+.instructor-editorjs .ce-paragraph,
+.instructor-editorjs .ce-header,
+.instructor-editorjs .cdx-input,
+.instructor-editorjs .cdx-quote,
+.instructor-editorjs .cdx-list,
+.instructor-editorjs .tc-table {
+  color: var(--text-main);
+}
+
+.instructor-editorjs .ce-paragraph {
+  font-size: 0.98rem;
+  line-height: 1.7;
+  letter-spacing: 0.005em;
+}
+
+.instructor-editorjs .ce-header {
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.instructor-editorjs .ce-header[data-level="1"] {
+  font-size: 1.8rem;
+  line-height: 1.3;
+}
+
+.instructor-editorjs .ce-header[data-level="2"] {
+  font-size: 1.45rem;
+  line-height: 1.35;
+}
+
+.instructor-editorjs .ce-header[data-level="3"] {
+  font-size: 1.2rem;
+  line-height: 1.4;
+}
+
+.instructor-editorjs .ce-toolbar__plus:hover,
+.instructor-editorjs .ce-toolbar__settings-btn:hover,
+.instructor-editorjs .ce-popover-item:hover,
+.instructor-editorjs .ce-inline-toolbar__buttons button:hover {
+  background: var(--dash-soft-surface);
+}
+
+.instructor-editorjs .ce-popover-item {
+  border-radius: 0.5rem;
+}
+
+.instructor-editorjs .ce-popover-item,
+.instructor-editorjs .ce-popover-item__title,
+.instructor-editorjs .ce-popover-item__secondary-title,
+.instructor-editorjs .ce-popover-item__shortcut,
+.instructor-editorjs .ce-popover-item__icon {
+  color: var(--text-main);
+}
+
+.instructor-editorjs .ce-popover-item__icon {
+  background: var(--dash-soft-surface);
+  border: 1px solid var(--instructor-shell-border);
+}
+
+.instructor-editorjs .ce-popover-item:hover,
+.instructor-editorjs .ce-popover-item--focused {
+  background: var(--dash-soft-surface);
+}
+
+.instructor-editorjs .cdx-search-field,
+.instructor-editorjs .cdx-search-field__input {
+  color: var(--text-main);
+  background: var(--bg-secondary);
+}
+
+.instructor-editorjs .ce-code,
+.instructor-editorjs .ce-code__textarea {
+  color: var(--text-main);
+  background: var(--dash-soft-surface);
+  border: 1px solid var(--instructor-shell-border);
+}
+
+.instructor-editorjs .ce-code__textarea {
+  min-height: 2.75rem;
+  overflow: hidden;
+  resize: none;
+  line-height: 1.55;
+}
+
+.instructor-editorjs .ce-code__textarea::placeholder,
+.instructor-editorjs .cdx-search-field__input::placeholder {
+  color: var(--text-secondary);
+}
+
+.preview-lesson {
+  color: var(--text-main);
+}
+
+.preview-lesson p,
+.preview-lesson li,
+.preview-lesson td {
+  color: var(--text-main);
+}
+
+.instructor-editorjs .ce-block__content,
+.instructor-editorjs .ce-toolbar__content {
+  max-width: 100%;
+}
+
+.instructor-editorjs .cdx-block,
+.instructor-editorjs .ce-block {
+  padding: 0.1rem 0;
+}
+
+.ce-popover,
+.ce-popover__container,
+.ce-popover-item,
+.ce-popover-item__title,
+.ce-popover-item__secondary-title,
+.ce-popover-item__shortcut,
+.ce-popover-item__icon,
+.ce-popover-item svg,
+.ce-popover-item svg path,
+.cdx-search-field,
+.cdx-search-field__input {
+  color: var(--text-main) !important;
+}
+
+.ce-popover,
+.ce-popover__container,
+.cdx-search-field {
+  background: var(--bg-secondary) !important;
+  border-color: var(--instructor-shell-border) !important;
+}
+
+.ce-popover-item__icon {
+  background: var(--dash-soft-surface) !important;
+  border: 1px solid var(--instructor-shell-border) !important;
+}
+
+.ce-popover-item:hover,
+.ce-popover-item--focused,
+.ce-popover-item--active {
+  background: var(--dash-soft-surface) !important;
+}
+
+.cdx-search-field__input::placeholder {
+  color: var(--text-secondary) !important;
+}
+
+.ce-inline-toolbar,
+.ce-inline-toolbar__dropdown,
+.ce-conversion-toolbar,
+.ce-conversion-toolbar__actions,
+.ce-inline-toolbar .ce-popover,
+.ce-inline-toolbar .ce-popover__container {
+  background: var(--bg-secondary) !important;
+  border-color: var(--instructor-shell-border) !important;
+  color: var(--text-main) !important;
+  z-index: 80 !important;
+}
+
+.ce-inline-toolbar .ce-inline-tool,
+.ce-inline-toolbar .ce-inline-tool svg,
+.ce-inline-toolbar .ce-inline-tool svg path,
+.ce-inline-toolbar .ce-conversion-tool,
+.ce-inline-toolbar .ce-conversion-tool svg,
+.ce-inline-toolbar .ce-conversion-tool svg path {
+  color: var(--text-main) !important;
+  fill: var(--text-main) !important;
+}
+
+.ce-inline-toolbar .ce-inline-tool:hover,
+.ce-inline-toolbar .ce-inline-tool--active,
+.ce-inline-toolbar .ce-conversion-tool:hover,
+.ce-inline-toolbar .ce-conversion-tool--focused {
+  background: var(--dash-soft-surface) !important;
+}
+
+.instructor-editorjs mark,
+.preview-lesson mark {
+  background-color: color-mix(in srgb, var(--text-accent) 32%, transparent) !important;
+  color: var(--text-main) !important;
 }
 
 

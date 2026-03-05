@@ -1,0 +1,15 @@
+export const instructorSidebarNavigation = [
+  { label: "Dashboard", icon: "solar:home-2-outline", path: "/instructor/dashboard" },
+  { label: "My Courses", icon: "solar:folder-with-files-outline", path: "/instructor/courses" },
+  { label: "Course Builder", icon: "solar:pen-new-square-outline", path: "/instructor/courses/builder" },
+  { label: "Lessons", icon: "solar:notebook-outline", path: "/instructor/lessons/builder" },
+  { label: "Students", icon: "solar:users-group-rounded-outline" },
+  { label: "Assignments", icon: "solar:checklist-minimalistic-outline" },
+  { label: "Articles", icon: "solar:document-text-outline" },
+  { label: "Community", icon: "solar:chat-round-dots-outline" },
+  { label: "Messages", icon: "solar:chat-round-outline" },
+  { label: "Analytics", icon: "solar:graph-up-outline" },
+  { label: "Revenue", icon: "solar:dollar-minimalistic-outline" },
+  { label: "Media Library", icon: "solar:gallery-wide-outline" },
+  { label: "Settings", icon: "solar:settings-outline" },
+];
