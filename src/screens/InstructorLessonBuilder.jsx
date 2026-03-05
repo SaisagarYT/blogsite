@@ -10,7 +10,9 @@ import Checklist from "@editorjs/checklist";
 import Delimiter from "@editorjs/delimiter";
 import Underline from "@editorjs/underline";
 import ColorPlugin from "editorjs-text-color-plugin";
+import { useSearchParams } from "react-router-dom";
 import InstructorLayout from "../components/instructor/InstructorLayout";
+import { getCourseBuilderApi, getLessonApi, saveLessonContentApi } from "../services/courseApi";
 
 const initialEditorData = {
   blocks: [
@@ -107,9 +109,24 @@ const syncEditorInlineTextColor = (rootElement) => {
 };
 
 const InstructorLessonBuilder = () => {
+  const [searchParams] = useSearchParams();
+  const courseId = searchParams.get("courseId");
+  const moduleId = searchParams.get("moduleId");
+  const lessonId = searchParams.get("lessonId");
+
   const editorRef = useRef(null);
   const [editorOutput, setEditorOutput] = useState(initialEditorData);
   const [saveState, setSaveState] = useState("Not saved");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [moduleOptions, setModuleOptions] = useState([]);
+  const [lessonForm, setLessonForm] = useState({
+    title: "",
+    slug: "",
+    lesson_type: "article",
+    reading_time: "",
+    module_id: moduleId || "",
+  });
 
   useEffect(() => {
     if (editorRef.current) {
@@ -303,14 +320,83 @@ const InstructorLessonBuilder = () => {
     };
   }, []);
 
-  const handleSave = async (mode) => {
-    if (!editorRef.current) {
+  useEffect(() => {
+    if (!courseId || !moduleId || !lessonId) {
+      setError("Missing courseId/moduleId/lessonId in URL");
       return;
     }
 
-    const saved = await editorRef.current.save();
-    setEditorOutput(saved);
-    setSaveState(mode === "draft" ? "Draft saved" : "Lesson published");
+    let cancelled = false;
+
+    const loadData = async () => {
+      setLoading(true);
+      setError("");
+      try {
+        const [builderData, lessonData] = await Promise.all([
+          getCourseBuilderApi(courseId),
+          getLessonApi(courseId, moduleId, lessonId),
+        ]);
+
+        if (cancelled) return;
+
+        setModuleOptions(builderData?.module_structure || []);
+
+        const lesson = lessonData?.lesson;
+        if (lesson) {
+          setLessonForm({
+            title: lesson.title || "",
+            slug: lesson.slug || "",
+            lesson_type: lesson.lesson_type || "article",
+            reading_time: lesson.reading_time || "",
+            module_id: moduleId,
+          });
+
+          const incomingEditorData = lesson.editor_data?.blocks
+            ? lesson.editor_data
+            : { time: Date.now(), version: "2.29.0", blocks: [] };
+
+          setEditorOutput(incomingEditorData);
+          if (editorRef.current) {
+            await editorRef.current.render(incomingEditorData);
+          }
+        }
+      } catch (requestError) {
+        if (cancelled) return;
+        setError(requestError?.response?.data?.error || "Failed to load lesson data");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    loadData();
+    return () => {
+      cancelled = true;
+    };
+  }, [courseId, moduleId, lessonId]);
+
+  const handleSave = async (mode) => {
+    if (!editorRef.current || !courseId || !moduleId || !lessonId) {
+      return;
+    }
+
+    try {
+      const saved = await editorRef.current.save();
+      setEditorOutput(saved);
+
+      await saveLessonContentApi(courseId, moduleId, lessonId, {
+        title: lessonForm.title,
+        slug: lessonForm.slug,
+        lesson_type: lessonForm.lesson_type,
+        reading_time: lessonForm.reading_time,
+        status: mode === "draft" ? "draft" : "published",
+        editor_data: saved,
+      });
+
+      setSaveState(mode === "draft" ? "Draft saved" : "Lesson published");
+      setError("");
+    } catch (requestError) {
+      setError(requestError?.response?.data?.error || "Failed to save lesson");
+    }
   };
 
   return (
@@ -318,11 +404,22 @@ const InstructorLessonBuilder = () => {
       pageTitle="Lesson Builder Page"
       pageDescription="Create rich lesson content with structured metadata, editor blocks, and instant preview."
     >
+      {error ? <p className="mb-3 text-sm text-(--instructor-badge-bg)">{error}</p> : null}
+      {loading ? (
+        <div className="mb-3 rounded-xl border border-(--instructor-shell-border) bg-(--bg-secondary) p-3 text-sm text-(--text-secondary)">
+          Loading lesson...
+        </div>
+      ) : null}
       <section className="grid grid-cols-1 gap-4 xl:grid-cols-[1.3fr_1fr]">
         <div className="space-y-4">
           <article className="rounded-2xl border border-(--instructor-shell-border) bg-(--bg-secondary) p-4 sm:p-5">
             <h3 className="mb-3 text-base font-semibold">Lesson Title Input</h3>
-            <input className="w-full rounded-xl border border-(--instructor-shell-border) bg-(--bg-background) px-3 py-2.5 text-sm outline-none" placeholder="Write your lesson title" />
+            <input
+              value={lessonForm.title}
+              onChange={(event) => setLessonForm((previous) => ({ ...previous, title: event.target.value }))}
+              className="w-full rounded-xl border border-(--instructor-shell-border) bg-(--bg-background) px-3 py-2.5 text-sm outline-none"
+              placeholder="Write your lesson title"
+            />
           </article>
 
           <article className="rounded-2xl border border-(--instructor-shell-border) bg-(--bg-secondary) p-4 sm:p-5">
@@ -330,26 +427,44 @@ const InstructorLessonBuilder = () => {
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div>
                 <label className="mb-1 block text-xs text-(--text-secondary)">Lesson Slug</label>
-                <input className="w-full rounded-xl border border-(--instructor-shell-border) bg-(--bg-background) px-3 py-2 text-sm outline-none" placeholder="intro-to-html" />
+                <input
+                  value={lessonForm.slug}
+                  onChange={(event) => setLessonForm((previous) => ({ ...previous, slug: event.target.value }))}
+                  className="w-full rounded-xl border border-(--instructor-shell-border) bg-(--bg-background) px-3 py-2 text-sm outline-none"
+                  placeholder="intro-to-html"
+                />
               </div>
               <div>
                 <label className="mb-1 block text-xs text-(--text-secondary)">Lesson Type</label>
-                <select className="w-full rounded-xl border border-(--instructor-shell-border) bg-(--bg-background) px-3 py-2 text-sm outline-none">
-                  <option>Article</option>
-                  <option>Video + Article</option>
-                  <option>Practice</option>
+                <select
+                  value={lessonForm.lesson_type}
+                  onChange={(event) => setLessonForm((previous) => ({ ...previous, lesson_type: event.target.value }))}
+                  className="w-full rounded-xl border border-(--instructor-shell-border) bg-(--bg-background) px-3 py-2 text-sm outline-none"
+                >
+                  <option value="article">Article</option>
+                  <option value="video_article">Video + Article</option>
+                  <option value="practice">Practice</option>
                 </select>
               </div>
               <div>
                 <label className="mb-1 block text-xs text-(--text-secondary)">Reading Time</label>
-                <input className="w-full rounded-xl border border-(--instructor-shell-border) bg-(--bg-background) px-3 py-2 text-sm outline-none" placeholder="8 min" />
+                <input
+                  value={lessonForm.reading_time}
+                  onChange={(event) => setLessonForm((previous) => ({ ...previous, reading_time: event.target.value }))}
+                  className="w-full rounded-xl border border-(--instructor-shell-border) bg-(--bg-background) px-3 py-2 text-sm outline-none"
+                  placeholder="8 min"
+                />
               </div>
               <div>
                 <label className="mb-1 block text-xs text-(--text-secondary)">Module Selector</label>
-                <select className="w-full rounded-xl border border-(--instructor-shell-border) bg-(--bg-background) px-3 py-2 text-sm outline-none">
-                  <option>HTML Fundamentals</option>
-                  <option>CSS Basics</option>
-                  <option>JavaScript Essentials</option>
+                <select
+                  value={lessonForm.module_id}
+                  disabled
+                  className="w-full rounded-xl border border-(--instructor-shell-border) bg-(--bg-background) px-3 py-2 text-sm outline-none disabled:opacity-70"
+                >
+                  {moduleOptions.map((moduleOption) => (
+                    <option key={moduleOption._id} value={moduleOption._id}>{moduleOption.name}</option>
+                  ))}
                 </select>
               </div>
             </div>
