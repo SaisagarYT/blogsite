@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 const tocItems = [
@@ -38,6 +38,7 @@ const BlogDetail = () => {
   const location = useLocation();
   const post = location.state?.post;
   const [activeSection, setActiveSection] = useState("introduction");
+  const [mobileTocOpen, setMobileTocOpen] = useState(false);
   const [expandedFolders, setExpandedFolders] = useState(() =>
     tocItems.reduce((acc, item) => {
       acc[item.id] = true;
@@ -59,16 +60,21 @@ const BlogDetail = () => {
     [post, slug],
   );
 
-  const scrollToSection = (id) => {
+  const scrollToSection = useCallback((id, updateHash = true) => {
     const element = document.getElementById(id);
     if (!element) return;
 
+    if (updateHash) {
+      navigate(`${location.pathname}#${id}`, { replace: true });
+    }
+
     const headerHeight = headerRef.current?.offsetHeight || 0;
-    const targetY = element.getBoundingClientRect().top + window.scrollY - headerHeight - 10;
-    window.scrollTo({ top: Math.max(targetY, 0), behavior: "smooth" });
-    window.history.replaceState(null, "", `#${id}`);
+    element.scrollIntoView({ behavior: "smooth", block: "start" });
+    window.setTimeout(() => {
+      window.scrollBy({ top: -(headerHeight + 10), behavior: "smooth" });
+    }, 120);
     setActiveSection(id);
-  };
+  }, [location.pathname, navigate]);
 
   const toggleFolder = (id) => {
     setExpandedFolders((prev) => ({
@@ -108,6 +114,17 @@ const BlogDetail = () => {
     return () => observers.forEach((observer) => observer.disconnect());
   }, []);
 
+  useEffect(() => {
+    const hashId = decodeURIComponent(location.hash?.replace("#", "") || "");
+    if (!hashId) return;
+
+    const frame = requestAnimationFrame(() => {
+      scrollToSection(hashId, false);
+    });
+
+    return () => cancelAnimationFrame(frame);
+  }, [location.hash, scrollToSection]);
+
   return (
     <div className="min-h-screen w-full bg-(--bg-background) text-(--text-main)">
       <header ref={headerRef} className="sticky top-0 z-40 border-b border-(--bg-primary) bg-(--bg-secondary)">
@@ -119,6 +136,13 @@ const BlogDetail = () => {
               className="h-9 w-9 rounded-lg border border-(--bg-primary) flex items-center justify-center"
             >
               <Icon icon="mdi:arrow-left" width="18" height="18" />
+            </button>
+            <button
+              onClick={() => setMobileTocOpen(true)}
+              aria-label="Open table of contents"
+              className="lg:hidden h-9 w-9 rounded-lg border border-(--bg-primary) flex items-center justify-center"
+            >
+              <Icon icon="mdi:file-tree-outline" width="18" height="18" />
             </button>
           </div>
 
@@ -132,6 +156,120 @@ const BlogDetail = () => {
           </button>
         </div>
       </header>
+
+      <div
+        className={`lg:hidden fixed inset-0 z-50 transition-opacity duration-300 ${
+          mobileTocOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        }`}
+      >
+        <button
+          onClick={() => setMobileTocOpen(false)}
+          className="absolute inset-0 bg-black/45"
+          aria-label="Close table of contents overlay"
+        />
+
+        <aside
+          className={`absolute left-0 top-0 h-full w-[86%] max-w-[340px] bg-(--bg-secondary) border-r border-(--bg-primary) p-4 overflow-y-auto transition-transform duration-300 ${
+            mobileTocOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+        >
+          <div className="flex items-center justify-between">
+            <h2 className="text-xs tracking-wide text-(--text-secondary) uppercase">Tab of contents</h2>
+            <button
+              onClick={() => setMobileTocOpen(false)}
+              aria-label="Close table of contents"
+              className="h-8 w-8 rounded-lg border border-(--bg-primary) flex items-center justify-center"
+            >
+              <Icon icon="mdi:close" width="16" height="16" />
+            </button>
+          </div>
+
+          <div className="mt-3">
+            <div className="flex items-center gap-2 text-sm font-semibold text-(--text-main)">
+              <Icon icon="mdi:folder-open-outline" width="18" height="18" />
+              Content Tree
+            </div>
+
+            <ul className="mt-3 ml-1 border-l border-(--bg-primary) pl-2 space-y-2">
+              {tocItems.map((item) => {
+                const activeRow = getFolderActiveRow(item);
+
+                return (
+                  <li key={`${item.id}-mobile`} className="relative pl-3">
+                    <span className="absolute left-0 top-4 h-px w-2 bg-(--bg-primary)" />
+                    <span className="absolute left-0 top-1 bottom-1 w-[2px] bg-(--bg-primary)" />
+                    {activeRow >= 0 && (
+                      <span
+                        className="absolute left-[-1px] top-1 w-[4px] h-8 rounded-full bg-(--text-accent) transition-transform duration-300"
+                        style={{ transform: `translateY(${activeRow * 32}px)` }}
+                      />
+                    )}
+
+                    <div className="rounded-md px-1.5 py-1 transition-colors">
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={() => toggleFolder(item.id)}
+                          aria-label={`Toggle ${item.title}`}
+                          className="w-6 h-6 rounded-md hover:bg-(--bg-background) flex items-center justify-center"
+                        >
+                          <Icon
+                            icon={expandedFolders[item.id] ? "mdi:chevron-down" : "mdi:chevron-right"}
+                            width="16"
+                            height="16"
+                          />
+                        </button>
+
+                        <button
+                          onClick={() => {
+                            scrollToSection(item.id, true);
+                            setMobileTocOpen(false);
+                          }}
+                          className={`h-8 flex items-center gap-2 text-sm text-left flex-1 rounded-md px-1.5 ${
+                            activeSection === item.id
+                              ? "text-(--text-main) font-semibold"
+                              : "text-(--text-secondary) hover:text-(--text-main)"
+                          }`}
+                        >
+                          <Icon
+                            icon={expandedFolders[item.id] ? "mdi:folder-open-outline" : "mdi:folder-outline"}
+                            width="16"
+                            height="16"
+                          />
+                          {item.title}
+                        </button>
+                      </div>
+
+                      {expandedFolders[item.id] && (
+                        <ul className="mt-1 ml-6 border-l border-(--bg-primary) pl-2 space-y-1">
+                          {item.children.map((child) => (
+                            <li key={`${child.id}-mobile`} className="relative pl-3">
+                              <span className="absolute left-0 top-3.5 h-px w-2 bg-(--bg-primary)" />
+                              <button
+                                onClick={() => {
+                                  scrollToSection(child.id, true);
+                                  setMobileTocOpen(false);
+                                }}
+                                className={`h-8 w-full text-left text-sm px-1.5 rounded-md transition-colors flex items-center gap-2 ${
+                                  activeSection === child.id
+                                    ? "text-(--text-main) font-semibold"
+                                    : "text-(--text-secondary) hover:text-(--text-main)"
+                                }`}
+                              >
+                                <Icon icon="mdi:file-document-outline" width="15" height="15" />
+                                {child.title}
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </aside>
+      </div>
 
       <div className="mx-auto w-full max-w-[1500px] px-3 md:px-5 py-4 md:py-6 grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-4 md:gap-6">
         <aside className="hidden lg:block sticky top-24 h-[calc(100vh-130px)] rounded-2xl border border-(--bg-primary) bg-(--bg-secondary) p-4 overflow-y-auto">
@@ -172,7 +310,7 @@ const BlogDetail = () => {
                         </button>
 
                         <button
-                          onClick={() => scrollToSection(item.id)}
+                          onClick={() => scrollToSection(item.id, true)}
                           className={`h-8 flex items-center gap-2 text-sm text-left flex-1 rounded-md px-1.5 ${
                             activeSection === item.id
                               ? "text-(--text-main) font-semibold"
@@ -194,7 +332,7 @@ const BlogDetail = () => {
                             <li key={child.id} className="relative pl-3">
                               <span className="absolute left-0 top-3.5 h-px w-2 bg-(--bg-primary)" />
                               <button
-                                onClick={() => scrollToSection(child.id)}
+                                onClick={() => scrollToSection(child.id, true)}
                                 className={`h-8 w-full text-left text-sm px-1.5 rounded-md transition-colors flex items-center gap-2 ${
                                   activeSection === child.id
                                     ? "text-(--text-main) font-semibold"
@@ -217,25 +355,6 @@ const BlogDetail = () => {
         </aside>
 
         <main className="min-w-0">
-          <div className="md:hidden mb-4 overflow-x-auto pb-1">
-            <div className="flex gap-2 min-w-max">
-              {flatTocIds.map((id) => {
-                const label = id.replaceAll("-", " ");
-                return (
-                  <button
-                    key={id}
-                    onClick={() => scrollToSection(id)}
-                    className={`px-3 py-1.5 text-xs rounded-full border border-(--bg-primary) whitespace-nowrap ${
-                      activeSection === id ? "bg-(--text-accent) text-(--text-button)" : "bg-(--bg-secondary)"
-                    }`}
-                  >
-                    {label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
           <article className="rounded-2xl bg-(--bg-secondary) p-4 md:p-8 lg:p-10">
             <h1 className="text-3xl md:text-5xl font-bold leading-tight">{blogMeta.title}</h1>
             <div className="mt-3 flex flex-wrap items-center gap-2 text-xs md:text-sm">
