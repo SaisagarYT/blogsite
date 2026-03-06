@@ -396,6 +396,30 @@ exports.getArticles = async (req, res) => {
   return res.json({ success: true, articles });
 };
 
+exports.getDashboardBlogs = async (req, res) => {
+  try {
+    const { limit = 12, status = "published" } = req.query;
+    const limitNumber = Math.max(1, Math.min(50, Number(limit) || 12));
+
+    const query = {
+      content_type: { $in: ["blog", "course_article"] },
+    };
+
+    if (String(status).toLowerCase() !== "all") {
+      query.status = status;
+    }
+
+    const articles = await Article.find(query)
+      .sort({ published_at: -1, createdAt: -1 })
+      .limit(limitNumber)
+      .populate("author_id", "_id email username picture");
+
+    return res.json({ success: true, blogs: articles });
+  } catch (error) {
+    return res.status(500).json({ success: false, error: error.message || "Failed to load dashboard blogs" });
+  }
+};
+
 exports.getArticleById = async (req, res) => {
   const { id } = req.params;
   if (!isObjectId(id)) return res.status(400).json({ success: false, error: "Invalid id" });

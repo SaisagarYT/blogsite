@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
 import axios from "axios";
@@ -23,95 +23,45 @@ const DashPage = () => {
   const [profileImageError, setProfileImageError] = useState(false);
   const [activeSlide, setActiveSlide] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [blogPosts, setBlogPosts] = useState([]);
+  const [blogLoading, setBlogLoading] = useState(false);
+  const [blogError, setBlogError] = useState("");
+  const [selectedBlogCategory, setSelectedBlogCategory] = useState("All");
   const dashboardRef = useRef(null);
   const cursorRef = useRef(null);
   const profileImage = currentUser?.picture || "";
   const effectiveProfileImage = profileImageError ? "" : profileImage;
   const slides = [bgImg1, bgImg2, bgImg3];
-  const blogCategories = ["All", "Destination", "Culinary", "Lifestyle", "Tips & Hacks"];
-  const blogPosts = [
-    {
-      image: bgImg1,
-      category: "Destination",
-      date: "30 Jan 2024",
-      readTime: "10 mins read",
-      title: "Unveiling the Secrets Beyond the Tourist Trails",
-      description: "Dive into the local culture, discover hidden spots, and experience authentic destination charm.",
-      author: "Seraphina Isabella",
-    },
-    {
-      image: Webassets.image1,
-      category: "Lifestyle",
-      date: "29 Jan 2024",
-      readTime: "5 mins read",
-      title: "A Fashionista's Guide to Wanderlust",
-      description: "Explore the intersection of fashion and travel as we delve into effortless style for globe-trotters.",
-      author: "Maximilian Bartholomew",
-    },
-    {
-      image: Webassets.image2,
-      category: "Tips & Hacks",
-      date: "26 Jan 2024",
-      readTime: "15 mins read",
-      title: "Top 5 Apps and Gadgets That Will Transform Your Journeys",
-      description: "Uncover must-have tools and apps to make every trip smoother, safer, and more productive.",
-      author: "Anastasia Evangeline",
-    },
-    {
-      image: bgImg2,
-      category: "Culinary",
-      date: "24 Jan 2024",
-      readTime: "10 mins read",
-      title: "Savoring Mosaic Resto Gastronomic Delights",
-      description: "From street food to fine dining, uncover remarkable culinary gems and local specialties.",
-      author: "Nathaniel Reginald",
-    },
-    {
-      image: bgImg3,
-      category: "Destination",
-      date: "20 Jan 2024",
-      readTime: "8 mins read",
-      title: "Journey Through Time",
-      description: "Wander through ancient streets and iconic landmarks while immersing yourself in timeless culture.",
-      author: "Percival Thaddeus",
-    },
-    {
-      image: bgImg1,
-      category: "Culinary",
-      date: "18 Jan 2024",
-      readTime: "6 mins read",
-      title: "Experiencing Sustainable Culinary Tourism",
-      description: "Join us on a sustainable culinary voyage spotlighting farm-to-table destinations.",
-      author: "Sebastian Montgomery",
-    },
-    {
-      image: bgImg2,
-      category: "Lifestyle",
-      date: "17 Jan 2024",
-      readTime: "5 mins read",
-      title: "Navigating the Traveler's Lifestyle",
-      description: "Embrace a balanced travel life and keep your goals moving while exploring the world.",
-      author: "Arabella Serenity",
-    },
-    {
-      image: Webassets.image2,
-      category: "Tips & Hacks",
-      date: "12 Jan 2024",
-      readTime: "8 mins read",
-      title: "10 Essential Packing Hacks for Stress-Free Travel",
-      description: "Discover packing methods that reduce stress and save space while staying organized.",
-      author: "Benjamin Augustus",
-    },
-    {
-      image: bgImg3,
-      category: "Destination",
-      date: "10 Jan 2024",
-      readTime: "10 mins read",
-      title: "Adrenaline-Pumping Adventures",
-      description: "Explore awe-inspiring experiences and thrilling routes for adventure-seeking travelers.",
-      author: "Catalista Gwendolyn",
-    },
-  ];
+
+  const formatArticleDate = (value) => {
+    if (!value) return "-";
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) return "-";
+    return parsed.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+  };
+
+  const mapContentTypeToCategory = (type = "") => {
+    const normalized = String(type || "").trim().toLowerCase();
+    if (normalized === "course_article") return "Course Article";
+    if (normalized === "news") return "News";
+    if (normalized === "tutorial") return "Tutorial";
+    if (normalized === "blog") return "Blog";
+    return "Other";
+  };
+
+  const blogCategories = useMemo(() => {
+    const derived = [...new Set(blogPosts.map((item) => item.category).filter(Boolean))];
+    return ["All", ...derived];
+  }, [blogPosts]);
+
+  const filteredBlogPosts = useMemo(() => {
+    if (selectedBlogCategory === "All") return blogPosts;
+    return blogPosts.filter((post) => post.category === selectedBlogCategory);
+  }, [blogPosts, selectedBlogCategory]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -147,6 +97,55 @@ const DashPage = () => {
 
     fetchCurrentUser();
   }, [localUser?._id, localUser?.email]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadDashboardBlogs = async () => {
+      setBlogLoading(true);
+      setBlogError("");
+
+      try {
+        const res = await axios.get(`${API_BASE_URL}/api/content/dashboard/blogs`, {
+          params: { limit: 12, status: "all" },
+          withCredentials: true,
+        });
+
+        if (cancelled) return;
+        const mapped = (res.data?.blogs || []).map((article) => ({
+          id: article._id,
+          image: article.cover_image || bgImg1,
+          category: mapContentTypeToCategory(article.content_type),
+          date: formatArticleDate(article.published_at || article.createdAt),
+          readTime: article.reading_time || "-",
+          title: article.title || "Untitled",
+          description: article.excerpt || "No description available.",
+          author: article?.author_id?.username || currentUser?.username || "Instructor",
+          authorImage: article?.author_id?.picture || Webassets.person1,
+          slug:
+            article.slug ||
+            String(article.title || "")
+              .toLowerCase()
+              .replace(/[^a-z0-9]+/g, "-")
+              .replace(/^-|-$/g, ""),
+        }));
+
+        setBlogPosts(mapped);
+      } catch (error) {
+        if (cancelled) return;
+        setBlogError(error?.response?.data?.error || "Failed to load blogs");
+      } finally {
+        if (!cancelled) {
+          setBlogLoading(false);
+        }
+      }
+    };
+
+    loadDashboardBlogs();
+    return () => {
+      cancelled = true;
+    };
+  }, [currentUser?.username]);
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -769,12 +768,19 @@ const DashPage = () => {
 
           <div className="mt-4 md:mt-5 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
             <div className="flex flex-wrap gap-2">
-              {blogCategories.map((category, index) => (
+              {blogCategories.map((category) => (
                 <button
                   key={category}
+                  onClick={() => setSelectedBlogCategory(category)}
                   style={{
-                    backgroundColor: index === 0 ? "var(--dash-blog-pill-active-bg)" : "var(--dash-blog-pill-bg)",
-                    color: index === 0 ? "var(--dash-blog-pill-active-text)" : "var(--dash-blog-pill-text)",
+                    backgroundColor:
+                      selectedBlogCategory === category
+                        ? "var(--dash-blog-pill-active-bg)"
+                        : "var(--dash-blog-pill-bg)",
+                    color:
+                      selectedBlogCategory === category
+                        ? "var(--dash-blog-pill-active-text)"
+                        : "var(--dash-blog-pill-text)",
                   }}
                   className="dash-gsap-hover px-3 py-1.5 rounded-lg text-xs md:text-sm font-medium"
                 >
@@ -793,11 +799,21 @@ const DashPage = () => {
             </button>
           </div>
 
+          {blogError ? <p className="mt-3 text-xs md:text-sm text-(--instructor-badge-bg)">{blogError}</p> : null}
+
+          {blogLoading ? (
+            <div className="mt-4 rounded-xl border border-(--bg-primary) p-4 text-sm text-(--text-secondary)">Loading your blogs...</div>
+          ) : null}
+
+          {!blogLoading && !blogError && filteredBlogPosts.length === 0 ? (
+            <div className="mt-4 rounded-xl border border-(--bg-primary) p-4 text-sm text-(--text-secondary)">No instructor-created blogs found yet.</div>
+          ) : null}
+
           <div className="dash-stagger mt-4 md:mt-5 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 md:gap-4">
-            {blogPosts.map((post, index) => (
+            {filteredBlogPosts.map((post, index) => (
               <article
                 key={`${post.title}-${index}`}
-                onClick={() => navigate(`/blog/${encodeURIComponent(post.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""))}`, {
+                onClick={() => navigate(`/blog/${encodeURIComponent(post.slug)}`, {
                   state: { post },
                 })}
                 style={{
@@ -830,7 +846,7 @@ const DashPage = () => {
                 </p>
 
                 <div className="mt-3 pt-2 border-t border-(--bg-primary) flex items-center gap-2">
-                  <img src={Webassets.person1} alt={post.author} className="w-6 h-6 rounded-full object-cover" />
+                  <img src={post.authorImage || Webassets.person1} alt={post.author} className="w-6 h-6 rounded-full object-cover" />
                   <p style={{ color: "var(--dash-blog-author)" }} className="text-xs md:text-sm font-medium">
                     {post.author}
                   </p>

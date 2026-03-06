@@ -15,6 +15,7 @@ router.delete("/tags/:id", contentController.deleteTag);
 
 router.post("/articles", contentController.createArticle);
 router.get("/articles", contentController.getArticles);
+router.get("/dashboard/blogs", contentController.getDashboardBlogs);
 router.get("/articles/slug/:slug", contentController.getArticleBySlug);
 router.get("/articles/:id", contentController.getArticleById);
 router.put("/articles/:id", contentController.updateArticle);
