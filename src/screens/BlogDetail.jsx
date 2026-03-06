@@ -1,452 +1,246 @@
 import { Icon } from "@iconify/react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import axios from "axios";
+import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import API_BASE_URL from "../config/api";
 
-const tocItems = [
-  {
-    id: "introduction",
-    title: "Introduction",
-    children: [
-      { id: "chapter-1", title: "Chapter 1" },
-      { id: "viral-explosion", title: "Viral Explosion" },
-      { id: "future-of-pop", title: "Future of Pop" },
-    ],
-  },
-  {
-    id: "chapter-2",
-    title: "Chapter 2",
-    children: [
-      { id: "underground-roots", title: "Underground Roots" },
-      { id: "digital-aesthetics", title: "Digital Aesthetics" },
-    ],
-  },
-  {
-    id: "chapter-3",
-    title: "Chapter 3",
-    children: [
-      { id: "global-impact", title: "Global Impact" },
-      { id: "whats-next", title: "What’s Next" },
-    ],
-  },
-];
+const formatDate = (value) => {
+  if (!value) return "-";
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return "-";
+  return parsed.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+};
 
-const flatTocIds = tocItems.flatMap((item) => [item.id, ...item.children.map((child) => child.id)]);
+const blockText = (block = {}) =>
+  block?.data?.text ||
+  block?.data?.content ||
+  block?.data?.code ||
+  block?.data?.caption ||
+  block?.data?.message ||
+  "";
+
+const renderBlock = (block, index) => {
+  const type = String(block?.type || block?.block_type || "paragraph").toLowerCase();
+  const text = blockText(block);
+
+  if (type === "header" || type === "heading") {
+    const level = Math.min(3, Math.max(1, Number(block?.data?.level || 2)));
+    if (level === 1) return <h1 key={index} className="mt-6 text-3xl font-bold" dangerouslySetInnerHTML={{ __html: text }} />;
+    if (level === 2) return <h2 key={index} className="mt-6 text-2xl font-semibold" dangerouslySetInnerHTML={{ __html: text }} />;
+    return <h3 key={index} className="mt-5 text-xl font-semibold" dangerouslySetInnerHTML={{ __html: text }} />;
+  }
+
+  if (type === "quote") {
+    return (
+      <blockquote key={index} className="mt-4 rounded-r-md border-l-4 border-(--text-accent) bg-(--bg-background) px-4 py-3">
+        <p dangerouslySetInnerHTML={{ __html: text }} />
+      </blockquote>
+    );
+  }
+
+  if (type === "code") {
+    return (
+      <pre key={index} className="mt-4 overflow-auto rounded-lg border border-(--bg-primary) bg-(--bg-background) p-3 text-sm">
+        <code>{block?.data?.code || text}</code>
+      </pre>
+    );
+  }
+
+  if (type === "image") {
+    const imageUrl = block?.data?.file?.url || block?.data?.image_url || block?.data?.url || "";
+    if (!imageUrl) return null;
+    return (
+      <figure key={index} className="mt-5">
+        <img src={imageUrl} alt={block?.data?.alt_text || block?.data?.caption || "Content image"} className="w-full rounded-xl object-cover" />
+        {block?.data?.caption ? <figcaption className="mt-2 text-xs text-(--text-secondary)">{block.data.caption}</figcaption> : null}
+      </figure>
+    );
+  }
+
+  if (type === "list") {
+    const style = String(block?.data?.style || "unordered").toLowerCase();
+    const items = Array.isArray(block?.data?.items) ? block.data.items : [];
+    const ListTag = style === "ordered" ? "ol" : "ul";
+    return (
+      <ListTag key={index} className={`mt-4 space-y-1 pl-5 ${style === "ordered" ? "list-decimal" : "list-disc"}`}>
+        {items.map((item, itemIndex) => (
+          <li key={`${index}-${itemIndex}`} dangerouslySetInnerHTML={{ __html: String(item || "") }} />
+        ))}
+      </ListTag>
+    );
+  }
+
+  return <p key={index} className="mt-4 text-base leading-8 text-(--text-main)" dangerouslySetInnerHTML={{ __html: text }} />;
+};
 
 const BlogDetail = () => {
   const navigate = useNavigate();
   const { slug } = useParams();
   const location = useLocation();
-  const post = location.state?.post;
-  const [activeSection, setActiveSection] = useState("introduction");
-  const [mobileTocOpen, setMobileTocOpen] = useState(false);
-  const [expandedFolders, setExpandedFolders] = useState(() =>
-    tocItems.reduce((acc, item) => {
-      acc[item.id] = true;
-      return acc;
-    }, {}),
-  );
-  const headerRef = useRef(null);
 
-  const blogMeta = useMemo(
-    () => ({
-      title: post?.title || "The Rise of Hyperpop",
-      date: post?.date || "Wed, 17 Aug 2025",
-      category: post?.category || "Technology",
-      subCategory: "Society",
-      author: post?.author || "Editorial Team",
-      readTime: post?.readTime || "2 min read",
-      slug,
-    }),
-    [post, slug],
-  );
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [sourceType, setSourceType] = useState("");
+  const [articleData, setArticleData] = useState(null);
+  const [courseData, setCourseData] = useState(null);
 
-  const scrollToSection = useCallback((id, updateHash = true) => {
-    const element = document.getElementById(id);
-    if (!element) return;
+  const fallbackPost = location.state?.post || null;
 
-    if (updateHash) {
-      navigate(`${location.pathname}#${id}`, { replace: true });
+  useEffect(() => {
+    if (!slug) return;
+    let cancelled = false;
+
+    const loadContent = async () => {
+      setLoading(true);
+      setError("");
+      setArticleData(null);
+      setCourseData(null);
+
+      try {
+        const articleRes = await axios.get(`${API_BASE_URL}/api/content/articles/slug/${encodeURIComponent(slug)}`, {
+          withCredentials: true,
+        });
+
+        if (cancelled) return;
+        if (articleRes.data?.success && articleRes.data?.article) {
+          setSourceType("article");
+          setArticleData(articleRes.data.article);
+          return;
+        }
+      } catch (articleError) {
+        if (articleError?.response?.status !== 404) {
+          if (!cancelled) {
+            setError(articleError?.response?.data?.error || "Failed to load content");
+          }
+          return;
+        }
+      }
+
+      try {
+        const courseRes = await axios.get(`${API_BASE_URL}/api/course/courses/slug/${encodeURIComponent(slug)}`, {
+          withCredentials: true,
+        });
+
+        if (cancelled) return;
+        if (courseRes.data?.success && courseRes.data?.course) {
+          setSourceType("course");
+          setCourseData(courseRes.data.course);
+          return;
+        }
+      } catch (courseError) {
+        if (!cancelled) {
+          setError(courseError?.response?.data?.error || "Content not found");
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    loadContent();
+    return () => {
+      cancelled = true;
+    };
+  }, [slug]);
+
+  const meta = useMemo(() => {
+    if (sourceType === "article" && articleData) {
+      return {
+        title: articleData.title || "Untitled",
+        category: articleData.content_type || "article",
+        author: articleData?.author_id?.username || "Author",
+        readTime: articleData.reading_time || "-",
+        date: formatDate(articleData.published_at || articleData.createdAt),
+        image: articleData.cover_image || "",
+      };
     }
 
-    const headerHeight = headerRef.current?.offsetHeight || 0;
-    element.scrollIntoView({ behavior: "smooth", block: "start" });
-    window.setTimeout(() => {
-      window.scrollBy({ top: -(headerHeight + 10), behavior: "smooth" });
-    }, 120);
-    setActiveSection(id);
-  }, [location.pathname, navigate]);
+    if (sourceType === "course" && courseData) {
+      return {
+        title: courseData.title || "Untitled course",
+        category: "course",
+        author: courseData?.instructor_id?.username || "Instructor",
+        readTime: courseData.estimated_duration || "-",
+        date: formatDate(courseData.updatedAt || courseData.createdAt),
+        image: courseData.thumbnail_url || "",
+      };
+    }
 
-  const toggleFolder = (id) => {
-    setExpandedFolders((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
-  };
+    return {
+      title: fallbackPost?.title || "Loading...",
+      category: fallbackPost?.category || "content",
+      author: fallbackPost?.author || "-",
+      readTime: fallbackPost?.readTime || "-",
+      date: fallbackPost?.date || "-",
+      image: fallbackPost?.image || "",
+    };
+  }, [sourceType, articleData, courseData, fallbackPost]);
 
-  const getFolderActiveRow = (item) => {
-    if (activeSection === item.id) return 0;
-    const childIndex = item.children.findIndex((child) => child.id === activeSection);
-    if (childIndex >= 0) return childIndex + 1;
-    return -1;
-  };
-
-  useEffect(() => {
-    if (!flatTocIds.length) return;
-
-    const observers = [];
-    flatTocIds.forEach((id) => {
-      const section = document.getElementById(id);
-      if (!section) return;
-
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            setActiveSection(id);
-          }
-        },
-        { rootMargin: "-35% 0px -55% 0px", threshold: 0.15 },
-      );
-
-      observer.observe(section);
-      observers.push(observer);
-    });
-
-    return () => observers.forEach((observer) => observer.disconnect());
-  }, []);
-
-  useEffect(() => {
-    const hashId = decodeURIComponent(location.hash?.replace("#", "") || "");
-    if (!hashId) return;
-
-    const frame = requestAnimationFrame(() => {
-      scrollToSection(hashId, false);
-    });
-
-    return () => cancelAnimationFrame(frame);
-  }, [location.hash, scrollToSection]);
+  const articleBlocks = articleData?.editorData?.blocks || [];
 
   return (
     <div className="min-h-screen w-full bg-(--bg-background) text-(--text-main)">
-      <header ref={headerRef} className="sticky top-0 z-40 border-b border-(--bg-primary) bg-(--bg-secondary)">
-        <div className="mx-auto w-full max-w-[1500px] px-3 md:px-5 py-3 flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2 md:gap-3">
-            <button
-              onClick={() => navigate(-1)}
-              aria-label="Go back"
-              className="h-9 w-9 rounded-lg border border-(--bg-primary) flex items-center justify-center"
-            >
-              <Icon icon="mdi:arrow-left" width="18" height="18" />
-            </button>
-            <button
-              onClick={() => setMobileTocOpen(true)}
-              aria-label="Open table of contents"
-              className="lg:hidden h-9 w-9 rounded-lg border border-(--bg-primary) flex items-center justify-center"
-            >
-              <Icon icon="mdi:file-tree-outline" width="18" height="18" />
-            </button>
-          </div>
-
-          <div className="hidden md:flex rounded-lg border border-(--bg-primary) px-4 py-2 text-xs md:text-sm text-(--text-secondary)">
-            {blogMeta.date}
-          </div>
-
-          <button className="rounded-lg bg-(--text-accent) text-(--text-button) px-3 md:px-4 py-2 text-xs md:text-sm font-semibold flex items-center gap-2">
-            <Icon icon="mdi:share-variant" width="16" height="16" />
-            Share
+      <header className="sticky top-0 z-40 border-b border-(--bg-primary) bg-(--bg-secondary)">
+        <div className="mx-auto flex w-full max-w-[1200px] items-center justify-between gap-2 px-3 py-3 md:px-5">
+          <button
+            onClick={() => navigate(-1)}
+            aria-label="Go back"
+            className="flex h-9 w-9 items-center justify-center rounded-lg border border-(--bg-primary)"
+          >
+            <Icon icon="mdi:arrow-left" width="18" height="18" />
           </button>
+          <span className="rounded-lg border border-(--bg-primary) px-3 py-1.5 text-xs text-(--text-secondary)">{meta.date}</span>
         </div>
       </header>
 
-      <div
-        className={`lg:hidden fixed inset-0 z-50 transition-opacity duration-300 ${
-          mobileTocOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-        }`}
-      >
-        <button
-          onClick={() => setMobileTocOpen(false)}
-          className="absolute inset-0 bg-black/45"
-          aria-label="Close table of contents overlay"
-        />
+      <main className="mx-auto w-full max-w-[1000px] px-3 py-5 md:px-5 md:py-8">
+        <article className="rounded-2xl bg-(--bg-secondary) p-4 md:p-8">
+          {meta.image ? <img src={meta.image} alt={meta.title} className="mb-5 h-52 w-full rounded-xl object-cover md:h-72" /> : null}
 
-        <aside
-          className={`absolute left-0 top-0 h-full w-[86%] max-w-[340px] bg-(--bg-secondary) border-r border-(--bg-primary) p-4 overflow-y-auto transition-transform duration-300 ${
-            mobileTocOpen ? "translate-x-0" : "-translate-x-full"
-          }`}
-        >
-          <div className="flex items-center justify-between">
-            <h2 className="text-xs tracking-wide text-(--text-secondary) uppercase">Tab of contents</h2>
-            <button
-              onClick={() => setMobileTocOpen(false)}
-              aria-label="Close table of contents"
-              className="h-8 w-8 rounded-lg border border-(--bg-primary) flex items-center justify-center"
-            >
-              <Icon icon="mdi:close" width="16" height="16" />
-            </button>
+          <h1 className="text-3xl font-bold leading-tight md:text-5xl">{meta.title}</h1>
+          <div className="mt-3 flex flex-wrap items-center gap-2 text-xs md:text-sm">
+            <span className="rounded-full bg-(--bg-background) px-2.5 py-1 capitalize">{meta.category}</span>
+            <span className="text-(--text-secondary)">{meta.author}</span>
+            <span className="text-(--text-secondary)">•</span>
+            <span className="text-(--text-secondary)">{meta.readTime}</span>
           </div>
 
-          <div className="mt-3">
-            <div className="flex items-center gap-2 text-sm font-semibold text-(--text-main)">
-              <Icon icon="mdi:folder-open-outline" width="18" height="18" />
-              Content Tree
-            </div>
+          {loading ? <p className="mt-6 text-sm text-(--text-secondary)">Loading content...</p> : null}
+          {error && !loading ? <p className="mt-6 text-sm text-(--instructor-badge-bg)">{error}</p> : null}
 
-            <ul className="mt-3 ml-1 border-l border-(--bg-primary) pl-2 space-y-2">
-              {tocItems.map((item) => {
-                const activeRow = getFolderActiveRow(item);
+          {!loading && !error && sourceType === "article" ? (
+            <section className="mt-6">
+              {articleBlocks.length ? articleBlocks.map((block, index) => renderBlock(block, index)) : <p className="text-(--text-secondary)">No article content available.</p>}
+            </section>
+          ) : null}
 
-                return (
-                  <li key={`${item.id}-mobile`} className="relative pl-3">
-                    <span className="absolute left-0 top-4 h-px w-2 bg-(--bg-primary)" />
-                    <span className="absolute left-0 top-1 bottom-1 w-[2px] bg-(--bg-primary)" />
-                    {activeRow >= 0 && (
-                      <span
-                        className="absolute left-[-1px] top-1 w-[4px] h-8 rounded-full bg-(--text-accent) transition-transform duration-300"
-                        style={{ transform: `translateY(${activeRow * 32}px)` }}
-                      />
-                    )}
+          {!loading && !error && sourceType === "course" ? (
+            <section className="mt-6 space-y-6">
+              {courseData?.description ? <p className="text-base leading-8 text-(--text-main)">{courseData.description}</p> : null}
 
-                    <div className="rounded-md px-1.5 py-1 transition-colors">
-                      <div className="flex items-center gap-1">
-                        <button
-                          onClick={() => toggleFolder(item.id)}
-                          aria-label={`Toggle ${item.title}`}
-                          className="w-6 h-6 rounded-md hover:bg-(--bg-background) flex items-center justify-center"
-                        >
-                          <Icon
-                            icon={expandedFolders[item.id] ? "mdi:chevron-down" : "mdi:chevron-right"}
-                            width="16"
-                            height="16"
-                          />
-                        </button>
-
-                        <button
-                          onClick={() => {
-                            scrollToSection(item.id, true);
-                            setMobileTocOpen(false);
-                          }}
-                          className={`h-8 flex items-center gap-2 text-sm text-left flex-1 rounded-md px-1.5 ${
-                            activeSection === item.id
-                              ? "text-(--text-main) font-semibold"
-                              : "text-(--text-secondary) hover:text-(--text-main)"
-                          }`}
-                        >
-                          <Icon
-                            icon={expandedFolders[item.id] ? "mdi:folder-open-outline" : "mdi:folder-outline"}
-                            width="16"
-                            height="16"
-                          />
-                          {item.title}
-                        </button>
+              {(courseData?.modules || []).map((moduleItem) => (
+                <div key={moduleItem._id} className="rounded-xl border border-(--bg-primary) p-4">
+                  <h2 className="text-xl font-semibold">{moduleItem.name}</h2>
+                  <div className="mt-3 space-y-4">
+                    {(moduleItem.lessons || []).map((lesson) => (
+                      <div key={lesson._id} className="rounded-lg bg-(--bg-background) p-3">
+                        <h3 className="text-base font-semibold">{lesson.title}</h3>
+                        {lesson.reading_time ? <p className="mt-1 text-xs text-(--text-secondary)">{lesson.reading_time}</p> : null}
+                        <div className="mt-2">{(lesson?.editor_data?.blocks || []).map((block, index) => renderBlock(block, `${lesson._id}-${index}`))}</div>
                       </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
 
-                      {expandedFolders[item.id] && (
-                        <ul className="mt-1 ml-6 border-l border-(--bg-primary) pl-2 space-y-1">
-                          {item.children.map((child) => (
-                            <li key={`${child.id}-mobile`} className="relative pl-3">
-                              <span className="absolute left-0 top-3.5 h-px w-2 bg-(--bg-primary)" />
-                              <button
-                                onClick={() => {
-                                  scrollToSection(child.id, true);
-                                  setMobileTocOpen(false);
-                                }}
-                                className={`h-8 w-full text-left text-sm px-1.5 rounded-md transition-colors flex items-center gap-2 ${
-                                  activeSection === child.id
-                                    ? "text-(--text-main) font-semibold"
-                                    : "text-(--text-secondary) hover:text-(--text-main)"
-                                }`}
-                              >
-                                <Icon icon="mdi:file-document-outline" width="15" height="15" />
-                                {child.title}
-                              </button>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        </aside>
-      </div>
-
-      <div className="mx-auto w-full max-w-[1500px] px-3 md:px-5 py-4 md:py-6 grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-4 md:gap-6">
-        <aside className="hidden lg:block sticky top-24 h-[calc(100vh-130px)] rounded-2xl border border-(--bg-primary) bg-(--bg-secondary) p-4 overflow-y-auto">
-          <h2 className="text-xs tracking-wide text-(--text-secondary) uppercase">Tab of contents</h2>
-          <div className="mt-3">
-            <div className="flex items-center gap-2 text-sm font-semibold text-(--text-main)">
-              <Icon icon="mdi:folder-open-outline" width="18" height="18" />
-              Content Tree
-            </div>
-
-            <ul className="mt-3 ml-1 border-l border-(--bg-primary) pl-2 space-y-2">
-              {tocItems.map((item) => {
-                const activeRow = getFolderActiveRow(item);
-
-                return (
-                  <li key={item.id} className="relative pl-3">
-                    <span className="absolute left-0 top-4 h-px w-2 bg-(--bg-primary)" />
-                    <span className="absolute left-0 top-1 bottom-1 w-[2px] bg-(--bg-primary)" />
-                    {activeRow >= 0 && (
-                      <span
-                        className="absolute left-[-1px] top-1 w-[4px] h-8 rounded-full bg-(--text-accent) transition-transform duration-300"
-                        style={{ transform: `translateY(${activeRow * 32}px)` }}
-                      />
-                    )}
-
-                    <div className="rounded-md px-1.5 py-1 transition-colors">
-                      <div className="flex items-center gap-1">
-                        <button
-                          onClick={() => toggleFolder(item.id)}
-                          aria-label={`Toggle ${item.title}`}
-                          className="w-6 h-6 rounded-md hover:bg-(--bg-background) flex items-center justify-center"
-                        >
-                          <Icon
-                            icon={expandedFolders[item.id] ? "mdi:chevron-down" : "mdi:chevron-right"}
-                            width="16"
-                            height="16"
-                          />
-                        </button>
-
-                        <button
-                          onClick={() => scrollToSection(item.id, true)}
-                          className={`h-8 flex items-center gap-2 text-sm text-left flex-1 rounded-md px-1.5 ${
-                            activeSection === item.id
-                              ? "text-(--text-main) font-semibold"
-                              : "text-(--text-secondary) hover:text-(--text-main)"
-                          }`}
-                        >
-                          <Icon
-                            icon={expandedFolders[item.id] ? "mdi:folder-open-outline" : "mdi:folder-outline"}
-                            width="16"
-                            height="16"
-                          />
-                          {item.title}
-                        </button>
-                      </div>
-
-                      {expandedFolders[item.id] && (
-                        <ul className="mt-1 ml-6 border-l border-(--bg-primary) pl-2 space-y-1">
-                          {item.children.map((child) => (
-                            <li key={child.id} className="relative pl-3">
-                              <span className="absolute left-0 top-3.5 h-px w-2 bg-(--bg-primary)" />
-                              <button
-                                onClick={() => scrollToSection(child.id, true)}
-                                className={`h-8 w-full text-left text-sm px-1.5 rounded-md transition-colors flex items-center gap-2 ${
-                                  activeSection === child.id
-                                    ? "text-(--text-main) font-semibold"
-                                    : "text-(--text-secondary) hover:text-(--text-main)"
-                                }`}
-                              >
-                                <Icon icon="mdi:file-document-outline" width="15" height="15" />
-                                {child.title}
-                              </button>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        </aside>
-
-        <main className="min-w-0">
-          <article className="rounded-2xl bg-(--bg-secondary) p-4 md:p-8 lg:p-10">
-            <h1 className="text-3xl md:text-5xl font-bold leading-tight">{blogMeta.title}</h1>
-            <div className="mt-3 flex flex-wrap items-center gap-2 text-xs md:text-sm">
-              <span className="px-2.5 py-1 rounded-full bg-green-100 text-green-700">{blogMeta.category}</span>
-              <span className="px-2.5 py-1 rounded-full bg-red-100 text-red-700">{blogMeta.subCategory}</span>
-              <span className="text-(--text-secondary)">{blogMeta.author}</span>
-              <span className="text-(--text-secondary)">•</span>
-              <span className="text-(--text-secondary)">{blogMeta.readTime}</span>
-            </div>
-
-            <section id="introduction" className="scroll-mt-28 mt-7">
-              <p className="text-base md:text-lg leading-8 text-(--text-main)">
-                Hyperpop is more than just a genre—it&apos;s a digital-native movement that blends internet culture,
-                experimental sound, and shifting youth identity.
-                <span className="bg-(--text-accent) text-(--text-button) px-1.5 rounded-sm mx-1">
-                  Emerging in the late 2010s, it&apos;s marked by
-                </span>
-                distorted vocals, glitchy beats, and hyper-stylized aesthetics that feel at home on TikTok as much as
-                in underground clubs.
-              </p>
+              {!courseData?.modules?.length ? <p className="text-(--text-secondary)">No course module content available.</p> : null}
             </section>
-
-            <section id="chapter-1" className="scroll-mt-28 mt-10">
-              <h2 className="text-3xl font-bold">Chapter 1</h2>
-            </section>
-
-            <section id="viral-explosion" className="scroll-mt-28 mt-4">
-              <h3 className="text-2xl font-semibold">Viral Explosion</h3>
-              <p className="mt-3 text-(--text-secondary) leading-8">
-                The rise of platforms like TikTok accelerated hyperpop&apos;s visibility. Short, high-energy clips allowed
-                songs to spread faster than traditional radio ever could. Tracks by artists like 100 gecs, Charli XCX,
-                and glaive became viral soundtracks, giving the genre mainstream exposure.
-              </p>
-              <blockquote className="mt-4 border-l-4 border-(--text-accent) bg-(--bg-background) px-4 py-3 rounded-r-md text-base md:text-lg">
-                “Hyperpop feels like the soundtrack of the internet—fragmented, but endlessly creative.”
-              </blockquote>
-            </section>
-
-            <section id="future-of-pop" className="scroll-mt-28 mt-7">
-              <h3 className="text-2xl font-semibold">Future of Pop</h3>
-              <p className="mt-3 text-(--text-secondary) leading-8">
-                As mainstream pop absorbs hyperpop&apos;s textures, the boundary between underground and popular music keeps
-                blurring. Producers now borrow maximalist synth stacks, pitched vocals, and genre-switching song
-                structures to create next-gen anthems for digital audiences.
-              </p>
-            </section>
-
-            <section id="chapter-2" className="scroll-mt-28 mt-10">
-              <h2 className="text-3xl font-bold">Chapter 2</h2>
-            </section>
-
-            <section id="underground-roots" className="scroll-mt-28 mt-4">
-              <h3 className="text-2xl font-semibold">Underground Roots</h3>
-              <p className="mt-3 text-(--text-secondary) leading-8">
-                Before global attention, hyperpop grew inside online communities where artists traded unfinished demos,
-                remix stems, and production experiments. This open-source creative process shaped its chaotic,
-                boundary-pushing sound.
-              </p>
-            </section>
-
-            <section id="digital-aesthetics" className="scroll-mt-28 mt-7">
-              <h3 className="text-2xl font-semibold">Digital Aesthetics</h3>
-              <p className="mt-3 text-(--text-secondary) leading-8">
-                The visual identity of hyperpop mirrors its sound: neon palettes, glitch edits, maximal typography, and
-                playful internet irony. Music and visuals co-evolve, making the listening experience fully immersive.
-              </p>
-            </section>
-
-            <section id="chapter-3" className="scroll-mt-28 mt-10">
-              <h2 className="text-3xl font-bold">Chapter 3</h2>
-            </section>
-
-            <section id="global-impact" className="scroll-mt-28 mt-4">
-              <h3 className="text-2xl font-semibold">Global Impact</h3>
-              <p className="mt-3 text-(--text-secondary) leading-8">
-                Hyperpop&apos;s influence now appears in K-pop, Latin pop, and electronic scenes worldwide. The genre has
-                become a creative toolkit rather than a strict label.
-              </p>
-            </section>
-
-            <section id="whats-next" className="scroll-mt-28 mt-7">
-              <h3 className="text-2xl font-semibold">What&apos;s Next</h3>
-              <p className="mt-3 text-(--text-secondary) leading-8">
-                With AI-powered music workflows and cross-platform fan communities, the next wave of hyperpop may feel
-                even more collaborative and global—less about a single scene, more about a constantly evolving digital
-                language.
-              </p>
-            </section>
-          </article>
-        </main>
-
-      </div>
+          ) : null}
+        </article>
+      </main>
     </div>
   );
 };

@@ -7,6 +7,7 @@ router.post("/uploads/thumbnail", courseController.uploadCourseThumbnail);
 
 router.post("/courses", courseController.createCourse);
 router.get("/courses", courseController.listCourses);
+router.get("/courses/slug/:slug", courseController.getCourseBySlug);
 router.get("/courses/:id", courseController.getCourseById);
 router.put("/courses/:id", courseController.updateCourse);
 router.delete("/courses/:id", courseController.deleteCourse);

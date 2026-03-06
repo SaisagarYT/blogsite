@@ -243,6 +243,24 @@ exports.getCourseById = async (req, res) => {
   }
 };
 
+exports.getCourseBySlug = async (req, res) => {
+  try {
+    const slug = String(req.params.slug || "").trim();
+    if (!slug) {
+      return res.status(400).json({ success: false, error: "slug is required" });
+    }
+
+    const course = await Course.findOne({ slug });
+    if (!course) {
+      return res.status(404).json({ success: false, error: "Course not found" });
+    }
+
+    return res.json({ success: true, course: sortModulesAndLessons(course.toObject()) });
+  } catch (error) {
+    return res.status(500).json({ success: false, error: error.message || "Failed to get course by slug" });
+  }
+};
+
 exports.updateCourse = async (req, res) => {
   try {
     const course = await getCourseOr404(req.params.id, res);
