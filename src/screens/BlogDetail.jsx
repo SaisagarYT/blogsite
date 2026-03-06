@@ -87,6 +87,7 @@ const BlogDetail = () => {
   const [sourceType, setSourceType] = useState("");
   const [articleData, setArticleData] = useState(null);
   const [courseData, setCourseData] = useState(null);
+  const [lessonData, setLessonData] = useState(null);
 
   const fallbackPost = location.state?.post || null;
 
@@ -99,41 +100,39 @@ const BlogDetail = () => {
       setError("");
       setArticleData(null);
       setCourseData(null);
+      setLessonData(null);
 
       try {
-        const articleRes = await axios.get(`${API_BASE_URL}/api/content/articles/slug/${encodeURIComponent(slug)}`, {
+        const response = await axios.get(`${API_BASE_URL}/api/content/slug/${encodeURIComponent(slug)}`, {
           withCredentials: true,
         });
 
         if (cancelled) return;
-        if (articleRes.data?.success && articleRes.data?.article) {
+        if (!response.data?.success || !response.data?.source) {
+          setError("Content not found");
+          return;
+        }
+
+        if (response.data.source === "article") {
           setSourceType("article");
-          setArticleData(articleRes.data.article);
+          setArticleData(response.data.content || null);
           return;
         }
-      } catch (articleError) {
-        if (articleError?.response?.status !== 404) {
-          if (!cancelled) {
-            setError(articleError?.response?.data?.error || "Failed to load content");
-          }
-          return;
-        }
-      }
 
-      try {
-        const courseRes = await axios.get(`${API_BASE_URL}/api/course/courses/slug/${encodeURIComponent(slug)}`, {
-          withCredentials: true,
-        });
-
-        if (cancelled) return;
-        if (courseRes.data?.success && courseRes.data?.course) {
+        if (response.data.source === "course") {
           setSourceType("course");
-          setCourseData(courseRes.data.course);
+          setCourseData(response.data.content || null);
           return;
         }
-      } catch (courseError) {
+
+        if (response.data.source === "lesson") {
+          setSourceType("lesson");
+          setLessonData(response.data.content || null);
+          return;
+        }
+      } catch (requestError) {
         if (!cancelled) {
-          setError(courseError?.response?.data?.error || "Content not found");
+          setError(requestError?.response?.data?.error || "Content not found");
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -169,6 +168,17 @@ const BlogDetail = () => {
       };
     }
 
+    if (sourceType === "lesson" && lessonData) {
+      return {
+        title: lessonData?.lesson?.title || "Untitled lesson",
+        category: "lesson",
+        author: lessonData?.course?.instructor_id?.username || "Instructor",
+        readTime: lessonData?.lesson?.reading_time || "-",
+        date: formatDate(lessonData?.course?.updatedAt || lessonData?.course?.createdAt),
+        image: lessonData?.course?.thumbnail_url || "",
+      };
+    }
+
     return {
       title: fallbackPost?.title || "Loading...",
       category: fallbackPost?.category || "content",
@@ -177,7 +187,7 @@ const BlogDetail = () => {
       date: fallbackPost?.date || "-",
       image: fallbackPost?.image || "",
     };
-  }, [sourceType, articleData, courseData, fallbackPost]);
+  }, [sourceType, articleData, courseData, lessonData, fallbackPost]);
 
   const articleBlocks = articleData?.editorData?.blocks || [];
 
@@ -237,6 +247,24 @@ const BlogDetail = () => {
               ))}
 
               {!courseData?.modules?.length ? <p className="text-(--text-secondary)">No course module content available.</p> : null}
+            </section>
+          ) : null}
+
+          {!loading && !error && sourceType === "lesson" ? (
+            <section className="mt-6 space-y-5">
+              <div className="rounded-xl border border-(--bg-primary) p-4">
+                <p className="text-xs text-(--text-secondary)">Course</p>
+                <h2 className="text-xl font-semibold">{lessonData?.course?.title || "-"}</h2>
+                <p className="mt-2 text-xs text-(--text-secondary)">Module: {lessonData?.module?.name || "-"}</p>
+              </div>
+
+              <div>
+                {(lessonData?.lesson?.editor_data?.blocks || []).length ? (
+                  (lessonData.lesson.editor_data.blocks || []).map((block, index) => renderBlock(block, `lesson-${index}`))
+                ) : (
+                  <p className="text-(--text-secondary)">No lesson content available.</p>
+                )}
+              </div>
             </section>
           ) : null}
         </article>

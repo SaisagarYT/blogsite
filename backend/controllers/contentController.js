@@ -477,6 +477,64 @@ exports.getDashboardBlogs = async (req, res) => {
   }
 };
 
+exports.getContentBySlug = async (req, res) => {
+  try {
+    const slug = String(req.params.slug || "").trim();
+    if (!slug) return res.status(400).json({ success: false, error: "slug is required" });
+
+    const article = await Article.findOne({ slug }).populate("author_id", "_id email username picture");
+    if (article) {
+      const payload = await buildArticlePayload(article);
+      return res.json({ success: true, source: "article", content: payload });
+    }
+
+    const course = await Course.findOne({ slug }).populate("instructor_id", "_id email username picture");
+    if (course) {
+      return res.json({ success: true, source: "course", content: course.toObject() });
+    }
+
+    const lessonContainer = await Course.findOne({ "modules.lessons.slug": slug }).populate(
+      "instructor_id",
+      "_id email username picture",
+    );
+
+    if (lessonContainer) {
+      const moduleItem = (lessonContainer.modules || []).find((moduleDoc) =>
+        (moduleDoc.lessons || []).some((lessonDoc) => lessonDoc.slug === slug),
+      );
+      const lesson = moduleItem?.lessons?.find((lessonDoc) => lessonDoc.slug === slug);
+
+      if (moduleItem && lesson) {
+        return res.json({
+          success: true,
+          source: "lesson",
+          content: {
+            course: {
+              _id: lessonContainer._id,
+              title: lessonContainer.title,
+              slug: lessonContainer.slug,
+              description: lessonContainer.description,
+              thumbnail_url: lessonContainer.thumbnail_url,
+              instructor_id: lessonContainer.instructor_id || null,
+              updatedAt: lessonContainer.updatedAt,
+              createdAt: lessonContainer.createdAt,
+            },
+            module: {
+              _id: moduleItem._id,
+              name: moduleItem.name,
+            },
+            lesson,
+          },
+        });
+      }
+    }
+
+    return res.status(404).json({ success: false, error: "Content not found" });
+  } catch (error) {
+    return res.status(500).json({ success: false, error: error.message || "Failed to load content by slug" });
+  }
+};
+
 exports.getArticleById = async (req, res) => {
   const { id } = req.params;
   if (!isObjectId(id)) return res.status(400).json({ success: false, error: "Invalid id" });
