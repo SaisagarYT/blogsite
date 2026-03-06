@@ -398,15 +398,26 @@ exports.getArticles = async (req, res) => {
 
 exports.getDashboardBlogs = async (req, res) => {
   try {
-    const { limit = 12, status = "published" } = req.query;
+    const { limit = 12, status = "all", content_type = "all" } = req.query;
     const limitNumber = Math.max(1, Math.min(50, Number(limit) || 12));
 
-    const query = {
-      content_type: { $in: ["blog", "course_article"] },
-    };
+    const query = {};
 
     if (String(status).toLowerCase() !== "all") {
       query.status = status;
+    }
+
+    if (String(content_type).toLowerCase() !== "all") {
+      const contentTypes = String(content_type)
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean);
+
+      if (contentTypes.length === 1) {
+        query.content_type = contentTypes[0];
+      } else if (contentTypes.length > 1) {
+        query.content_type = { $in: contentTypes };
+      }
     }
 
     const articles = await Article.find(query)

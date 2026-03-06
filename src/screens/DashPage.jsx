@@ -806,7 +806,7 @@ const DashPage = () => {
           ) : null}
 
           {!blogLoading && !blogError && filteredBlogPosts.length === 0 ? (
-            <div className="mt-4 rounded-xl border border-(--bg-primary) p-4 text-sm text-(--text-secondary)">No instructor-created blogs found yet.</div>
+            <div className="mt-4 rounded-xl border border-(--bg-primary) p-4 text-sm text-(--text-secondary)">No blogs found yet.</div>
           ) : null}
 
           <div className="dash-stagger mt-4 md:mt-5 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 md:gap-4">
