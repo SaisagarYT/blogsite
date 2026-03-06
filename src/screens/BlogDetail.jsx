@@ -532,7 +532,7 @@ const BlogDetail = () => {
 
   return (
     <div className="min-h-screen w-full text-(--text-main)">
-      <header className="sticky top-0 z-40 border-b border-(--bg-primary) bg-black">
+      <header className="sticky top-0 z-40 border-b border-(--bg-primary) bg-(--bg-secondary)">
         <div className="mx-auto flex w-full max-w-[1200px] items-center justify-between gap-2 px-2 py-3 md:px-5">
           <button
             onClick={() => navigate(-1)}
