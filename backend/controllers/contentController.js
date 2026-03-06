@@ -388,9 +388,11 @@ exports.createArticle = async (req, res) => {
 exports.getArticles = async (req, res) => {
   const { status, content_type, author_id, category_id, tag_id, search } = req.query;
   const query = {};
+  const normalizedStatus = String(status || "").toLowerCase();
+  const normalizedContentType = String(content_type || "").toLowerCase();
 
-  if (status) query.status = status;
-  if (content_type) query.content_type = content_type;
+  if (normalizedStatus && normalizedStatus !== "all") query.status = normalizedStatus;
+  if (normalizedContentType && normalizedContentType !== "all") query.content_type = normalizedContentType;
   if (author_id && isObjectId(author_id)) query.author_id = author_id;
   if (search) query.title = { $regex: search, $options: "i" };
 

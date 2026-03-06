@@ -1,15 +1,20 @@
 import { Icon } from "@iconify/react";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import bgImg1 from "../assets/alps-snow-mountains-3840x2160-25451.jpg";
-import bgImg2 from "../assets/os-x-lion-twilight-3840x2160-24060.jpg";
-import bgImg3 from "../assets/katerina-kerdi--YiJvbfNDqk-unsplash.jpg";
 import Webassets from "../assets/Assets";
+import API_BASE_URL from "../config/api";
 
 const TechNews = () => {
   const navigate = useNavigate();
   const [categoriesOpen, setCategoriesOpen] = useState(false);
   const [profileImageError, setProfileImageError] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [search, setSearch] = useState("");
+  const [articles, setArticles] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("all");
 
   const localUser = (() => {
     try {
@@ -22,35 +27,97 @@ const TechNews = () => {
   const profileImage = localUser?.picture || "";
   const effectiveProfileImage = profileImageError ? "" : profileImage;
 
-  const categoryItems = ["Coding", "System Design", "Interviews", "Jobs", "Dev Knowledge", "Career Growth"];
+  useEffect(() => {
+    let cancelled = false;
 
-  const sidebarStories = [
-    {
-      date: "OCT 21, 2022",
-      title: "Celebrities claim that opera gloves are becoming casual",
-    },
-    {
-      date: "JAN 01, 2022",
-      title: 'In support of the "naked dress," Ciara attended Paris Fashion Week',
-    },
-    {
-      date: "DEC 28, 2021",
-      title: "The historical attire worn by these women of color is a form of contemporary art",
-    },
-  ];
+    const loadArticles = async () => {
+      setLoading(true);
+      setError("");
+      try {
+        const response = await axios.get(`${API_BASE_URL}/api/content/articles`, {
+          params: { status: "all" },
+          withCredentials: true,
+        });
 
-  const bottomCards = [
-    {
-      image: bgImg2,
-      title: "Tailored minimalism the street style way",
-      author: "Bambieta Basterbine",
-    },
-    {
-      image: bgImg3,
-      title: "All the cool kids are wearing balaclavas",
-      author: "Gerard Valkyrie",
-    },
-  ];
+        if (cancelled) return;
+
+        const normalized = (response.data?.articles || []).map((item) => {
+          const displaySlug =
+            item.slug ||
+            String(item.title || "")
+              .toLowerCase()
+              .replace(/[^a-z0-9]+/g, "-")
+              .replace(/^-|-$/g, "");
+
+          return {
+            id: item._id,
+            title: item.title || "Untitled",
+            excerpt: item.excerpt || "No description available.",
+            image: item.cover_image || bgImg1,
+            publishedAt: item.published_at || item.createdAt,
+            category: item.categories?.[0]?.name || "General",
+            author: item?.author_id?.username || "Instructor",
+            slug: displaySlug,
+            status: item.status || "draft",
+            readTime: Number(item.reading_time || 0),
+            views: Number(item.views_count || 0),
+          };
+        });
+
+        setArticles(normalized);
+      } catch (requestError) {
+        if (!cancelled) {
+          setError(requestError?.response?.data?.error || "Failed to load articles");
+          setArticles([]);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    loadArticles();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const formatDate = (value) => {
+    if (!value) return "-";
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) return "-";
+    return parsed.toLocaleDateString("en-US", {
+      month: "short",
+      day: "2-digit",
+      year: "numeric",
+    });
+  };
+
+  const categoryItems = useMemo(() => {
+    const names = new Set(["all"]);
+    articles.forEach((item) => names.add(item.category || "General"));
+    return [...names];
+  }, [articles]);
+
+  const filteredArticles = useMemo(() => {
+    const query = search.trim().toLowerCase();
+    return articles.filter((item) => {
+      const byCategory = selectedCategory === "all" ? true : item.category === selectedCategory;
+      const bySearch = query
+        ? `${item.title} ${item.excerpt} ${item.author}`.toLowerCase().includes(query)
+        : true;
+      return byCategory && bySearch;
+    });
+  }, [articles, selectedCategory, search]);
+
+  const orderedArticles = useMemo(
+    () => [...filteredArticles].sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt)),
+    [filteredArticles],
+  );
+
+  const heroArticle = orderedArticles[0] || null;
+  const sidebarStories = orderedArticles.slice(1, 4);
+  const bottomCards = orderedArticles.slice(4, 6);
+  const remainingArticles = orderedArticles.slice(6);
 
   return (
     <div className="min-h-screen bg-(--bg-background) text-(--text-main) p-3 md:p-5">
@@ -92,10 +159,13 @@ const TechNews = () => {
                     {categoryItems.map((item) => (
                       <button
                         key={item}
-                        onClick={() => setCategoriesOpen(false)}
+                        onClick={() => {
+                          setSelectedCategory(item);
+                          setCategoriesOpen(false);
+                        }}
                         className="w-full text-left px-3 py-2 rounded-md hover:bg-white/10 text-xs md:text-sm"
                       >
-                        {item}
+                        {item === "all" ? "All Categories" : item}
                       </button>
                     ))}
                 </div>
@@ -112,6 +182,8 @@ const TechNews = () => {
                 <input
                   type="text"
                   placeholder="Search..."
+                  value={search}
+                  onChange={(event) => setSearch(event.target.value)}
                   className="w-full bg-transparent text-white text-xs md:text-sm placeholder-white/60 outline-none"
                 />
               </div>
@@ -136,7 +208,7 @@ const TechNews = () => {
             style={{ color: "var(--tech-fashion-heading)" }}
             className="text-4xl md:text-6xl lg:text-7xl font-light tracking-tight uppercase"
           >
-            Fashion
+            Tech News
           </h1>
           <button
             onClick={() => navigate("/dashboard")}
@@ -148,9 +220,24 @@ const TechNews = () => {
           </button>
         </div>
 
+        {error ? (
+          <div className="mt-4 rounded-xl border border-(--tech-fashion-divider) bg-black/20 p-3 text-xs md:text-sm">
+            {error}
+          </div>
+        ) : null}
+
+        {loading ? (
+          <div className="mt-4 rounded-xl border border-(--tech-fashion-divider) bg-black/20 p-3 text-xs md:text-sm">
+            Loading articles...
+          </div>
+        ) : null}
+
+        {heroArticle ? (
         <div className="mt-5 grid grid-cols-1 lg:grid-cols-5 gap-4 md:gap-6 lg:gap-7">
           <div className="lg:col-span-3 rounded-xl overflow-hidden min-h-[260px] md:min-h-[420px]">
-            <img src={bgImg1} alt="Fashion lead" className="w-full h-full object-cover" />
+            <button className="w-full h-full" onClick={() => navigate(`/blog/${encodeURIComponent(heroArticle.slug)}`)}>
+              <img src={heroArticle.image} alt={heroArticle.title} className="w-full h-full object-cover" />
+            </button>
           </div>
 
           <article className="lg:col-span-2 rounded-xl border border-(--tech-fashion-divider) p-4 md:p-5 flex flex-col justify-start pt-1">
@@ -159,34 +246,43 @@ const TechNews = () => {
                 style={{ borderColor: "var(--tech-fashion-chip-border)", color: "var(--tech-fashion-chip-text)" }}
                 className="px-2 py-0.5 rounded-full border"
               >
-                Fashion
+                {heroArticle.category}
               </span>
-              <span style={{ color: "var(--tech-fashion-subtle)" }}>Aug 09, 2022</span>
+              <span style={{ color: "var(--tech-fashion-subtle)" }}>{formatDate(heroArticle.publishedAt)}</span>
             </div>
-            <h2 style={{ color: "var(--tech-fashion-heading)" }} className="mt-4 text-3xl md:text-5xl leading-tight uppercase max-w-md">
-              Short suits: the must-have fashion investment for spring
+            <h2
+              style={{ color: "var(--tech-fashion-heading)" }}
+              className="mt-4 text-3xl md:text-5xl leading-tight uppercase max-w-md cursor-pointer"
+              onClick={() => navigate(`/blog/${encodeURIComponent(heroArticle.slug)}`)}
+            >
+              {heroArticle.title}
             </h2>
             <p style={{ color: "var(--tech-fashion-subtle)" }} className="mt-4 text-sm md:text-base flex items-center gap-2">
               <span>✦</span>
-              Written by <span className="font-semibold" style={{ color: "var(--tech-fashion-text)" }}>Jonathan Lopez</span>
+              Written by <span className="font-semibold" style={{ color: "var(--tech-fashion-text)" }}>{heroArticle.author}</span>
             </p>
           </article>
         </div>
+        ) : null}
 
         <div className="mt-5 grid grid-cols-1 xl:grid-cols-5 gap-4 md:gap-6 lg:gap-7">
           <div className="xl:col-span-2 space-y-3 md:space-y-4">
             {sidebarStories.map((story) => (
-              <article key={story.title} className="rounded-xl border p-3 md:p-4" style={{ borderColor: "var(--tech-fashion-divider)" }}>
+              <article key={story.id} className="rounded-xl border p-3 md:p-4" style={{ borderColor: "var(--tech-fashion-divider)" }}>
                 <div className="flex items-center gap-2 text-[9px] md:text-[10px] uppercase tracking-wide mb-2">
                   <span
                     style={{ borderColor: "var(--tech-fashion-chip-border)", color: "var(--tech-fashion-chip-text)" }}
                     className="px-2 py-0.5 rounded-full border"
                   >
-                    Fashion
+                    {story.category}
                   </span>
-                  <span style={{ color: "var(--tech-fashion-subtle)" }}>{story.date}</span>
+                  <span style={{ color: "var(--tech-fashion-subtle)" }}>{formatDate(story.publishedAt)}</span>
                 </div>
-                <h3 className="uppercase text-lg md:text-2xl leading-tight" style={{ color: "var(--tech-fashion-heading)" }}>
+                <h3
+                  className="uppercase text-lg md:text-2xl leading-tight cursor-pointer"
+                  style={{ color: "var(--tech-fashion-heading)" }}
+                  onClick={() => navigate(`/blog/${encodeURIComponent(story.slug)}`)}
+                >
                   {story.title}
                 </h3>
               </article>
@@ -195,9 +291,11 @@ const TechNews = () => {
 
           <div className="xl:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             {bottomCards.map((card) => (
-              <article key={card.title} className="rounded-xl border border-(--tech-fashion-divider) p-3 md:p-4">
+              <article key={card.id} className="rounded-xl border border-(--tech-fashion-divider) p-3 md:p-4">
                 <div className="rounded-xl overflow-hidden min-h-[220px] md:min-h-[260px]">
-                  <img src={card.image} alt={card.title} className="w-full h-full object-cover" />
+                  <button className="w-full h-full" onClick={() => navigate(`/blog/${encodeURIComponent(card.slug)}`)}>
+                    <img src={card.image} alt={card.title} className="w-full h-full object-cover" />
+                  </button>
                 </div>
                 <div className="mt-3">
                   <div className="flex items-center gap-2 text-[10px] md:text-xs uppercase tracking-wide mb-2">
@@ -205,11 +303,15 @@ const TechNews = () => {
                       style={{ borderColor: "var(--tech-fashion-chip-border)", color: "var(--tech-fashion-chip-text)" }}
                       className="px-2 py-0.5 rounded-full border"
                     >
-                      Fashion
+                      {card.category}
                     </span>
-                    <span style={{ color: "var(--tech-fashion-subtle)" }}>Aug 11, 2022</span>
+                    <span style={{ color: "var(--tech-fashion-subtle)" }}>{formatDate(card.publishedAt)}</span>
                   </div>
-                  <h3 className="uppercase text-2xl md:text-4xl leading-tight" style={{ color: "var(--tech-fashion-heading)" }}>
+                  <h3
+                    className="uppercase text-2xl md:text-4xl leading-tight cursor-pointer"
+                    style={{ color: "var(--tech-fashion-heading)" }}
+                    onClick={() => navigate(`/blog/${encodeURIComponent(card.slug)}`)}
+                  >
                     {card.title}
                   </h3>
                   <p style={{ color: "var(--tech-fashion-subtle)" }} className="mt-3 text-xs md:text-sm flex items-center gap-2">
@@ -221,6 +323,54 @@ const TechNews = () => {
             ))}
           </div>
         </div>
+
+        {remainingArticles.length ? (
+          <section className="mt-6 rounded-xl border border-(--tech-fashion-divider) p-3 md:p-4">
+            <div className="mb-3 flex items-center justify-between gap-2">
+              <h2 className="text-lg md:text-xl uppercase" style={{ color: "var(--tech-fashion-heading)" }}>
+                All Articles ({orderedArticles.length})
+              </h2>
+              <span className="text-xs" style={{ color: "var(--tech-fashion-subtle)" }}>
+                Category: {selectedCategory === "all" ? "All" : selectedCategory}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+              {remainingArticles.map((item) => (
+                <article key={item.id} className="rounded-xl border border-(--tech-fashion-divider) p-3">
+                  <button className="w-full" onClick={() => navigate(`/blog/${encodeURIComponent(item.slug)}`)}>
+                    <img src={item.image} alt={item.title} className="h-44 w-full rounded-lg object-cover" />
+                  </button>
+                  <div className="mt-3">
+                    <div className="flex items-center justify-between text-[10px] uppercase" style={{ color: "var(--tech-fashion-subtle)" }}>
+                      <span>{item.category}</span>
+                      <span>{formatDate(item.publishedAt)}</span>
+                    </div>
+                    <h3
+                      className="mt-2 text-lg leading-tight uppercase cursor-pointer"
+                      style={{ color: "var(--tech-fashion-heading)" }}
+                      onClick={() => navigate(`/blog/${encodeURIComponent(item.slug)}`)}
+                    >
+                      {item.title}
+                    </h3>
+                    <p className="mt-2 text-xs line-clamp-3" style={{ color: "var(--tech-fashion-subtle)" }}>
+                      {item.excerpt}
+                    </p>
+                    <p className="mt-2 text-xs" style={{ color: "var(--tech-fashion-subtle)" }}>
+                      By {item.author} · {item.readTime || 0} min · {item.views} views
+                    </p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
+        {!loading && !orderedArticles.length ? (
+          <div className="mt-6 rounded-xl border border-(--tech-fashion-divider) p-4 text-sm" style={{ color: "var(--tech-fashion-subtle)" }}>
+            No articles found.
+          </div>
+        ) : null}
 
         <div className="mt-6 md:mt-8 flex justify-center">
           <img src={Webassets.arrowMark} alt="decorative divider" className="opacity-60 w-16 md:w-20" />
