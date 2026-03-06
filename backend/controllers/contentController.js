@@ -9,6 +9,7 @@ const TextBlock = require("../models/TextBlock");
 const ImageBlock = require("../models/ImageBlock");
 const GalleryBlock = require("../models/GalleryBlock");
 const GalleryImage = require("../models/GalleryImage");
+const Course = require("../models/Course");
 
 const isObjectId = (value) => mongoose.Types.ObjectId.isValid(String(value || ""));
 
@@ -401,31 +402,76 @@ exports.getDashboardBlogs = async (req, res) => {
     const { limit = 12, status = "all", content_type = "all" } = req.query;
     const limitNumber = Math.max(1, Math.min(50, Number(limit) || 12));
 
-    const query = {};
+    const normalizedStatus = String(status || "all").toLowerCase();
+    const normalizedTypes = String(content_type || "all")
+      .toLowerCase()
+      .split(",")
+      .map((item) => item.trim())
+      .filter(Boolean);
 
-    if (String(status).toLowerCase() !== "all") {
-      query.status = status;
+    const allowAllTypes = !normalizedTypes.length || normalizedTypes.includes("all");
+    const includeArticles = allowAllTypes || normalizedTypes.some((item) => item !== "course");
+    const includeCourses = allowAllTypes || normalizedTypes.includes("course");
+
+    const articleQuery = {};
+    if (normalizedStatus !== "all") articleQuery.status = normalizedStatus;
+    if (!allowAllTypes) {
+      const articleTypes = normalizedTypes.filter((item) => item !== "course");
+      if (articleTypes.length === 1) articleQuery.content_type = articleTypes[0];
+      if (articleTypes.length > 1) articleQuery.content_type = { $in: articleTypes };
     }
 
-    if (String(content_type).toLowerCase() !== "all") {
-      const contentTypes = String(content_type)
-        .split(",")
-        .map((item) => item.trim())
-        .filter(Boolean);
+    const courseQuery = {};
+    if (normalizedStatus !== "all") courseQuery.status = normalizedStatus;
 
-      if (contentTypes.length === 1) {
-        query.content_type = contentTypes[0];
-      } else if (contentTypes.length > 1) {
-        query.content_type = { $in: contentTypes };
-      }
-    }
+    const [articles, courses] = await Promise.all([
+      includeArticles
+        ? Article.find(articleQuery)
+            .sort({ published_at: -1, createdAt: -1 })
+            .limit(limitNumber)
+            .populate("author_id", "_id email username picture")
+        : Promise.resolve([]),
+      includeCourses
+        ? Course.find(courseQuery)
+            .sort({ updatedAt: -1, createdAt: -1 })
+            .limit(limitNumber)
+            .populate("instructor_id", "_id email username picture")
+        : Promise.resolve([]),
+    ]);
 
-    const articles = await Article.find(query)
-      .sort({ published_at: -1, createdAt: -1 })
-      .limit(limitNumber)
-      .populate("author_id", "_id email username picture");
+    const normalizedArticles = articles.map((item) => ({
+      _id: item._id,
+      title: item.title,
+      slug: item.slug,
+      excerpt: item.excerpt || "",
+      cover_image: item.cover_image || "",
+      content_type: item.content_type || "blog",
+      reading_time: item.reading_time || "",
+      published_at: item.published_at || item.createdAt,
+      createdAt: item.createdAt,
+      author_id: item.author_id || null,
+      source_type: "article",
+    }));
 
-    return res.json({ success: true, blogs: articles });
+    const normalizedCourses = courses.map((item) => ({
+      _id: item._id,
+      title: item.title,
+      slug: item.slug,
+      excerpt: item.description || "",
+      cover_image: item.thumbnail_url || "",
+      content_type: "course",
+      reading_time: item.estimated_duration || "",
+      published_at: item.updatedAt || item.createdAt,
+      createdAt: item.createdAt,
+      author_id: item.instructor_id || null,
+      source_type: "course",
+    }));
+
+    const blogs = [...normalizedArticles, ...normalizedCourses]
+      .sort((a, b) => new Date(b.published_at || b.createdAt) - new Date(a.published_at || a.createdAt))
+      .slice(0, limitNumber);
+
+    return res.json({ success: true, blogs });
   } catch (error) {
     return res.status(500).json({ success: false, error: error.message || "Failed to load dashboard blogs" });
   }

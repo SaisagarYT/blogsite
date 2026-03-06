@@ -46,6 +46,7 @@ const DashPage = () => {
 
   const mapContentTypeToCategory = (type = "") => {
     const normalized = String(type || "").trim().toLowerCase();
+    if (normalized === "course") return "Course";
     if (normalized === "course_article") return "Course Article";
     if (normalized === "news") return "News";
     if (normalized === "tutorial") return "Tutorial";
@@ -59,8 +60,20 @@ const DashPage = () => {
   }, [blogPosts]);
 
   const filteredBlogPosts = useMemo(() => {
-    if (selectedBlogCategory === "All") return blogPosts;
-    return blogPosts.filter((post) => post.category === selectedBlogCategory);
+    const result =
+      selectedBlogCategory === "All"
+        ? blogPosts
+        : blogPosts.filter((post) => post.category === selectedBlogCategory);
+
+    if (typeof window !== "undefined") {
+      console.log("[DashPage][Blogs] Filter applied", {
+        selectedBlogCategory,
+        totalBlogs: blogPosts.length,
+        filteredBlogs: result.length,
+      });
+    }
+
+    return result;
   }, [blogPosts, selectedBlogCategory]);
 
   useEffect(() => {
@@ -106,15 +119,22 @@ const DashPage = () => {
       setBlogError("");
 
       try {
+        console.log("[DashPage][Blogs] Fetching dashboard blogs...");
         const res = await axios.get(`${API_BASE_URL}/api/content/dashboard/blogs`, {
           params: { limit: 12, status: "all" },
           withCredentials: true,
         });
 
+        console.log("[DashPage][Blogs] API response", {
+          success: res?.data?.success,
+          blogsCount: Array.isArray(res?.data?.blogs) ? res.data.blogs.length : 0,
+          rawData: res?.data,
+        });
+
         if (cancelled) return;
         const mapped = (res.data?.blogs || []).map((article) => ({
           id: article._id,
-          image: article.cover_image || bgImg1,
+          image: article.cover_image || article.thumbnail_url || bgImg1,
           category: mapContentTypeToCategory(article.content_type),
           date: formatArticleDate(article.published_at || article.createdAt),
           readTime: article.reading_time || "-",
@@ -130,9 +150,19 @@ const DashPage = () => {
               .replace(/^-|-$/g, ""),
         }));
 
+        console.log("[DashPage][Blogs] Mapped blogs", {
+          mappedCount: mapped.length,
+          sample: mapped[0] || null,
+        });
+
         setBlogPosts(mapped);
       } catch (error) {
         if (cancelled) return;
+        console.error("[DashPage][Blogs] Fetch failed", {
+          message: error?.message,
+          status: error?.response?.status,
+          data: error?.response?.data,
+        });
         setBlogError(error?.response?.data?.error || "Failed to load blogs");
       } finally {
         if (!cancelled) {
