@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Icon } from "@iconify/react";
 import { useNavigate } from "react-router-dom";
 import InstructorLayout from "../components/instructor/InstructorLayout";
-import { createCourseApi } from "../services/courseApi";
+import { createCourseApi, uploadCourseThumbnailApi } from "../services/courseApi";
 
 const categoryOptions = ["Web Development", "Design", "Marketing", "Business"];
 const difficultyOptions = ["Beginner", "Intermediate", "Advanced"];
@@ -23,6 +23,8 @@ const InstructorCreateCourse = () => {
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const fileInputRef = useRef(null);
 
   const toggleTag = (tag) => {
     setSelectedTags((previous) =>
@@ -74,6 +76,41 @@ const InstructorCreateCourse = () => {
       setError(requestError?.response?.data?.error || "Failed to create course");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const fileToDataUrl = (file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(new Error("Failed to read selected image"));
+      reader.readAsDataURL(file);
+    });
+
+  const handleThumbnailSelect = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setError("Please choose a valid image file");
+      event.target.value = "";
+      return;
+    }
+
+    setUploadingImage(true);
+    setError("");
+    try {
+      const image = await fileToDataUrl(file);
+      const data = await uploadCourseThumbnailApi({ image, folder: "courses" });
+      if (!data?.url) {
+        throw new Error("Upload did not return a URL");
+      }
+      setForm((previous) => ({ ...previous, thumbnail_url: data.url }));
+    } catch (uploadError) {
+      setError(uploadError?.response?.data?.error || uploadError?.message || "Failed to upload thumbnail");
+    } finally {
+      setUploadingImage(false);
+      event.target.value = "";
     }
   };
 
@@ -185,11 +222,20 @@ const InstructorCreateCourse = () => {
 
           <article className="rounded-2xl border border-(--instructor-shell-border) bg-(--bg-secondary) p-4 sm:p-5">
             <h3 className="mb-3 text-base font-semibold">Course Thumbnail Upload</h3>
-            <div className="flex h-40 items-center justify-center rounded-xl border border-dashed border-(--instructor-shell-border) bg-(--dash-soft-surface)">
-              <button type="button" className="inline-flex items-center gap-1.5 rounded-lg border border-(--instructor-shell-border) px-3 py-2 text-xs font-semibold">
+            <div className="relative flex h-40 items-center justify-center overflow-hidden rounded-xl border border-dashed border-(--instructor-shell-border) bg-(--dash-soft-surface)">
+              {form.thumbnail_url ? (
+                <img src={form.thumbnail_url} alt="Course thumbnail" className="absolute inset-0 h-full w-full object-cover" />
+              ) : null}
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploadingImage}
+                className="relative z-10 inline-flex items-center gap-1.5 rounded-lg border border-(--instructor-shell-border) bg-(--bg-secondary)/90 px-3 py-2 text-xs font-semibold disabled:opacity-60"
+              >
                 <Icon icon="solar:upload-outline" width={15} />
-                Upload Image
+                {uploadingImage ? "Uploading..." : "Upload Image"}
               </button>
+              <input ref={fileInputRef} type="file" accept="image/*" onChange={handleThumbnailSelect} className="hidden" />
             </div>
             <input
               value={form.thumbnail_url}

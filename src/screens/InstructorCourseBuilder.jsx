@@ -1,21 +1,59 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Icon } from "@iconify/react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import InstructorLayout from "../components/instructor/InstructorLayout";
-import { addLessonApi, addModuleApi, getCourseBuilderApi } from "../services/courseApi";
+import {
+  addLessonApi,
+  addModuleApi,
+  getCourseBuilderApi,
+  listCoursesApi,
+  updateCourseApi,
+  uploadCourseThumbnailApi,
+} from "../services/courseApi";
 
 const InstructorCourseBuilder = () => {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const courseId = searchParams.get("courseId");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const selectedCourseId = searchParams.get("courseId") || "";
   const [courseInfo, setCourseInfo] = useState(null);
   const [modules, setModules] = useState([]);
+  const [courseOptions, setCourseOptions] = useState([]);
+  const [newModuleName, setNewModuleName] = useState("");
+  const [lessonNameByModule, setLessonNameByModule] = useState({});
   const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
-    if (!courseId) {
-      setError("Missing courseId in URL");
+    let cancelled = false;
+
+    const loadCourses = async () => {
+      try {
+        const data = await listCoursesApi({ page: 1, limit: 100, status: "all" });
+        if (cancelled) return;
+        const options = data?.courses || [];
+        setCourseOptions(options);
+
+        if (!selectedCourseId && options.length) {
+          setSearchParams({ courseId: options[0]._id });
+        }
+      } catch {
+        if (!cancelled) {
+          setError("Failed to load courses list");
+        }
+      }
+    };
+
+    loadCourses();
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedCourseId, setSearchParams]);
+
+  useEffect(() => {
+    if (!selectedCourseId) {
       return;
     }
 
@@ -25,7 +63,7 @@ const InstructorCourseBuilder = () => {
       setLoading(true);
       setError("");
       try {
-        const data = await getCourseBuilderApi(courseId);
+        const data = await getCourseBuilderApi(selectedCourseId);
         if (cancelled) return;
         setCourseInfo(data?.course || null);
         setModules(data?.module_structure || []);
@@ -41,36 +79,84 @@ const InstructorCourseBuilder = () => {
     return () => {
       cancelled = true;
     };
-  }, [courseId]);
+  }, [selectedCourseId]);
 
   const refreshBuilder = async () => {
-    if (!courseId) return;
-    const data = await getCourseBuilderApi(courseId);
+    if (!selectedCourseId) return;
+    const data = await getCourseBuilderApi(selectedCourseId);
     setCourseInfo(data?.course || null);
     setModules(data?.module_structure || []);
   };
 
   const handleAddModule = async () => {
-    const name = window.prompt("Enter module name");
-    if (!name?.trim()) return;
+    if (!newModuleName.trim() || !selectedCourseId) return;
 
     try {
-      await addModuleApi(courseId, { name: name.trim() });
+      setSaving(true);
+      await addModuleApi(selectedCourseId, { name: newModuleName.trim() });
+      setNewModuleName("");
       await refreshBuilder();
     } catch (requestError) {
       setError(requestError?.response?.data?.error || "Failed to add module");
+    } finally {
+      setSaving(false);
     }
   };
 
   const handleAddLesson = async (moduleId) => {
-    const title = window.prompt("Enter lesson title");
-    if (!title?.trim()) return;
+    const title = lessonNameByModule[moduleId] || "";
+    if (!title.trim() || !selectedCourseId) return;
 
     try {
-      await addLessonApi(courseId, moduleId, { title: title.trim(), status: "draft" });
+      setSaving(true);
+      await addLessonApi(selectedCourseId, moduleId, { title: title.trim(), status: "draft" });
+      setLessonNameByModule((previous) => ({ ...previous, [moduleId]: "" }));
       await refreshBuilder();
     } catch (requestError) {
       setError(requestError?.response?.data?.error || "Failed to add lesson");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const fileToDataUrl = (file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(new Error("Failed to read selected image"));
+      reader.readAsDataURL(file);
+    });
+
+  const handleThumbnailSelect = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file || !selectedCourseId) return;
+
+    if (!file.type.startsWith("image/")) {
+      setError("Please choose a valid image file");
+      event.target.value = "";
+      return;
+    }
+
+    setUploadingImage(true);
+    setError("");
+    try {
+      const image = await fileToDataUrl(file);
+      const uploadData = await uploadCourseThumbnailApi({ image, folder: "courses" });
+      const imageUrl = uploadData?.url;
+      if (!imageUrl) {
+        throw new Error("Upload did not return image URL");
+      }
+
+      await updateCourseApi(selectedCourseId, { thumbnail_url: imageUrl });
+      setCourseInfo((previous) => (previous ? { ...previous, thumbnail_url: imageUrl } : previous));
+      setCourseOptions((previous) =>
+        previous.map((item) => (item._id === selectedCourseId ? { ...item, thumbnail_url: imageUrl } : item))
+      );
+    } catch (requestError) {
+      setError(requestError?.response?.data?.error || requestError?.message || "Failed to update thumbnail");
+    } finally {
+      setUploadingImage(false);
+      event.target.value = "";
     }
   };
 
@@ -79,6 +165,22 @@ const InstructorCourseBuilder = () => {
       pageTitle="Course Builder Page"
       pageDescription="Structure modules, edit lessons, and preview your course before publishing."
     >
+      <section className="mb-4 rounded-2xl border border-(--instructor-shell-border) bg-(--bg-secondary) p-4">
+        <label className="mb-1 block text-xs text-(--text-secondary)">Select Course</label>
+        <select
+          value={selectedCourseId}
+          onChange={(event) => setSearchParams({ courseId: event.target.value })}
+          className="w-full rounded-xl border border-(--instructor-shell-border) bg-(--bg-background) px-3 py-2 text-sm outline-none"
+        >
+          {courseOptions.length === 0 ? <option value="">No courses found</option> : null}
+          {courseOptions.map((course) => (
+            <option key={course._id} value={course._id}>
+              {course.title}
+            </option>
+          ))}
+        </select>
+      </section>
+
       {error ? <p className="mb-3 text-sm text-(--instructor-badge-bg)">{error}</p> : null}
 
       {loading ? (
@@ -90,6 +192,24 @@ const InstructorCourseBuilder = () => {
       <section className="grid grid-cols-1 gap-4 2xl:grid-cols-[0.9fr_1.1fr_1.2fr_0.9fr]">
         <article className="rounded-2xl border border-(--instructor-shell-border) bg-(--bg-secondary) p-4">
           <h3 className="mb-3 text-base font-semibold">Course Info Panel</h3>
+          <div className="mb-3 rounded-xl border border-(--instructor-shell-border) p-3">
+            <p className="mb-2 text-xs text-(--text-secondary)">Thumbnail</p>
+            <div className="relative flex h-28 items-center justify-center overflow-hidden rounded-lg border border-dashed border-(--instructor-shell-border) bg-(--dash-soft-surface)">
+              {courseInfo?.thumbnail_url ? (
+                <img src={courseInfo.thumbnail_url} alt={courseInfo?.title || "Course thumbnail"} className="absolute inset-0 h-full w-full object-cover" />
+              ) : null}
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={!selectedCourseId || uploadingImage}
+                className="relative z-10 inline-flex items-center gap-1 rounded-md border border-(--instructor-shell-border) bg-(--bg-secondary)/90 px-2 py-1 text-[11px] font-semibold disabled:opacity-60"
+              >
+                <Icon icon="solar:upload-outline" width={14} />
+                {uploadingImage ? "Uploading..." : "Change Thumbnail"}
+              </button>
+              <input ref={fileInputRef} type="file" accept="image/*" onChange={handleThumbnailSelect} className="hidden" />
+            </div>
+          </div>
           <div className="space-y-2 text-sm">
             <div className="rounded-xl border border-(--instructor-shell-border) p-3">
               <p className="text-xs text-(--text-secondary)">Title</p>
@@ -109,10 +229,22 @@ const InstructorCourseBuilder = () => {
         <article className="rounded-2xl border border-(--instructor-shell-border) bg-(--bg-secondary) p-4">
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-base font-semibold">Module Structure Panel</h3>
-            <button onClick={handleAddModule} className="inline-flex items-center gap-1 rounded-lg bg-(--instructor-button-bg) px-2.5 py-1.5 text-xs font-semibold text-(--instructor-button-text)">
-              <Icon icon="solar:add-circle-outline" width={14} />
-              Add Module
-            </button>
+            <div className="flex items-center gap-2">
+              <input
+                value={newModuleName}
+                onChange={(event) => setNewModuleName(event.target.value)}
+                className="w-40 rounded-md border border-(--instructor-shell-border) bg-(--bg-background) px-2 py-1 text-xs outline-none"
+                placeholder="New module name"
+              />
+              <button
+                onClick={handleAddModule}
+                disabled={!newModuleName.trim() || saving}
+                className="inline-flex items-center gap-1 rounded-lg bg-(--instructor-button-bg) px-2.5 py-1.5 text-xs font-semibold text-(--instructor-button-text) disabled:opacity-60"
+              >
+                <Icon icon="solar:add-circle-outline" width={14} />
+                Add Module
+              </button>
+            </div>
           </div>
 
           <div className="space-y-3">
@@ -122,17 +254,31 @@ const InstructorCourseBuilder = () => {
                   <p className="text-sm font-semibold">{item.name}</p>
                   <Icon icon="solar:hamburger-menu-outline" width={15} className="text-(--text-secondary)" />
                 </div>
-                <button
-                  onClick={() => handleAddLesson(item._id)}
-                  className="mb-2 rounded-md border border-(--instructor-shell-border) px-2 py-1 text-[11px]"
-                >
-                  + Add Lesson
-                </button>
+                <div className="mb-2 flex items-center gap-2">
+                  <input
+                    value={lessonNameByModule[item._id] || ""}
+                    onChange={(event) =>
+                      setLessonNameByModule((previous) => ({
+                        ...previous,
+                        [item._id]: event.target.value,
+                      }))
+                    }
+                    className="w-full rounded-md border border-(--instructor-shell-border) bg-(--bg-background) px-2 py-1 text-[11px] outline-none"
+                    placeholder="New lesson title"
+                  />
+                  <button
+                    onClick={() => handleAddLesson(item._id)}
+                    disabled={!String(lessonNameByModule[item._id] || "").trim() || saving}
+                    className="rounded-md border border-(--instructor-shell-border) px-2 py-1 text-[11px] disabled:opacity-60"
+                  >
+                    + Add Lesson
+                  </button>
+                </div>
                 <div className="space-y-1.5">
                   {(item.lessons || []).map((lesson) => (
                     <button
                       key={lesson._id}
-                      onClick={() => navigate(`/instructor/lessons/builder?courseId=${courseId}&moduleId=${item._id}&lessonId=${lesson._id}`)}
+                      onClick={() => navigate(`/instructor/lessons/builder?courseId=${selectedCourseId}&moduleId=${item._id}&lessonId=${lesson._id}`)}
                       className="flex w-full items-center justify-between rounded-lg bg-(--dash-soft-surface) px-2.5 py-1.5 text-left text-xs"
                     >
                       <span>• {lesson.title}</span>

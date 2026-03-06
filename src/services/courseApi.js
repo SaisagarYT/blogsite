@@ -16,6 +16,16 @@ export const createCourseApi = async (payload) => {
   return data;
 };
 
+export const updateCourseApi = async (courseId, payload) => {
+  const { data } = await api.put(`/courses/${courseId}`, payload);
+  return data;
+};
+
+export const uploadCourseThumbnailApi = async (payload) => {
+  const { data } = await api.post("/uploads/thumbnail", payload);
+  return data;
+};
+
 export const getCourseBuilderApi = async (courseId) => {
   const { data } = await api.get(`/courses/${courseId}/builder`);
   return data;

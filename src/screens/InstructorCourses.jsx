@@ -126,7 +126,9 @@ const InstructorCourses = () => {
 
         {courses.map((course, index) => (
           <article key={course._id} className="rounded-2xl border border-(--instructor-shell-border) bg-(--bg-secondary) p-3 sm:p-4">
-            <div className={`mb-3 h-36 rounded-xl border border-(--instructor-shell-border) bg-gradient-to-br ${accentGradients[index % accentGradients.length]}`} />
+            <div className={`mb-3 h-36 overflow-hidden rounded-xl border border-(--instructor-shell-border) bg-gradient-to-br ${accentGradients[index % accentGradients.length]}`}>
+              {course.thumbnail_url ? <img src={course.thumbnail_url} alt={course.title} className="h-full w-full object-cover" /> : null}
+            </div>
 
             <div className="mb-2 flex items-start justify-between gap-2">
               <h3 className="line-clamp-2 text-sm font-semibold sm:text-base">{course.title}</h3>

@@ -39,8 +39,21 @@ const initialEditorData = {
 };
 
 const cleanText = (value) => value?.replace(/<[^>]*>/g, "") || "";
+const getInlineValue = (value) => {
+  if (typeof value === "string") return value;
+  if (typeof value === "number") return String(value);
+  if (value && typeof value === "object") {
+    if (typeof value.content === "string") return value.content;
+    if (typeof value.text === "string") return value.text;
+    if (Array.isArray(value.items)) {
+      return value.items.map((item) => getInlineValue(item)).join(" ");
+    }
+  }
+  return "";
+};
+
 const normalizeInlineHtml = (value) =>
-  (value || "")
+  getInlineValue(value)
     .replace(/<font\s+color=["']([^"']+)["']\s*>/gi, '<span style="color:$1">')
     .replace(/<font\s+style=["']([^"']+)["']\s*>/gi, '<span style="$1">')
     .replace(/<\/font>/gi, "</span>");
@@ -518,7 +531,10 @@ const InstructorLessonBuilder = () => {
                     {block.type === "list" ? (
                       <ul className="mb-2 list-disc space-y-1 pl-5 text-sm">
                         {(block.data?.items || []).map((item, itemIndex) => (
-                          <li key={`${item}-${itemIndex}`} dangerouslySetInnerHTML={renderInlineHtml(item)} />
+                          <li
+                            key={`${getInlineValue(item) || "item"}-${itemIndex}`}
+                            dangerouslySetInnerHTML={renderInlineHtml(item)}
+                          />
                         ))}
                       </ul>
                     ) : null}
@@ -552,7 +568,7 @@ const InstructorLessonBuilder = () => {
                               <tr key={`row-${rowIndex}`}>
                                 {row.map((cell, cellIndex) => (
                                   <td key={`cell-${rowIndex}-${cellIndex}`} className="border border-(--instructor-shell-border) px-2 py-1">
-                                    {cleanText(cell)}
+                                    {cleanText(getInlineValue(cell))}
                                   </td>
                                 ))}
                               </tr>

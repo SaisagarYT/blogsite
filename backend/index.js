@@ -6,7 +6,7 @@ const cors = require("cors");
 require("dotenv").config();
 
 const app = express();
-app.use(express.json());
+app.use(express.json({ limit: "15mb" }));
 
 const defaultAllowedOrigins = [
 	"http://localhost:5173",

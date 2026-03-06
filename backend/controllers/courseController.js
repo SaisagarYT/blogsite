@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Course = require("../models/Course");
+const { cloudinary, isCloudinaryConfigured } = require("../config/cloudinary");
 
 const isObjectId = (value) => mongoose.Types.ObjectId.isValid(String(value || ""));
 
@@ -82,6 +83,37 @@ const sortModulesAndLessons = (course) => {
       return moduleItem;
     });
   return course;
+};
+
+exports.uploadCourseThumbnail = async (req, res) => {
+  try {
+    if (!isCloudinaryConfigured()) {
+      return res.status(500).json({
+        success: false,
+        error: "Cloudinary is not configured. Set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET.",
+      });
+    }
+
+    const { image, folder = "courses" } = req.body || {};
+    if (!image || typeof image !== "string") {
+      return res.status(400).json({ success: false, error: "image is required as a base64 data URL" });
+    }
+
+    const trimmedFolder = String(folder || "courses").trim() || "courses";
+    const uploadResult = await cloudinary.uploader.upload(image, {
+      folder: trimmedFolder,
+      resource_type: "image",
+      transformation: [{ width: 1600, height: 900, crop: "limit", quality: "auto", fetch_format: "auto" }],
+    });
+
+    return res.status(201).json({
+      success: true,
+      url: uploadResult.secure_url,
+      public_id: uploadResult.public_id,
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, error: error.message || "Failed to upload thumbnail" });
+  }
 };
 
 exports.createCourse = async (req, res) => {
@@ -272,6 +304,7 @@ exports.getCourseBuilder = async (req, res) => {
         title: sorted.title,
         slug: sorted.slug,
         description: sorted.description,
+        thumbnail_url: sorted.thumbnail_url,
         category: sorted.category,
         difficulty: sorted.difficulty,
         status: sorted.status,
