@@ -92,7 +92,7 @@ const renderBlock = (block, index, anchorId = "") => {
         <h1
           key={index}
           id={anchorId || undefined}
-          className="mt-8 scroll-mt-24 text-3xl font-bold leading-tight md:text-4xl"
+          className="mt-8 scroll-mt-24 text-2xl font-bold leading-tight md:text-2xl"
           dangerouslySetInnerHTML={renderInlineHtml(text)}
         />
       );
@@ -103,7 +103,7 @@ const renderBlock = (block, index, anchorId = "") => {
         <h2
           key={index}
           id={anchorId || undefined}
-          className="mt-7 scroll-mt-24 text-2xl font-semibold leading-snug md:text-3xl"
+          className="mt-7 scroll-mt-24 text-xl font-semibold leading-snug md:text-xl"
           dangerouslySetInnerHTML={renderInlineHtml(text)}
         />
       );
@@ -113,7 +113,7 @@ const renderBlock = (block, index, anchorId = "") => {
       <h3
         key={index}
         id={anchorId || undefined}
-        className="mt-6 scroll-mt-24 text-xl font-semibold leading-snug md:text-2xl"
+        className="mt-6 scroll-mt-24 text-lg font-semibold leading-snug md:text-lg"
         dangerouslySetInnerHTML={renderInlineHtml(text)}
       />
     );
@@ -196,7 +196,7 @@ const renderBlock = (block, index, anchorId = "") => {
     return <hr key={index} className="my-4 border-(--bg-primary)" />;
   }
 
-  return <p key={index} className="mt-4 text-base leading-7 text-(--text-main) md:text-lg md:leading-8" dangerouslySetInnerHTML={renderInlineHtml(text)} />;
+  return <p key={index} className="mt-4 text-sm leading-7 text-(--text-main) md:text-base md:leading-8" dangerouslySetInnerHTML={renderInlineHtml(text)} />;
 };
 
 const BlogDetail = () => {

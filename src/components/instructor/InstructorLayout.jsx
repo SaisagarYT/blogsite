@@ -1,12 +1,16 @@
 import { useMemo, useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { Icon } from "@iconify/react";
 import TopNavbar from "./TopNavbar";
 import { instructorSidebarNavigation } from "./instructorNavigation";
 
 const InstructorLayout = ({ children, pageTitle, pageDescription }) => {
+  const location = useLocation();
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [openGroups, setOpenGroups] = useState({
+    Articles: location.pathname.startsWith("/instructor/articles"),
+  });
 
   const greetingName = useMemo(() => {
     try {
@@ -59,6 +63,67 @@ const InstructorLayout = ({ children, pageTitle, pageDescription }) => {
               const commonClasses = `flex w-full items-center rounded-xl px-3 py-2.5 text-left text-sm transition-colors ${
                 isSidebarCollapsed ? "justify-center" : "justify-start gap-2.5"
               }`;
+
+              const hasChildren = Array.isArray(item.children) && item.children.length > 0;
+              const isChildActive = hasChildren
+                ? item.children.some((child) =>
+                    child.path ? location.pathname === child.path || location.pathname.startsWith(`${child.path}/`) : false
+                  )
+                : false;
+
+              if (hasChildren) {
+                return (
+                  <div key={item.label} className="space-y-1">
+                    <button
+                      title={item.label}
+                      onClick={() => {
+                        if (isSidebarCollapsed) return;
+                        setOpenGroups((previous) => ({
+                          ...previous,
+                          [item.label]: !previous[item.label],
+                        }));
+                      }}
+                      className={`${commonClasses} ${
+                        isChildActive
+                          ? "border border-(--instructor-highlight-border) bg-(--instructor-highlight-bg) text-(--text-main)"
+                          : "text-(--text-main) hover:bg-(--dash-soft-surface-hover)"
+                      }`}
+                    >
+                      <Icon icon={item.icon} width={18} />
+                      {!isSidebarCollapsed ? (
+                        <>
+                          <span className="flex-1">{item.label}</span>
+                          <Icon
+                            icon={openGroups[item.label] ? "solar:alt-arrow-down-outline" : "solar:alt-arrow-right-outline"}
+                            width={14}
+                          />
+                        </>
+                      ) : null}
+                    </button>
+
+                    {!isSidebarCollapsed && openGroups[item.label] ? (
+                      <div className="ml-4 space-y-1 border-l border-(--instructor-shell-border) pl-3">
+                        {item.children.map((child) => (
+                          <NavLink
+                            key={child.label}
+                            to={child.path}
+                            className={({ isActive }) =>
+                              `flex items-center rounded-lg px-2.5 py-2 text-xs transition-colors ${
+                                isActive
+                                  ? "bg-(--instructor-highlight-bg) text-(--text-main)"
+                                  : "text-(--text-secondary) hover:bg-(--dash-soft-surface-hover)"
+                              }`
+                            }
+                            onClick={() => setMobileSidebarOpen(false)}
+                          >
+                            {child.label}
+                          </NavLink>
+                        ))}
+                      </div>
+                    ) : null}
+                  </div>
+                );
+              }
 
               if (item.path) {
                 return (

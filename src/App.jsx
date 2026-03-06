@@ -13,6 +13,7 @@ import InstructorCourses from "./screens/InstructorCourses";
 import InstructorCreateCourse from "./screens/InstructorCreateCourse";
 import InstructorCourseBuilder from "./screens/InstructorCourseBuilder";
 import InstructorLessonBuilder from "./screens/InstructorLessonBuilder";
+import InstructorArticles from "./screens/InstructorArticles";
 
 import Login from "./screens/Login";
 import OtpVerification from "./screens/OtpVerification";
@@ -44,6 +45,8 @@ const App = () => {
         <Route path="/instructor/courses/create" element={<ProtectedRoute><InstructorCreateCourse /></ProtectedRoute>} />
         <Route path="/instructor/courses/builder" element={<ProtectedRoute><InstructorCourseBuilder /></ProtectedRoute>} />
         <Route path="/instructor/lessons/builder" element={<ProtectedRoute><InstructorLessonBuilder /></ProtectedRoute>} />
+        <Route path="/instructor/articles" element={<ProtectedRoute><InstructorArticles /></ProtectedRoute>} />
+        <Route path="/instructor/articles/:section" element={<ProtectedRoute><InstructorArticles /></ProtectedRoute>} />
         <Route path="/admin/dashboard" element={<ProtectedRoute><AdminDashboard/></ProtectedRoute>} />
       </Routes>
       <VercelSpeedInsights />

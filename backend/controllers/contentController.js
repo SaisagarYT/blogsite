@@ -394,7 +394,46 @@ exports.getArticles = async (req, res) => {
     articles = articles.filter((item) => articleIds.some((id) => String(id) === String(item._id)));
   }
 
-  return res.json({ success: true, articles });
+  const articleIds = articles.map((item) => item._id);
+  const [categoryRows, tagRows] = await Promise.all([
+    ArticleCategory.find({ article_id: { $in: articleIds } })
+      .populate("category_id", "_id name slug")
+      .lean(),
+    ArticleTag.find({ article_id: { $in: articleIds } })
+      .populate("tag_id", "_id name slug")
+      .lean(),
+  ]);
+
+  const categoriesByArticle = new Map();
+  categoryRows.forEach((row) => {
+    const key = String(row.article_id);
+    const list = categoriesByArticle.get(key) || [];
+    if (row.category_id) list.push(row.category_id);
+    categoriesByArticle.set(key, list);
+  });
+
+  const tagsByArticle = new Map();
+  tagRows.forEach((row) => {
+    const key = String(row.article_id);
+    const list = tagsByArticle.get(key) || [];
+    if (row.tag_id) list.push(row.tag_id);
+    tagsByArticle.set(key, list);
+  });
+
+  const payload = articles.map((article) => {
+    const articleObj = article.toObject ? article.toObject() : article;
+    const articleKey = String(articleObj._id);
+
+    return {
+      ...articleObj,
+      categories: categoriesByArticle.get(articleKey) || [],
+      tags: tagsByArticle.get(articleKey) || [],
+      likes_count: Number(articleObj.likes_count || 0),
+      comments_count: Number(articleObj.comments_count || 0),
+    };
+  });
+
+  return res.json({ success: true, articles: payload });
 };
 
 exports.getDashboardBlogs = async (req, res) => {

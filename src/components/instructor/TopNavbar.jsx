@@ -77,7 +77,7 @@ const CreateButton = () => {
   const createMenuItems = [
     { label: "Course", path: "/instructor/courses/create" },
     { label: "Lesson", path: "/instructor/lessons/builder" },
-    { label: "Article", path: "/instructor/dashboard" },
+    { label: "Article", path: "/instructor/articles/create" },
   ];
 
   return (

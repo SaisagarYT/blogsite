@@ -338,14 +338,14 @@ const DashPage = () => {
                 <ul className="flex items-center gap-7 text-sm font-medium">
                   <li className="cursor-pointer hover:text-(--text-accent)" onClick={() => navigate("/")}>HOME</li>
                   <li className="cursor-pointer hover:text-(--text-accent)" onClick={() => navigate("/news")}>TECHNEWS</li>
-                  <li className="cursor-default">Explore</li>
-                  <li className="cursor-default">Resources</li>
+                  <li className="cursor-default">Topics</li>
+                  <li className="cursor-default">Guides</li>
                 </ul>
 
                 <div className="w-102 h-10 rounded-lg border border-white/35 bg-white/15 backdrop-blur-sm flex items-center px-3">
                   <input
                     type="text"
-                    placeholder="Search destination..."
+                    placeholder="Search topics..."
                     className="w-full bg-transparent text-sm text-white placeholder-white/70 outline-none"
                   />
                   <Icon icon="mdi:magnify" width="20" height="20" className="text-white/90" />
@@ -421,12 +421,12 @@ const DashPage = () => {
                   <button
                     onClick={() => setMobileMenuOpen(false)}
                     className="text-left text-white px-3 py-2 rounded-lg hover:bg-white/10">
-                    Explore
+                    Topics
                   </button>
                   <button
                     onClick={() => setMobileMenuOpen(false)}
                     className="text-left text-white px-3 py-2 rounded-lg hover:bg-white/10">
-                    Resources
+                    Guides
                   </button>
                 </nav>
               </aside>
@@ -434,13 +434,13 @@ const DashPage = () => {
 
             <div className="dash-hero-animate max-w-2xl text-white pb-2 md:pb-4">
               <span className="inline-block text-xs px-3 py-1 rounded-full border border-white/50 bg-black/20 mb-3">
-                Dashboard
+                Topic Dashboard
               </span>
               <h1 className="text-2xl md:text-4xl font-bold leading-tight">
                 Welcome back{currentUser?.username ? `, ${currentUser.username}` : ""}
               </h1>
               <p className="mt-2 text-sm md:text-base text-white/90">
-                Explore your latest updates and continue your reading journey.
+                Explore your latest topic updates and continue your learning journey.
               </p>
               <div className="flex items-center gap-2 mt-4">
                 {slides.map((_, index) => (
@@ -460,7 +460,7 @@ const DashPage = () => {
 
         <section className="mt-6 md:mt-8 rounded-xl border border-(--bg-primary) bg-(--bg-secondary) p-3 md:p-5">
           <div className="flex items-center justify-between gap-3 mb-4 md:mb-6">
-            <h2 className="text-2xl md:text-5xl font-bold italic tracking-tight">Best blog of the week ...</h2>
+            <h2 className="text-2xl md:text-5xl font-bold italic tracking-tight">Best topic of the week ...</h2>
             <button
               style={{
                 backgroundColor: "var(--dash-soft-surface)",
@@ -473,7 +473,7 @@ const DashPage = () => {
               onMouseLeave={(e) => {
                 e.currentTarget.style.backgroundColor = "var(--dash-soft-surface)";
               }}>
-              See all post
+              See all topics
               <Icon icon="mdi:arrow-right" width="18" height="18" />
             </button>
           </div>
@@ -504,13 +504,13 @@ const DashPage = () => {
                 <div
                   style={{ backgroundColor: "var(--dash-overlay-card-bg)" }}
                   className="rounded-xl md:rounded-2xl px-4 py-3 md:px-5 md:py-4 max-w-[80%]">
-                  <span style={{ color: "var(--dash-overlay-card-subtext)" }} className="text-xs block mb-1">• Travel</span>
+                  <span style={{ color: "var(--dash-overlay-card-subtext)" }} className="text-xs block mb-1">• Featured Topic</span>
                   <h3 style={{ color: "var(--dash-overlay-card-text)" }} className="text-3xl md:text-6xl leading-tight font-black italic">
-                    Get to your dream
+                    Build your next skill
                     <br />
-                    now destinations with
+                    with practical learning
                     <br />
-                    TravelPro
+                    on BlogSite
                   </h3>
                 </div>
                 <button
@@ -555,15 +555,15 @@ const DashPage = () => {
                       <Icon icon="mdi:arrow-top-right" width="24" height="24" />
                     </button>
                   </div>
-                  <p style={{ color: "var(--dash-soft-text)" }} className="mt-3 text-sm italic">Become A Broadcast Member</p>
-                  <h3 style={{ color: "var(--dash-soft-text)" }} className="mt-2 text-3xl md:text-5xl font-black italic leading-tight">Real talk in a corporate world</h3>
+                  <p style={{ color: "var(--dash-soft-text)" }} className="mt-3 text-sm italic">Join Our Topic Community</p>
+                  <h3 style={{ color: "var(--dash-soft-text)" }} className="mt-2 text-3xl md:text-5xl font-black italic leading-tight">Real insights for modern creators</h3>
                   <div style={{ borderColor: "var(--dash-ad-divider)" }} className="mt-3 border-t" />
                   <div style={{ borderColor: "var(--dash-ad-divider)" }} className="py-2.5 border-b flex justify-between items-center gap-2">
-                    <p className="text-base md:text-2xl font-semibold italic">How to work out in a limited space</p>
+                    <p className="text-base md:text-2xl font-semibold italic">How to learn effectively in less time</p>
                     <Icon icon="mdi:arrow-top-right" width="20" height="20" />
                   </div>
                   <div className="py-2.5 flex justify-between items-center gap-2">
-                    <p className="text-base md:text-2xl font-semibold italic">How to read golf green gran like a pro</p>
+                    <p className="text-base md:text-2xl font-semibold italic">How to structure a topic roadmap like a pro</p>
                     <Icon icon="mdi:arrow-top-right" width="20" height="20" />
                   </div>
                 </div>
@@ -578,10 +578,10 @@ const DashPage = () => {
                     backgroundPosition: "center",
                   }}>
                   <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/20 to-black/75" />
-                  <div className="absolute top-3 left-3 text-xs bg-black/45 text-white border border-white/30 rounded-full px-2.5 py-1">• Gym</div>
+                  <div className="absolute top-3 left-3 text-xs bg-black/45 text-white border border-white/30 rounded-full px-2.5 py-1">• Topic</div>
                   <div className="absolute bottom-3 left-3 right-3 text-white">
                     <p className="text-xs text-white/90 mb-1">5 mins, 22 Jan 2024</p>
-                    <h4 className="text-base md:text-xl font-bold italic leading-tight">Athletic Training i soft and hard styles of training</h4>
+                    <h4 className="text-base md:text-xl font-bold italic leading-tight">Structured learning with beginner and advanced paths</h4>
                   </div>
                 </article>
 
@@ -590,13 +590,13 @@ const DashPage = () => {
                   className="dash-stagger-item dash-gsap-hover rounded-3xl border border-black/10 p-3 md:p-4 flex flex-col justify-between">
                   <div className="flex flex-wrap gap-2">
                     {[
-                      "Medical Knowledge",
-                      "Bodybuilding",
-                      "Life Style",
-                      "Diet",
-                      "Health Food",
-                      "Sickness",
-                      "Diseases",
+                      "Web Development",
+                      "Artificial Intelligence",
+                      "React",
+                      "System Design",
+                      "Cloud",
+                      "DevOps",
+                      "Career Growth",
                     ].map((tag) => (
                       <span
                         key={tag}
@@ -615,7 +615,7 @@ const DashPage = () => {
                       color: "var(--dash-btn-text)",
                     }}
                     className="dash-gsap-hover mt-3 w-full rounded-xl text-sm md:text-base py-2.5 font-medium flex items-center justify-center gap-2">
-                    View All Categories
+                    View All Topics
                     <Icon icon="mdi:arrow-right" width="18" height="18" />
                   </button>
                 </article>
@@ -634,12 +634,12 @@ const DashPage = () => {
                 className="text-4xl sm:text-5xl lg:text-7xl leading-[1.02] font-black tracking-tight">
                 Our most
                 <br />
-                popular articles
+                popular topics
               </h2>
               <p
                 style={{ color: "var(--dash-popular-subtitle)" }}
                 className="mt-3 md:mt-4 text-base md:text-2xl leading-relaxed max-w-xl">
-                The latest news, tips and advice to help you run your business with less fuss
+                The latest topic updates, tips, and guides to help you learn faster with less friction
               </p>
             </div>
 
@@ -649,15 +649,15 @@ const DashPage = () => {
                 color: "var(--dash-popular-cta-text)",
               }}
               className="dash-gsap-hover self-start md:self-center rounded-full px-4 md:px-6 py-2 md:py-2.5 text-xs md:text-base font-medium">
-              Read All Article
+              Read All Topics
             </button>
           </div>
 
           <div className="dash-stagger mt-5 md:mt-8 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-5">
             {[
-              { image: bgImg1, title: "Everything you need to know about VAT for your business" },
-              { image: bgImg2, title: "Everything you need to know about VAT for your business" },
-              { image: bgImg3, title: "Everything you need to know about VAT for your business" },
+              { image: bgImg1, title: "Everything you need to know about modern frontend architecture" },
+              { image: bgImg2, title: "Practical guide to AI tooling for engineering teams" },
+              { image: bgImg3, title: "Security checklist every product team should follow" },
             ].map((article, index) => (
               <article
                 key={index}
@@ -686,7 +686,7 @@ const DashPage = () => {
                       color: "var(--dash-popular-card-chip-text)",
                     }}
                     className="inline-flex px-2.5 py-1 rounded-full text-[10px] md:text-sm font-medium mb-2 md:mb-3">
-                    CREATORS
+                    TOPICS
                   </span>
                   <h3
                     style={{ color: "var(--dash-popular-card-text)" }}
@@ -708,7 +708,7 @@ const DashPage = () => {
               className="text-4xl md:text-6xl lg:text-7xl font-black leading-tight tracking-tight">
               Useful tips
               <br />
-              for your <span style={{ color: "var(--dash-tips-title-accent)" }}>business</span>
+              for your <span style={{ color: "var(--dash-tips-title-accent)" }}>topics</span>
             </h2>
           </div>
 
@@ -716,23 +716,23 @@ const DashPage = () => {
             {[
               {
                 icon: Webassets.icon1,
-                title: "Business Creators",
-                desc: "Everything you need to know to launch your own company.",
+                title: "Topic Creators",
+                desc: "Everything you need to start writing and publishing useful topic content.",
               },
               {
                 icon: Webassets.icon2,
-                title: "Freelancers",
-                desc: "Focus on what's important - here are the essentials to help you drive.",
+                title: "Learners",
+                desc: "Focus on what matters most with essential learning paths and resources.",
               },
               {
                 icon: Webassets.icon3,
                 title: "Trends and News",
-                desc: "What's happening in the world of entrepreneurship.",
+                desc: "What is changing across tech topics and product development.",
               },
               {
                 icon: Webassets.icon4,
-                title: "Operations",
-                desc: "Practical systems to keep your team running efficiently every day.",
+                title: "Workflows",
+                desc: "Practical systems to keep your topic pipeline running smoothly.",
               },
             ].map((item, index) => (
               <article
@@ -756,7 +756,7 @@ const DashPage = () => {
                     borderColor: "var(--dash-tips-discover-border)",
                   }}
                   className="dash-gsap-hover mt-5 md:mt-6 rounded-full border px-4 py-1.5 md:px-5 md:py-2 text-xs md:text-base">
-                  Discover
+                  Explore
                 </button>
               </article>
             ))}
@@ -790,9 +790,9 @@ const DashPage = () => {
           className="dash-reveal mt-6 md:mt-8 rounded-2xl border border-(--bg-primary) p-4 md:p-6"
         >
           <div className="flex flex-col gap-2">
-            <h2 style={{ color: "var(--dash-blog-title)" }} className="text-2xl md:text-3xl font-bold">Blog</h2>
+            <h2 style={{ color: "var(--dash-blog-title)" }} className="text-2xl md:text-3xl font-bold">Topics</h2>
             <p style={{ color: "var(--dash-blog-subtitle)" }} className="text-xs md:text-sm">
-              Here, we share travel tips, destination guides, and stories that inspire your next adventure.
+              Here, we share topic insights, practical guides, and stories that inspire your next build.
             </p>
           </div>
 
@@ -832,11 +832,11 @@ const DashPage = () => {
           {blogError ? <p className="mt-3 text-xs md:text-sm text-(--instructor-badge-bg)">{blogError}</p> : null}
 
           {blogLoading ? (
-            <div className="mt-4 rounded-xl border border-(--bg-primary) p-4 text-sm text-(--text-secondary)">Loading your blogs...</div>
+            <div className="mt-4 rounded-xl border border-(--bg-primary) p-4 text-sm text-(--text-secondary)">Loading your topics...</div>
           ) : null}
 
           {!blogLoading && !blogError && filteredBlogPosts.length === 0 ? (
-            <div className="mt-4 rounded-xl border border-(--bg-primary) p-4 text-sm text-(--text-secondary)">No blogs found yet.</div>
+            <div className="mt-4 rounded-xl border border-(--bg-primary) p-4 text-sm text-(--text-secondary)">No topics found yet.</div>
           ) : null}
 
           <div className="dash-stagger mt-4 md:mt-5 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 md:gap-4">
@@ -927,17 +927,17 @@ const DashPage = () => {
                       <Icon icon="mdi:web" width="20" height="20" />
                     </span>
                     <h3 style={{ color: "var(--dash-explore-text)" }} className="mt-4 text-3xl md:text-4xl font-semibold leading-tight">
-                      Explore more to get your comfort zone
+                      Explore more to sharpen your skill zone
                     </h3>
                     <p style={{ color: "var(--dash-explore-subtext)" }} className="mt-2 text-sm md:text-base">
-                      Book your perfect stay with us.
+                      Start your next learning path with us.
                     </p>
                   </div>
                   <button
                     style={{ backgroundColor: "var(--dash-explore-btn-bg)", color: "var(--dash-explore-btn-text)" }}
                     className="dash-gsap-hover mt-4 w-max px-4 py-2 rounded-lg text-sm md:text-base font-medium flex items-center gap-2"
                   >
-                    Booking Now
+                    Start Learning
                     <Icon icon="mdi:arrow-right" width="16" height="16" />
                   </button>
                 </div>
@@ -947,7 +947,7 @@ const DashPage = () => {
                 <img src={bgImg2} alt="Article available" className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-b from-black/10 to-black/65" />
                 <div className="absolute left-4 bottom-4 z-10 text-white">
-                  <p className="text-lg md:text-2xl font-medium">Article Available</p>
+                  <p className="text-lg md:text-2xl font-medium">Topics Available</p>
                   <p className="text-4xl md:text-5xl font-bold">78</p>
                 </div>
               </article>
@@ -958,7 +958,7 @@ const DashPage = () => {
               <div className="absolute inset-0 bg-black/20" />
               <div className="absolute inset-0 flex items-center justify-center px-5">
                 <h3 className="text-white text-4xl md:text-6xl text-center leading-tight font-medium max-w-3xl">
-                  Beyond accommodation, creating memories of a lifetime
+                  Beyond articles, building skills for a lifetime
                 </h3>
               </div>
             </article>
@@ -970,9 +970,9 @@ const DashPage = () => {
           >
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
               <div>
-                <h4 className="text-2xl md:text-3xl font-bold">Horizone</h4>
+                <h4 className="text-2xl md:text-3xl font-bold">BlogSite</h4>
                 <p style={{ color: "var(--dash-explore-footer-muted)" }} className="mt-3 text-sm md:text-base leading-relaxed">
-                  Our mission is to equip modern explorers with cutting-edge, functional, and stylish bags that elevate every adventure.
+                  Our mission is to help modern creators learn faster with practical topic-based content and tools.
                 </p>
               </div>
 
@@ -980,8 +980,8 @@ const DashPage = () => {
                 <h5 className="text-xl md:text-2xl font-semibold mb-2">About</h5>
                 <ul style={{ color: "var(--dash-explore-footer-muted)" }} className="space-y-2 text-sm md:text-base">
                   <li>About Us</li>
-                  <li>Blog</li>
-                  <li>Career</li>
+                  <li>Topics</li>
+                  <li>Careers</li>
                 </ul>
               </div>
 
@@ -989,7 +989,7 @@ const DashPage = () => {
                 <h5 className="text-xl md:text-2xl font-semibold mb-2">Support</h5>
                 <ul style={{ color: "var(--dash-explore-footer-muted)" }} className="space-y-2 text-sm md:text-base">
                   <li>Contact Us</li>
-                  <li>Return</li>
+                  <li>Feedback</li>
                   <li>FAQ</li>
                 </ul>
               </div>
@@ -999,7 +999,7 @@ const DashPage = () => {
                 <div className="flex items-center gap-2 rounded-lg p-1" style={{ backgroundColor: "var(--dash-explore-input-bg)" }}>
                   <input
                     type="text"
-                    placeholder="Enter your email"
+                    placeholder="Enter your email for topic updates"
                     style={{ color: "var(--dash-explore-input-text)" }}
                     className="flex-1 bg-transparent px-3 py-2 text-sm md:text-base outline-none"
                   />
@@ -1022,7 +1022,7 @@ const DashPage = () => {
             </div>
 
             <div className="mt-6 pt-4 border-t border-white/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-sm">
-              <p style={{ color: "var(--dash-explore-footer-muted)" }}>©2024 Horizone. All rights reserved.</p>
+              <p style={{ color: "var(--dash-explore-footer-muted)" }}>©2026 BlogSite. All rights reserved.</p>
               <div className="flex items-center gap-4" style={{ color: "var(--dash-explore-footer-muted)" }}>
                 <button className="hover:text-white transition-colors">Privacy Policy</button>
                 <button className="hover:text-white transition-colors">Terms of Service</button>

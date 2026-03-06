@@ -22,7 +22,7 @@ const AdminTopbar = ({ onOpenSidebar, onToggleSidebar, isSidebarCollapsed }) => 
           <Icon icon="mdi:magnify" width="18" height="18" className="text-(--text-secondary)" />
           <input
             className="w-full bg-transparent outline-none text-sm"
-            placeholder="Search articles, authors, categories..."
+            placeholder="Search topics, authors, categories..."
           />
         </div>
       </div>

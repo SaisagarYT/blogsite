@@ -19,7 +19,7 @@ export const StatGrid = () => (
 export const RevenueStatus = () => (
   <article className="border border-(--bg-primary) bg-(--bg-secondary) rounded-xl p-4 md:p-5">
     <div className="flex items-center justify-between">
-      <h3 className="font-semibold">Revenue Status</h3>
+      <h3 className="font-semibold">Topic Performance</h3>
       <button className="text-xs border border-(--bg-primary) rounded-md px-2.5 py-1">This year</button>
     </div>
     <div className="mt-4 h-56 md:h-64 flex items-end gap-2 md:gap-3">
@@ -56,7 +56,7 @@ export const RevenueStatus = () => (
 export const AudienceOverview = () => (
   <article className="border border-(--bg-primary) bg-(--bg-secondary) rounded-xl p-4 md:p-5">
     <div className="flex items-center justify-between">
-      <h3 className="font-semibold">Audience Overview</h3>
+      <h3 className="font-semibold">Topic Audience Overview</h3>
       <button className="text-xs border border-(--bg-primary) rounded-md px-2.5 py-1">All</button>
     </div>
 
@@ -67,15 +67,15 @@ export const AudienceOverview = () => (
       >
         <div className="w-[76%] h-[76%] rounded-full bg-(--bg-secondary) mx-auto mt-[12%] flex flex-col items-center justify-center">
           <p className="text-3xl font-semibold">12M+</p>
-          <p className="text-xs text-(--text-secondary)">Total Readers</p>
+          <p className="text-xs text-(--text-secondary)">Total Topic Readers</p>
         </div>
       </div>
     </div>
 
     <div className="mt-6 flex justify-center gap-5 text-xs">
-      <span className="flex items-center gap-1"><i className="w-2 h-2 rounded-full bg-indigo-500" />Current</span>
-      <span className="flex items-center gap-1"><i className="w-2 h-2 rounded-full bg-orange-500" />New</span>
-      <span className="flex items-center gap-1"><i className="w-2 h-2 rounded-full bg-yellow-500" />Returning</span>
+      <span className="flex items-center gap-1"><i className="w-2 h-2 rounded-full bg-indigo-500" />Core Topics</span>
+      <span className="flex items-center gap-1"><i className="w-2 h-2 rounded-full bg-orange-500" />New Topics</span>
+      <span className="flex items-center gap-1"><i className="w-2 h-2 rounded-full bg-yellow-500" />Returning Topics</span>
     </div>
   </article>
 );
@@ -83,16 +83,16 @@ export const AudienceOverview = () => (
 export const EarningsReport = () => (
   <article className="border border-(--bg-primary) bg-(--bg-secondary) rounded-xl p-4 md:p-5 overflow-x-auto">
     <div className="flex items-center justify-between mb-4">
-      <h3 className="font-semibold">Earnings Reports</h3>
+      <h3 className="font-semibold">Topic Activity Report</h3>
       <button className="text-xs border border-(--bg-primary) rounded-md px-2.5 py-1">Month</button>
     </div>
     <table className="w-full min-w-[480px] text-sm">
       <thead className="text-(--text-secondary)">
         <tr>
           <th className="text-left py-2">Date</th>
-          <th className="text-left py-2">Item Count</th>
-          <th className="text-left py-2">Type</th>
-          <th className="text-left py-2">Earning</th>
+          <th className="text-left py-2">Topic Count</th>
+          <th className="text-left py-2">Topic Type</th>
+          <th className="text-left py-2">Topic Score</th>
         </tr>
       </thead>
       <tbody>
@@ -111,14 +111,14 @@ export const EarningsReport = () => (
 
 export const PopularProducts = () => (
   <article className="border border-(--bg-primary) bg-(--bg-secondary) rounded-xl p-4 md:p-5 overflow-x-auto">
-    <h3 className="font-semibold mb-4">Most Popular Content</h3>
+    <h3 className="font-semibold mb-4">Most Popular Topics</h3>
     <table className="w-full min-w-[560px] text-sm">
       <thead className="text-(--text-secondary)">
         <tr>
-          <th className="text-left py-2">Article Name</th>
-          <th className="text-left py-2">ID</th>
-          <th className="text-left py-2">Price</th>
-          <th className="text-left py-2">Status</th>
+          <th className="text-left py-2">Topic Name</th>
+          <th className="text-left py-2">Topic ID</th>
+          <th className="text-left py-2">Plan</th>
+          <th className="text-left py-2">State</th>
           <th className="text-left py-2">Action</th>
         </tr>
       </thead>

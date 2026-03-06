@@ -1,32 +1,32 @@
 export const adminNavSections = [
   {
-    title: "Navigation",
+    title: "Topic Navigation",
     items: [
-      { label: "Dashboard", icon: "mdi:view-dashboard-outline" },
-      { label: "Content", icon: "mdi:file-document-multiple-outline", active: true },
-      { label: "Categories", icon: "mdi:shape-outline" },
-      { label: "Tags", icon: "mdi:tag-outline" },
-      { label: "Authors", icon: "mdi:account-group-outline" },
-      { label: "Comments", icon: "mdi:comment-outline" },
-      { label: "Media", icon: "mdi:image-multiple-outline" },
-      { label: "Calendar", icon: "mdi:calendar-month-outline" },
+      { label: "Topic Dashboard", icon: "mdi:view-dashboard-outline" },
+      { label: "Topic Library", icon: "mdi:file-document-multiple-outline", active: true },
+      { label: "Topic Categories", icon: "mdi:shape-outline" },
+      { label: "Topic Tags", icon: "mdi:tag-outline" },
+      { label: "Topic Authors", icon: "mdi:account-group-outline" },
+      { label: "Topic Comments", icon: "mdi:comment-outline" },
+      { label: "Topic Media", icon: "mdi:image-multiple-outline" },
+      { label: "Topic Calendar", icon: "mdi:calendar-month-outline" },
     ],
   },
   {
-    title: "General",
+    title: "Topic Settings",
     items: [
-      { label: "Settings", icon: "mdi:cog-outline" },
-      { label: "Help Center", icon: "mdi:help-circle-outline" },
-      { label: "Log Out", icon: "mdi:logout" },
+      { label: "Theme Settings", icon: "mdi:cog-outline" },
+      { label: "Topic Help Center", icon: "mdi:help-circle-outline" },
+      { label: "Exit Topic Admin", icon: "mdi:logout" },
     ],
   },
 ];
 
 export const statsCards = [
-  { title: "Articles", value: "2.5k", change: "+8.5% this week", icon: "mdi:file-document-outline" },
-  { title: "Avg. Read Time", value: "07:42", change: "+3.8% weekly avg", icon: "mdi:clock-outline" },
-  { title: "Monthly Views", value: "340k", change: "+10% views monthly", icon: "mdi:eye-outline" },
-  { title: "Published", value: "910", change: "+6.1% completions", icon: "mdi:check-circle-outline" },
+  { title: "Published Topics", value: "2.5k", change: "+8.5% this week", icon: "mdi:file-document-outline" },
+  { title: "Avg. Topic Read Time", value: "07:42", change: "+3.8% weekly avg", icon: "mdi:clock-outline" },
+  { title: "Monthly Topic Views", value: "340k", change: "+10% views monthly", icon: "mdi:eye-outline" },
+  { title: "Live Topic Count", value: "910", change: "+6.1% completions", icon: "mdi:check-circle-outline" },
 ];
 
 export const revenueBars = [620, 430, 540, 470, 510, 450, 495, 530, 590, 625, 520, 560];
